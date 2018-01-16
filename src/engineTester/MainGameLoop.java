@@ -2,11 +2,13 @@ package engineTester;
 
 import org.lwjgl.opengl.Display;
 
+import models.RawModel;
+import models.TexturedModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
-import renderEngine.RawModel;
 import renderEngine.Renderer;
 import shaders.StaticShader;
+import textures.ModelTexture;
 
 public class MainGameLoop {
 
@@ -31,14 +33,23 @@ public class MainGameLoop {
 				0, 1, 3, // Top left triangle (V0, V1, V3)
 				3, 1, 2, // Bottom right triangle (V3, V1, V2)
 		};
+		
+		float[] textureCoords = {
+				0, 0, // V0
+				0, 1, // V1
+				1, 1, // V2
+				1, 0, // V3
+		};
 
-		RawModel model = loader.loadToVAO(vertices, indices);
+		RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
+		ModelTexture texture = new ModelTexture(loader.loadTexture("tekstura"));
+		TexturedModel texturedModel = new TexturedModel(model, texture);
 
 		while(!Display.isCloseRequested()) {
 			// game logic
 			renderer.prepare();
 			shader.start();
-			renderer.render(model);
+			renderer.render(texturedModel);
 			shader.stop();
 			DisplayManager.updateDisplay();
 		}

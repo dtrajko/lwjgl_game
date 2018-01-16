@@ -15,16 +15,15 @@ public class DisplayManager {
 
 	public static void createDisplay(){
 		
-		ContextAttribs attribs = new ContextAttribs(3, 2);
-		attribs.withForwardCompatible(true);
-		attribs.withProfileCore(true);
+		ContextAttribs attribs = new ContextAttribs(3, 2)
+		.withForwardCompatible(true)
+		.withProfileCore(true);
 
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.create(new PixelFormat(), attribs);
-			Display.setTitle("Možda neka lepa 3D igrica?");
+			Display.setTitle("LWJGL Game");
 		} catch (LWJGLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
