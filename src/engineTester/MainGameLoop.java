@@ -42,7 +42,7 @@ public class MainGameLoop {
 		};
 
 		RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
-		ModelTexture texture = new ModelTexture(loader.loadTexture("tekstura"));
+		ModelTexture texture = new ModelTexture(loader.loadTexture("tiles"));
 		TexturedModel texturedModel = new TexturedModel(model, texture);
 
 		while(!Display.isCloseRequested()) {
