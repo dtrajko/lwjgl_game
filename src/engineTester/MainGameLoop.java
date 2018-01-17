@@ -5,10 +5,12 @@ import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 import entities.Entity;
+import entities.Light;
 import models.RawModel;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
+import renderEngine.OBJLoader;
 import renderEngine.Renderer;
 import shaders.StaticShader;
 import textures.ModelTexture;
@@ -18,97 +20,28 @@ public class MainGameLoop {
 	public static void main(String[] args) {
 
 		DisplayManager.createDisplay();
-		
 		Loader loader = new Loader();
 		StaticShader shader = new StaticShader();
 		Renderer renderer = new Renderer(shader);
 
-		// OpenGL expects vertices to be defined counter clockwise by default
-		float[] vertices = {			
-			-0.5f,0.5f,-0.5f,	
-			-0.5f,-0.5f,-0.5f,	
-			0.5f,-0.5f,-0.5f,	
-			0.5f,0.5f,-0.5f,		
-			
-			-0.5f,0.5f,0.5f,	
-			-0.5f,-0.5f,0.5f,	
-			0.5f,-0.5f,0.5f,	
-			0.5f,0.5f,0.5f,
-			
-			0.5f,0.5f,-0.5f,	
-			0.5f,-0.5f,-0.5f,	
-			0.5f,-0.5f,0.5f,	
-			0.5f,0.5f,0.5f,
-			
-			-0.5f,0.5f,-0.5f,	
-			-0.5f,-0.5f,-0.5f,	
-			-0.5f,-0.5f,0.5f,	
-			-0.5f,0.5f,0.5f,
-			
-			-0.5f,0.5f,0.5f,
-			-0.5f,0.5f,-0.5f,
-			0.5f,0.5f,-0.5f,
-			0.5f,0.5f,0.5f,
-			
-			-0.5f,-0.5f,0.5f,
-			-0.5f,-0.5f,-0.5f,
-			0.5f,-0.5f,-0.5f,
-			0.5f,-0.5f,0.5f
-		};
-		
-		float[] textureCoords = {	
-			0,0,
-			0,1,
-			1,1,
-			1,0,			
-			0,0,
-			0,1,
-			1,1,
-			1,0,			
-			0,0,
-			0,1,
-			1,1,
-			1,0,
-			0,0,
-			0,1,
-			1,1,
-			1,0,
-			0,0,
-			0,1,
-			1,1,
-			1,0,
-			0,0,
-			0,1,
-			1,1,
-			1,0,		
-		};
-		
-		int[] indices = {
-			0,1,3,	
-			3,1,2,	
-			4,5,7,
-			7,5,6,
-			8,9,11,
-			11,9,10,
-			12,13,15,
-			15,13,14,	
-			16,17,19,
-			19,17,18,
-			20,21,23,
-			23,21,22
-		};
+		RawModel model = OBJLoader.loadOBJModel("dragon", loader);
+		TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("dragon")));
+		ModelTexture texture = staticModel.getTexture();
+		texture.setShineDamper(10);
+		texture.setReflectivity(10);
 
-		RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
-		TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("frame")));
-		Entity entity = new Entity(staticModel, new Vector3f(0, 0, -5), 0, 0, 0, 1);
+		Entity entity = new Entity(staticModel, new Vector3f(0, -6, -20), 0, 0, 0, 1);
+
+		Light light = new Light(new Vector3f(0, 0, 30), new Vector3f(1, 1, 1));
 		Camera camera = new Camera();
 
 		while(!Display.isCloseRequested()) {
 			// entity.increasePosition(0, 0, 0);
-			entity.increaseRotation(0, 1, 1);
+			entity.increaseRotation(0, 1, 0);
 			camera.move();
 			renderer.prepare();
 			shader.start();
+			shader.loadLight(light);
 			shader.loadViewMatrix(camera);
 			renderer.render(entity, shader);
 			shader.stop();
