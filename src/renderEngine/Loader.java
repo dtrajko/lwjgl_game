@@ -43,7 +43,7 @@ public class Loader {
 			e.printStackTrace();
 		}
 		int textureID = texture.getTextureID();
-		System.out.println("textureID: " + textureID);
+		// System.out.println("textureID: " + textureID);
 		textures.add(textureID);
 		return textureID;
 	}

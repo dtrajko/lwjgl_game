@@ -1,6 +1,6 @@
 #version 400 core
 
-vec2 pass_textureCoordinates;
+in vec2 pass_textureCoordinates;
 
 out vec4 out_Color;
 

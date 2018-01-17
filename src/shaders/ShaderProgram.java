@@ -98,14 +98,14 @@ public abstract class ShaderProgram {
 		}
 		int shaderID = GL20.glCreateShader(type);
 		GL20.glShaderSource(shaderID, shaderSource);
-		System.out.print(shaderSource);
+		// System.out.print(shaderSource);
 		GL20.glCompileShader(shaderID);
 		if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
 			System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
 			System.err.println("Could not compile shader.");
 			System.exit(-1);
 		}
-		System.out.println("shaderID: " + shaderID);
+		// System.out.println("shaderID: " + shaderID);
 		return shaderID;
 	}
 }
