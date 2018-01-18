@@ -7,7 +7,7 @@ import models.TexturedModel;
 
 public class Camera {
 
-	private Vector3f position = new Vector3f(0, 8, 30);
+	private Vector3f position = new Vector3f(0, 10, 40);
 	private float pitch;
 	private float yaw;
 	private float roll;
