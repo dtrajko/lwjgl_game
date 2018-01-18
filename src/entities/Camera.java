@@ -7,7 +7,7 @@ import models.TexturedModel;
 
 public class Camera {
 
-	private Vector3f position = new Vector3f(0, 0, 0);
+	private Vector3f position = new Vector3f(0, 8, 30);
 	private float pitch;
 	private float yaw;
 	private float roll;
@@ -23,6 +23,9 @@ public class Camera {
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			position.y -= 0.05f;
+			if (position.y < 0.2f) {
+				position.y = 0.2f;
+			}
 		}
 		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			position.y += 0.05f;

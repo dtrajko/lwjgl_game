@@ -23,7 +23,7 @@ public class OBJLoader {
 			e.printStackTrace();
 		}
 		BufferedReader reader = new BufferedReader(fr);
-		String line;
+		String line = "";
 		List<Vector3f> vertices = new ArrayList<Vector3f>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();
 		List<Vector3f> normals = new ArrayList<Vector3f>();
@@ -33,8 +33,11 @@ public class OBJLoader {
 		float[] textureArray = null;
 		int[] indicesArray = null;
 		try {
-			while(true) {
+			while (line != null) {
 				line = reader.readLine();
+				if (line == null) {
+					break;
+				}
 				String[] currentLine = line.split(" ");
 				if (line.startsWith("v ")) {
 					Vector3f vertex = new Vector3f(
