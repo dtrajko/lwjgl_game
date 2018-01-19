@@ -8,6 +8,8 @@ import entities.Entity;
 import entities.Light;
 import models.RawModel;
 import models.TexturedModel;
+import objConverter.ModelData;
+import objConverter.OBJFileLoader;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -33,7 +35,9 @@ public class MainGameLoop {
 		Terrain terrain2 = new Terrain(-1, -0.5f, loader, new ModelTexture(loader.loadTexture("grass")));
 
 		// models
-		TexturedModel treeModel = new TexturedModel(OBJLoader.loadOBJModel("tree", loader), new ModelTexture(loader.loadTexture("tree")));
+		ModelData treeData = OBJFileLoader.loadOBJ("tree");
+		RawModel treeModelRaw = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
+		TexturedModel treeModel = new TexturedModel(treeModelRaw, new ModelTexture(loader.loadTexture("tree")));
 		Entity tree1 = new Entity(treeModel, new Vector3f(10, 0, -10), 0, 0, 0, 5);
 		Entity tree2 = new Entity(treeModel, new Vector3f(40, 0, -50), 0, 0, 0, 5);
 		Entity tree3 = new Entity(treeModel, new Vector3f(70, 0, -100), 0, 0, 0, 5);
