@@ -7,7 +7,7 @@ public class ModelTexture {
 	private float reflectivity = 0;
 
 	private boolean hasTransparency = false;
-	private boolean useFakeLighting = false;
+	private boolean useFakeLighting = true;
 
 	public ModelTexture(int id) {
 		this.textureID = id;

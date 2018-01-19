@@ -18,6 +18,8 @@ import renderEngine.EntityRenderer;
 import shaders.StaticShader;
 import terrains.Terrain;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 
 public class MainGameLoop {
 
@@ -26,13 +28,17 @@ public class MainGameLoop {
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
 
-		Light light = new Light(new Vector3f(50, 100, 50), new Vector3f(1, 1, 1));
-		Camera camera = new Camera();
-		MasterRenderer renderer = new MasterRenderer();
+		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
+		
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
+		
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 
-		// terrains
-		Terrain terrain = new Terrain(0, -0.5f, loader, new ModelTexture(loader.loadTexture("grass")));
-		Terrain terrain2 = new Terrain(-1, -0.5f, loader, new ModelTexture(loader.loadTexture("grass")));
+		/**************** END TERRAIN TEXTURE STUFF ****************/
 
 		// models
 		ModelData treeData = OBJFileLoader.loadOBJ("tree");
@@ -44,8 +50,8 @@ public class MainGameLoop {
 
 		TexturedModel bunnyModel = new TexturedModel(OBJLoader.loadOBJModel("bunny", loader), new ModelTexture(loader.loadTexture("fur")));
 		Entity bunny = new Entity(bunnyModel, new Vector3f(25, 0, -20), 0, 0, 0, 0.5f);
-		// bunny.getModel().getTexture().setShineDamper(50);
-		// bunny.getModel().getTexture().setReflectivity(50);
+		bunny.getModel().getTexture().setShineDamper(50);
+		bunny.getModel().getTexture().setReflectivity(50);
 
 		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		grassModel.getTexture().setHasTransparency(true);
@@ -57,7 +63,15 @@ public class MainGameLoop {
 		Entity fern = new Entity(fernModel, new Vector3f(-10, 0, 5), 0, 0, 0, 2);
 		fern.getModel().getTexture().setHasTransparency(true);
 		fern.getModel().getTexture().setUseFakeLighting(true);
-		
+
+		// terrains
+		Terrain terrain = new Terrain(-1, -0.5f, loader, texturePack, blendMap);
+		Terrain terrain2 = new Terrain(0, -0.5f, loader, texturePack, blendMap);
+
+		Light light = new Light(new Vector3f(200, 400, 200), new Vector3f(1, 1, 1));
+		Camera camera = new Camera();
+		MasterRenderer renderer = new MasterRenderer();
+
 		while(!Display.isCloseRequested()) {
 
 			// update
@@ -67,6 +81,7 @@ public class MainGameLoop {
 			// render
 			renderer.processTerrain(terrain);
 			renderer.processTerrain(terrain2);
+
 			renderer.processEntity(bunny);
 			renderer.processEntity(grass);
 			renderer.processEntity(grass2);

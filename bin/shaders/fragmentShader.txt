@@ -15,6 +15,7 @@ uniform float reflectivity;
 uniform vec3 skyColour;
 
 void main(void) {
+
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLightVector = normalize(toLightVector);
 
