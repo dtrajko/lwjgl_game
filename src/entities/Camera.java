@@ -8,10 +8,10 @@ import models.TexturedModel;
 
 public class Camera {
 
-	private float distanceFromPlayer = 50;
+	private float distanceFromPlayer = 60;
 	private float angleAroundPlayer = 0;
-	private Vector3f position = new Vector3f(0, 50, 50);
-	private float pitch = 20;
+	private Vector3f position = new Vector3f(0, 30, 30);
+	private float pitch = 15;
 	private float yaw = 0;
 	private float roll;
 	private Player player;
@@ -74,7 +74,7 @@ public class Camera {
 			float pitchChange = Mouse.getDY() * 0.1f;
 			pitch -= pitchChange;
 			if (pitch < 0.05f) {
-				pitch = 0.05f;
+				// pitch = 0.05f;
 			}
 		}
 	}

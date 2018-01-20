@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
 import renderEngine.DisplayManager;
+import terrains.Terrain;
 
 public class Player extends Entity {
 	
@@ -19,12 +20,14 @@ public class Player extends Entity {
 	private float upwardSpeed = 0;
 	
 	private boolean isInAir = false;
+	
+	private float speedCoeficient = 1;
 
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, position, rotX, rotY, rotZ, scale);
 	}
 
-	public void move() {
+	public void move(Terrain terrain) {
 		checkInputs();
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
@@ -33,10 +36,11 @@ public class Player extends Entity {
 		super.increasePosition(dx, 0, dz);
 		upwardSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
-		if (super.getPosition().y < TERRAIN_HEIGHT) {
+		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
+		if (super.getPosition().y < terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;
-			super.getPosition().y = TERRAIN_HEIGHT;
+			super.getPosition().y = terrainHeight;
 		}
 	}
 
@@ -50,9 +54,9 @@ public class Player extends Entity {
 	public void checkInputs() {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			currentSpeed = RUN_SPEED;
+			currentSpeed = RUN_SPEED * speedCoeficient;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			currentSpeed = -RUN_SPEED;
+			currentSpeed = -RUN_SPEED * speedCoeficient;
 		} else {
 			currentSpeed = 0;
 		}
@@ -67,6 +71,12 @@ public class Player extends Entity {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
+		}
+		
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
+			speedCoeficient = 5;
+		} else {
+			speedCoeficient = 1;
 		}
 	}
 }

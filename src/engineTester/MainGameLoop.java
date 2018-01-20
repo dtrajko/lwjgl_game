@@ -41,6 +41,9 @@ public class MainGameLoop {
 
 		/**************** END TERRAIN TEXTURE STUFF ****************/
 
+		// terrains
+		Terrain terrain = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "heightmap");
+
 		// models
 		ModelData treeData = OBJFileLoader.loadOBJ("tree");
 		RawModel treeModelRaw = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
@@ -50,44 +53,36 @@ public class MainGameLoop {
 		TexturedModel playerModel = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
 		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
-		Entity tree1 = new Entity(treeModel, new Vector3f(10, 0, -10), 0, 0, 0, 5);
-		Entity tree2 = new Entity(treeModel, new Vector3f(40, 0, -50), 0, 0, 0, 5);
-		Entity tree3 = new Entity(treeModel, new Vector3f(70, 0, -100), 0, 0, 0, 5);
-		Entity bunny = new Entity(bunnyModel, new Vector3f(25, 0, -20), 0, 0, 0, 0.5f);
-		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
-		grassModel.getTexture().setHasTransparency(true).setUseFakeLighting(true);
-		Entity grass = new Entity(grassModel, new Vector3f(-5, 0, 0), 0, 0, 0, 2);
-		Entity grass2 = new Entity(grassModel, new Vector3f(15, 0, -15), 0, 0, 0, 2);
-		Entity fern = new Entity(fernModel, new Vector3f(-10, 0, 5), 0, 0, 0, 2);
-		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
-		
-		Player player = new Player(playerModel, new Vector3f(0, 0, -50), 0, 0, 0, 1);
-		player.increaseRotation(0, 0, 0);
+		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 
-		// terrains
-		Terrain terrain = new Terrain(-1, -0.5f, loader, texturePack, blendMap);
-		Terrain terrain2 = new Terrain(0, -0.5f, loader, texturePack, blendMap);
+		Entity tree1 = new Entity(treeModel, new Vector3f(10, terrain.getHeightOfTerrain(10, -10), -10), 0, 0, 0, 14);
+		Entity tree2 = new Entity(treeModel, new Vector3f(40, terrain.getHeightOfTerrain(40, -50), -50), 0, 0, 0, 12);
+		Entity tree3 = new Entity(treeModel, new Vector3f(70, terrain.getHeightOfTerrain(70, -100), -100), 0, 0, 0, 15);
+		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
+		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
+		Entity fern = new Entity(fernModel, new Vector3f(-10, terrain.getHeightOfTerrain(-10, 5), 5), 0, 0, 0, 2);
+		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
+		Entity box1 = new Entity(boxModel, new Vector3f(0, terrain.getHeightOfTerrain(0, 200) + 8, 200), 0, 0, 0, 10);
+		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 50) + 8, 50), 0, 0, 0, 10);
+		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 26, 120), 0, 0, 0, 30);
+		
+		Player player = new Player(playerModel, new Vector3f(0, 0, 0), 0, 0, 0, 1);
 
 		Camera camera = new Camera(player);
 		Light light = new Light(new Vector3f(1000, 3000, -800), new Vector3f(1, 1, 1));
 		MasterRenderer renderer = new MasterRenderer();
 
 		while(!Display.isCloseRequested()) {
-
-			// update
-			// fern.increaseRotation(0, -1f, 0);
+			player.move(terrain);
 			camera.move();
 
-			// player
-			player.move();
-
 			// render
-			renderer.processTerrain(terrain).processTerrain(terrain2);
 			renderer.processEntity(player);
+			renderer.processTerrain(terrain);
 			renderer.processEntity(bunny);
-			renderer.processEntity(grass).processEntity(grass2);
 			renderer.processEntity(fern);
 			renderer.processEntity(tree1).processEntity(tree2).processEntity(tree3);
+			renderer.processEntity(box1).processEntity(box2).processEntity(box3);
 
 			renderer.render(light, camera);
 			DisplayManager.updateDisplay();
