@@ -21,34 +21,35 @@ public class ModelTexture {
 		return shineDamper;
 	}
 
-	public void setShineDamper(float shineDamper) {
+	public ModelTexture setShineDamper(float shineDamper) {
 		this.shineDamper = shineDamper;
+		return this;
+	}
+
+	public ModelTexture setReflectivity(float reflectivity) {
+		this.reflectivity = reflectivity;
+		return this;
+	}
+
+	public ModelTexture setHasTransparency(boolean hasTransparency) {
+		this.hasTransparency = hasTransparency;
+		return this;
+	}
+
+	public ModelTexture setUseFakeLighting(boolean useFakeLighting) {
+		this.useFakeLighting = useFakeLighting;
+		return this;
 	}
 
 	public float getReflectivity() {
 		return reflectivity;
 	}
 
-	public void setReflectivity(float reflectivity) {
-		this.reflectivity = reflectivity;
-	}
-
 	public boolean hasTransparency() {
 		return hasTransparency;
-	}
-
-	public void setHasTransparency(boolean hasTransparency) {
-		this.hasTransparency = hasTransparency;
 	}
 
 	public boolean useFakeLighting() {
 		return useFakeLighting;
 	}
-
-	public void setUseFakeLighting(boolean useFakeLighting) {
-		this.useFakeLighting = useFakeLighting;
-	}
-	
-	
-	
 }

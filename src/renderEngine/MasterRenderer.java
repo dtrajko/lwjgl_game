@@ -77,11 +77,12 @@ public class MasterRenderer {
 		entities.clear();
 	}
 	
-	public void processTerrain(Terrain terrain) {
+	public MasterRenderer processTerrain(Terrain terrain) {
 		terrains.add(terrain);
+		return this;
 	}
 
-	public void processEntity(Entity entity) {
+	public MasterRenderer processEntity(Entity entity) {
 		TexturedModel entityModel = entity.getModel();
 		List<Entity> batch = entities.get(entityModel);
 		if (batch != null) {
@@ -91,6 +92,7 @@ public class MasterRenderer {
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
+		return this;
 	}
 
 	public void prepare() {
