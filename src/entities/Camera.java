@@ -5,19 +5,26 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
+import terrains.Terrain;
 
 public class Camera {
 
-	private float distanceFromPlayer = 60;
+	private float distanceFromPlayer = 40;
 	private float angleAroundPlayer = 0;
 	private Vector3f position = new Vector3f(0, 30, 30);
 	private float pitch = 15;
 	private float yaw = 0;
 	private float roll;
 	private Player player;
+	private Terrain terrain = null;
 
 	public Camera(Player player) {
 		this.player = player;
+	}
+
+	public Camera(Player player, Terrain terrain) {
+		this.player = player;
+		this.terrain = terrain;
 	}
 
 	public void move() {
@@ -53,7 +60,11 @@ public class Camera {
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
-		position.y = player.getPosition().y + verticalDistance;
+		position.y = player.getPosition().y + verticalDistance - player.getVerticalOffset();
+		
+		if (terrain != null && terrain.getHeightOfTerrain(position.x, position.z) > position.y) {
+			position.y = terrain.getHeightOfTerrain(position.x, position.z) + 5;
+		}
 	}
 
 	private float calculateHorizontalDistance() {
