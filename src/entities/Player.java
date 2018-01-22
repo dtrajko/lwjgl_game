@@ -78,6 +78,10 @@ public class Player extends Entity {
 		} else {
 			speedCoeficient = 3;
 		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
+			System.out.println("Player location X = " + super.getPosition().x + ", Z = " + super.getPosition().z);
+		}
 	}
 	
 	public float getVerticalOffset() {
