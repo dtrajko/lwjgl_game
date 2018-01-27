@@ -70,6 +70,7 @@ public class MainGameLoop {
 		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
+		TexturedModel lampModel = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_texture_atlas")).setNumberOfRows(2);
 		TexturedModel fernModelAtlas = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
@@ -103,15 +104,21 @@ public class MainGameLoop {
 		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
 		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 26, 120), 0, 0, 0, 30);
 
+		List<Light> lights = new ArrayList<Light>();
+		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(0.3f, 0.3f, 0.3f))); // world light (sun)
+
+		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
+		lights.add(new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(1f, 1f, 3f), new Vector3f(1f, 0.01f, 0.0001f))); // blue
+		Entity lamp2 = new Entity(lampModel, new Vector3f(75, terrain.getHeightOfTerrain(75, -30), -30), 0, 0, 0, 2);
+		lights.add(new Light(new Vector3f(75, terrain.getHeightOfTerrain(75, -30) + 20, -30), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.0002f))); // red
+		Entity lamp3 = new Entity(lampModel, new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165), -165), 0, 0, 0, 2);
+		lights.add(new Light(new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165) + 20, -165), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow
+		Entity lamp4 = new Entity(lampModel, new Vector3f(155, terrain.getHeightOfTerrain(155, 120), 120), 0, 0, 0, 2);
+		lights.add(new Light(new Vector3f(155, terrain.getHeightOfTerrain(155, 120) + 20, 120), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow 2
+
 		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
 
 		Camera camera = new Camera(player, terrain);
-
-		List<Light> lights = new ArrayList<Light>();
-		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(0.6f, 0.6f, 0.6f))); // world light (sun)
-		lights.add(new Light(new Vector3f(-80, 20, -150), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.002f))); // red
-		lights.add(new Light(new Vector3f(0, 17, -130), new Vector3f(0f, 0f, 2f), new Vector3f(1f, 0.01f, 0.002f))); // blue
-		lights.add(new Light(new Vector3f(20, 7, -220), new Vector3f(0f, 2f, 0f), new Vector3f(1f, 0.01f, 0.002f))); // green
 
 		MasterRenderer renderer = new MasterRenderer();
 
@@ -135,6 +142,7 @@ public class MainGameLoop {
 			renderer.processEntity(pineTree1).processEntity(pineTree2).processEntity(pineTree3).processEntity(pineTree4);
 			renderer.processEntity(box1).processEntity(box2).processEntity(box3);
 			renderer.processEntity(stall1).processEntity(stall2);
+			renderer.processEntity(lamp1).processEntity(lamp2).processEntity(lamp3).processEntity(lamp4);
 
 			renderer.render(lights, camera);
 			guiRenderer.render(guis);
