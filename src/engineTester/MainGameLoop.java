@@ -107,11 +107,11 @@ public class MainGameLoop {
 
 		Camera camera = new Camera(player, terrain);
 
-		Light light = new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1));
 		List<Light> lights = new ArrayList<Light>();
-		lights.add(light);
-		lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(1, 1, 1)));
-		lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0.8f, 1f, 1f)));
+		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(0.6f, 0.6f, 0.6f))); // world light (sun)
+		lights.add(new Light(new Vector3f(-80, 20, -150), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.002f))); // red
+		lights.add(new Light(new Vector3f(0, 17, -130), new Vector3f(0f, 0f, 2f), new Vector3f(1f, 0.01f, 0.002f))); // blue
+		lights.add(new Light(new Vector3f(20, 7, -220), new Vector3f(0f, 2f, 0f), new Vector3f(1f, 0.01f, 0.002f))); // green
 
 		MasterRenderer renderer = new MasterRenderer();
 
