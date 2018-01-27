@@ -36,12 +36,12 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
-		
+
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
 		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("pinkFlowers"));
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
-		
+
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 
@@ -71,8 +71,7 @@ public class MainGameLoop {
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 
-		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_texture_atlas"));
-		fernTextureAtlas.setNumberOfRows(2);
+		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_texture_atlas")).setNumberOfRows(2);
 		TexturedModel fernModelAtlas = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 
 		Entity tree1 = new Entity(treeModel, new Vector3f(10, terrain.getHeightOfTerrain(10, -10), -10), 0, 0, 0, 14);
@@ -103,11 +102,17 @@ public class MainGameLoop {
 		box1.increaseRotation(0, -25f, 0);
 		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
 		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 26, 120), 0, 0, 0, 30);
-		
-		Player player = new Player(playerModel, new Vector3f(0, -20, -100), 0, 0, 0, 1f);
+
+		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
 
 		Camera camera = new Camera(player, terrain);
-		Light light = new Light(new Vector3f(1000, 3000, -800), new Vector3f(1, 1, 1));
+
+		Light light = new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1));
+		List<Light> lights = new ArrayList<Light>();
+		lights.add(light);
+		lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(1, 1, 1)));
+		lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0.8f, 1f, 1f)));
+
 		MasterRenderer renderer = new MasterRenderer();
 
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
@@ -131,7 +136,7 @@ public class MainGameLoop {
 			renderer.processEntity(box1).processEntity(box2).processEntity(box3);
 			renderer.processEntity(stall1).processEntity(stall2);
 
-			renderer.render(light, camera);
+			renderer.render(lights, camera);
 			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}

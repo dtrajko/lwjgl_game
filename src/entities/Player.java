@@ -82,6 +82,12 @@ public class Player extends Entity {
 		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
 			System.out.println("Player location X = " + super.getPosition().x + ", Z = " + super.getPosition().z);
 		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
+			// move left sidewise
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+			// move right sidewise
+		}
 	}
 	
 	public float getVerticalOffset() {
