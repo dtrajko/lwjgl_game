@@ -49,4 +49,25 @@ public class Maths {
 		float l3 = 1.0f - l1 - l2;
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
+
+	/*
+	 * returns a vector that contains larger of each component of input vectors
+	 */
+	public static Vector3f vectorMax3f(Vector3f v1, Vector3f v2) {
+		return new Vector3f(
+			Math.max(v1.x, v2.x),
+			Math.max(v1.y, v2.y),
+			Math.max(v1.z, v2.z)
+		);
+	}
+
+	/*
+	 * returns max component in a vector
+	 */
+	public static float vectorMaxComponent3f(Vector3f v) {
+		float max = v.getX();
+		if (v.getY() > max) max = v.getY();
+		if (v.getZ() > max) max = v.getZ();
+		return max;
+	}
 }

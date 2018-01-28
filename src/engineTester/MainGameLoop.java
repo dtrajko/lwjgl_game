@@ -7,6 +7,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import collision.AABB;
+import collision.IntersectData;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -76,8 +78,14 @@ public class MainGameLoop {
 		TexturedModel fernModelAtlas = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
 
 		Entity tree1 = new Entity(treeModel, new Vector3f(10, terrain.getHeightOfTerrain(10, -10), -10), 0, 0, 0, 14);
-		Entity tree2 = new Entity(treeModel, new Vector3f(40, terrain.getHeightOfTerrain(40, -50), -50), 0, 0, 0, 12);
-		Entity tree3 = new Entity(lowPolyTreeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -250) - 10, -250), 0, 0, 0, 10);
+		tree1.setAABB(new AABB(new Vector3f(8, terrain.getHeightOfTerrain(8, -12), -12), new Vector3f(12, terrain.getHeightOfTerrain(12, -8) + 35, -8)));
+		Entity tree2 = new Entity(treeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -70), -70), 0, 0, 0, 12);
+		tree2.setAABB(new AABB(new Vector3f(98, terrain.getHeightOfTerrain(98, -72), -72), new Vector3f(102, terrain.getHeightOfTerrain(102, -68) + 30, -68)));
+		Entity tree3 = new Entity(treeModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -70), -70), 0, 0, 0, 12);
+		tree3.setAABB(new AABB(new Vector3f(23, terrain.getHeightOfTerrain(23, -72), -72), new Vector3f(27, terrain.getHeightOfTerrain(27, -68) + 30, -68)));
+
+		Entity tree4 = new Entity(lowPolyTreeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -250) - 10, -250), 0, 0, 0, 10);
+		
 		Entity pineTree1 = new Entity(pineTreeModel, new Vector3f(200, terrain.getHeightOfTerrain(200, -300) - 2, -300), 0, 0, 0, 5);
 		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(240, terrain.getHeightOfTerrain(240, -260) - 2, -260), 0, 0, 0, 5);
 		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(280, terrain.getHeightOfTerrain(280, -260) - 2, -260), 0, 0, 0, 5);
@@ -88,7 +96,7 @@ public class MainGameLoop {
 		Entity stall2 = new Entity(stallModel, new Vector3f(-70, terrain.getHeightOfTerrain(-70, -190), -190), 0, 0, 0, 3);
 		stall2.increaseRotation(0, -120, 0);
 
-		Entity fern = new Entity(fernModel, new Vector3f(-10, terrain.getHeightOfTerrain(-10, 5), 5), 0, 0, 0, 2);
+		Entity fern = new Entity(fernModel, new Vector3f(25, terrain.getHeightOfTerrain(25, 70), 70), 0, 0, 0, 2);
 		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
 		
 		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-220, terrain.getHeightOfTerrain(-220, 0), 0), 0, 0, 0, 3);
@@ -100,12 +108,18 @@ public class MainGameLoop {
 		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
 
 		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, 350) + 20, 350), 0, 0, 0, 20);
+		box1.setAABB(new AABB(new Vector3f(-380, -10, 330), new Vector3f(-340, 42, 370)));
 		box1.increaseRotation(0, -25f, 0);
 		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
+		box2.setAABB(new AABB(new Vector3f(90, -10, 190), new Vector3f(110, 22, 210)));
 		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 26, 120), 0, 0, 0, 30);
+		box3.setAABB(new AABB(new Vector3f(-130, -10, 90), new Vector3f(-70, 50, 150)));
+		Entity box4 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 110, 120), 0, 0, 0, 30);
+		box4.increaseRotation(0, 45, 0);
+		box4.setAABB(new AABB(new Vector3f(-120, 80, 100), new Vector3f(-80, 140, 140)));
 
 		List<Light> lights = new ArrayList<Light>();
-		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(0.3f, 0.3f, 0.3f))); // world light (sun)
+		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
 
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(1f, 1f, 3f), new Vector3f(1f, 0.01f, 0.0001f))); // blue
@@ -139,13 +153,61 @@ public class MainGameLoop {
 			renderer.processEntity(fern);
 			renderer.processEntity(fern1).processEntity(fern2).processEntity(fern3).processEntity(fern4);
 			renderer.processEntity(tree1).processEntity(tree2).processEntity(tree3);
+			renderer.processEntity(tree4); // lowPolyTree
 			renderer.processEntity(pineTree1).processEntity(pineTree2).processEntity(pineTree3).processEntity(pineTree4);
-			renderer.processEntity(box1).processEntity(box2).processEntity(box3);
+			renderer.processEntity(box1).processEntity(box2).processEntity(box3).processEntity(box4);
 			renderer.processEntity(stall1).processEntity(stall2);
 			renderer.processEntity(lamp1).processEntity(lamp2).processEntity(lamp3).processEntity(lamp4);
 
 			renderer.render(lights, camera);
 			guiRenderer.render(guis);
+
+			if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 42) {
+					player.getPosition().y = 42;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			} else if (player.getAABB().intersectAABB(box2.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 22) {
+					player.getPosition().y = 22;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			} else if (player.getAABB().intersectAABB(box3.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 49) {
+					player.getPosition().y = 49;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			} else if (player.getAABB().intersectAABB(box4.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 133) {
+					player.getPosition().y = 133;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			} else {
+				player.setGravityEnabled(true);
+			}
+			
+			if (player.getAABB().intersectAABB(tree1.getAABB()).isIntersecting()) {
+				tree1.increaseRotation(0, 2f, 0);
+			}
+			if (player.getAABB().intersectAABB(tree2.getAABB()).isIntersecting()) {
+				tree2.increaseRotation(0, 2f, 0);
+			}
+
+			IntersectData intersectData = player.getAABB().intersectAABB(tree3.getAABB());
+			if (intersectData.isIntersecting()) {
+				tree3.increaseRotation(0, 2f, 0);
+				// System.out.println("IntersectData:" + " isIntersecting = " 
+				// + intersectData.isIntersecting() + " maxDistance = " + intersectData.getMaxDistance());
+			}
+
 			DisplayManager.updateDisplay();
 		}
 	

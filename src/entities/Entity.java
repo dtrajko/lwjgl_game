@@ -2,6 +2,7 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import collision.AABB;
 import models.TexturedModel;
 
 public class Entity {
@@ -12,6 +13,8 @@ public class Entity {
 	private float scale;
 
 	private int textureIndex = 0;
+	
+	private AABB aabb;
 
 	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super();
@@ -34,6 +37,14 @@ public class Entity {
 		this.scale = scale;
 	}
 
+	public void setAABB(AABB aabb) {
+		this.aabb = aabb;
+	}
+
+	public AABB getAABB() {
+		return	aabb;
+	}
+
 	public float getTextureXOffset() {
 		int column = textureIndex % model.getTexture().getNumberOfRows();
 		return (float) column / (float) model.getTexture().getNumberOfRows();
@@ -48,6 +59,8 @@ public class Entity {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		this.aabb.setMinExtents(new Vector3f(this.position.x - 2, this.position.y - 2, this.position.z - 2));
+		this.aabb.setMaxExtents(new Vector3f(this.position.x + 2, this.position.y + 2, this.position.z + 2));
 	}
 
 	public void increaseRotation(float dx, float dy, float dz) {

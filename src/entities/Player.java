@@ -3,6 +3,7 @@ package entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import collision.AABB;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
@@ -24,17 +25,26 @@ public class Player extends Entity {
 	
 	private float speedCoeficient = 3;
 
+	private boolean gravityEnabled = true;
+
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, position, rotX, rotY, rotZ, scale);
+		super.setAABB(new AABB(super.getPosition(), super.getPosition()));
 	}
 
 	public void move(Terrain terrain) {
 		checkInputs();
+
+		// prevent shaking when standing on objects
+		float gravity = GRAVITY;
+		if (gravityEnabled == false) {
+			gravity = 0;
+		}
 		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
-		upwardSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
+		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
 		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
 		if (super.getPosition().y < terrainHeight) {
@@ -42,13 +52,35 @@ public class Player extends Entity {
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
+		// System.out.println("Gravity enabled? " + gravityEnabled + ", gravity amount = " + gravity);
+	}
+
+	public void increasePosition(float dx, float dy, float dz) {
+		super.increasePosition(dx, dy, dz);
+		// dtrajko: experimental code for AABB
+		super.getAABB().setMinExtents(new Vector3f(super.getPosition().x - 2, super.getPosition().y - 2, super.getPosition().z - 2));
+		super.getAABB().setMaxExtents(new Vector3f(super.getPosition().x + 2, super.getPosition().y + 2, super.getPosition().z + 2));
+	}
+
+	// prevent shaking when standing on objects
+	public boolean isGravityEnabled() {
+		return gravityEnabled;
+	}
+
+	// prevent shaking when standing on objects
+	public void setGravityEnabled(boolean gravityEnabled) {
+		this.gravityEnabled = gravityEnabled;
 	}
 
 	public void jump() {
 		if (!isInAir) {
 			this.upwardSpeed = JUMP_POWER;
-			// isInAir = true;
+			// isInAir = true;			
 		}
+	}
+	
+	public boolean isInAir() {
+		return this.isInAir;
 	}
 
 	public void checkInputs() {
@@ -80,7 +112,19 @@ public class Player extends Entity {
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
-			System.out.println("Player location X = " + super.getPosition().x + ", Z = " + super.getPosition().z);
+			System.out.println("Player location: "
+				+ " X = " + super.getPosition().x
+				+ " Y = " + super.getPosition().y
+				+ " Z = " + super.getPosition().z
+			);
+			/*
+			System.out.println("Player AABB location:"
+				+ " Min X = " + this.getAABB().getMinExtents().x
+				+ " Max X = " + this.getAABB().getMaxExtents().x
+				+ " Min Z = " + this.getAABB().getMinExtents().z
+				+ " Max Z = " + this.getAABB().getMaxExtents().z
+			);
+			*/
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
