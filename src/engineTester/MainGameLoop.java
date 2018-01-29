@@ -85,7 +85,19 @@ public class MainGameLoop {
 		tree3.setAABB(new AABB(new Vector3f(23, terrain.getHeightOfTerrain(23, -72), -72), new Vector3f(27, terrain.getHeightOfTerrain(27, -68) + 30, -68)));
 
 		Entity tree4 = new Entity(lowPolyTreeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -250) - 10, -250), 0, 0, 0, 10);
-		
+
+		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, 350) + 20, 350), 0, 0, 0, 20);
+		box1.setAABB(new AABB(new Vector3f(-380, -10, 330), new Vector3f(-340, 42, 370)));
+		box1.increaseRotation(0, -25f, 0);
+		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
+		box2.setAABB(new AABB(new Vector3f(90, -10, 190), new Vector3f(110, 22, 210)));
+		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 30, 120), 0, 0, 0, 35);
+		box3.setAABB(new AABB(new Vector3f(-135, -5, 85), new Vector3f(-65, 58, 155)));
+		Entity box4 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 113, 120), 0, 0, 0, 30);
+		box4.setAABB(new AABB(new Vector3f(-131, 80, 89), new Vector3f(-69, 143, 151)));
+		Entity box5 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 185, 120), 0, 0, 0, 25);
+		box5.setAABB(new AABB(new Vector3f(-124, 160, 96), new Vector3f(-76, 205, 144)));
+
 		Entity pineTree1 = new Entity(pineTreeModel, new Vector3f(200, terrain.getHeightOfTerrain(200, -300) - 2, -300), 0, 0, 0, 5);
 		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(240, terrain.getHeightOfTerrain(240, -260) - 2, -260), 0, 0, 0, 5);
 		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(280, terrain.getHeightOfTerrain(280, -260) - 2, -260), 0, 0, 0, 5);
@@ -107,20 +119,9 @@ public class MainGameLoop {
 		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
 		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
 
-		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, 350) + 20, 350), 0, 0, 0, 20);
-		box1.setAABB(new AABB(new Vector3f(-380, -10, 330), new Vector3f(-340, 42, 370)));
-		box1.increaseRotation(0, -25f, 0);
-		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
-		box2.setAABB(new AABB(new Vector3f(90, -10, 190), new Vector3f(110, 22, 210)));
-		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 26, 120), 0, 0, 0, 30);
-		box3.setAABB(new AABB(new Vector3f(-130, -10, 90), new Vector3f(-70, 50, 150)));
-		Entity box4 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 110, 120), 0, 0, 0, 30);
-		box4.increaseRotation(0, 45, 0);
-		box4.setAABB(new AABB(new Vector3f(-120, 80, 100), new Vector3f(-80, 140, 140)));
-
+		// lights
 		List<Light> lights = new ArrayList<Light>();
-		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
-
+		lights.add(new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(1f, 1f, 3f), new Vector3f(1f, 0.01f, 0.0001f))); // blue
 		Entity lamp2 = new Entity(lampModel, new Vector3f(75, terrain.getHeightOfTerrain(75, -30), -30), 0, 0, 0, 2);
@@ -134,7 +135,7 @@ public class MainGameLoop {
 
 		Camera camera = new Camera(player, terrain);
 
-		MasterRenderer renderer = new MasterRenderer();
+		MasterRenderer renderer = new MasterRenderer(loader);
 
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(-0.75f, -0.8f), new Vector2f(0.2f, 0.2f));
@@ -155,7 +156,7 @@ public class MainGameLoop {
 			renderer.processEntity(tree1).processEntity(tree2).processEntity(tree3);
 			renderer.processEntity(tree4); // lowPolyTree
 			renderer.processEntity(pineTree1).processEntity(pineTree2).processEntity(pineTree3).processEntity(pineTree4);
-			renderer.processEntity(box1).processEntity(box2).processEntity(box3).processEntity(box4);
+			renderer.processEntity(box1).processEntity(box2).processEntity(box3).processEntity(box4).processEntity(box5);
 			renderer.processEntity(stall1).processEntity(stall2);
 			renderer.processEntity(lamp1).processEntity(lamp2).processEntity(lamp3).processEntity(lamp4);
 
@@ -177,15 +178,22 @@ public class MainGameLoop {
 					player.setGravityEnabled(true);
 				}
 			} else if (player.getAABB().intersectAABB(box3.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= 49) {
-					player.getPosition().y = 49;
+				if (player.getPosition().y <= 58) {
+					player.getPosition().y = 58;
 					player.setGravityEnabled(false);
 				} else {
 					player.setGravityEnabled(true);
 				}
 			} else if (player.getAABB().intersectAABB(box4.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= 133) {
-					player.getPosition().y = 133;
+				if (player.getPosition().y <= 136.5f) {
+					player.getPosition().y = 136.5f;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			} else if (player.getAABB().intersectAABB(box5.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 203) {
+					player.getPosition().y = 203;
 					player.setGravityEnabled(false);
 				} else {
 					player.setGravityEnabled(true);

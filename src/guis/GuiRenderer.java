@@ -19,10 +19,10 @@ public class GuiRenderer {
 
 	public GuiRenderer(Loader loader) {
 		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1};
-		this.quad = loader.loadToVAO(positions);
+		this.quad = loader.loadToVAO(positions, 2); // 2 stands for 2D
 		shader = new GuiShader();
 	}
-	
+
 	public void render(List<GuiTexture> guis) {
 		shader.start();
 		GL30.glBindVertexArray(quad.getVaoID());

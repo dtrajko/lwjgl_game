@@ -2,6 +2,7 @@ package renderEngine;
 
 import shaders.StaticShader;
 import shaders.TerrainShader;
+import skybox.SkyboxRenderer;
 import terrains.Terrain;
 import models.TexturedModel;
 
@@ -22,11 +23,11 @@ public class MasterRenderer {
 
 	private static final float FOV = 70; // field of view angle
 	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000;
+	private static final float FAR_PLANE = 2000;
 	
-	private static final float RED = 0.6f;
-	private static final float GREEN = 0.8f;
-	private static final float BLUE = 1.0f;
+	private static final float RED = 0.5444f;
+	private static final float GREEN = 0.62f;
+	private static final float BLUE = 0.69f;
 	
 	private Matrix4f projectionMatrix;
 
@@ -38,12 +39,15 @@ public class MasterRenderer {
 
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
+	
+	private SkyboxRenderer skyboxRenderer;
 
-	public MasterRenderer() {
+	public MasterRenderer(Loader loader) {
 		enableCulling();
 		createProjectionMatrix();
-		renderer = new EntityRenderer(shader, projectionMatrix);
-		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		this.renderer = new EntityRenderer(shader, projectionMatrix);
+		this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		this.skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 
 	public static void enableCulling() {
@@ -72,6 +76,8 @@ public class MasterRenderer {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains);
 		terrainShader.stop();
+		
+		skyboxRenderer.render(camera);
 
 		terrains.clear();
 		entities.clear();
