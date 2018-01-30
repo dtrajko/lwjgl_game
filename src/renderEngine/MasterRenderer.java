@@ -50,13 +50,8 @@ public class MasterRenderer {
 		this.skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 
-	public static void enableCulling() {
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glCullFace(GL11.GL_BACK);
-	}
-
-	public static void disableCulling() {
-		GL11.glDisable(GL11.GL_CULL_FACE);
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
 	}
 
 	public void render(List<Light> lights, Camera camera) {
@@ -83,6 +78,15 @@ public class MasterRenderer {
 		entities.clear();
 	}
 	
+	public static void enableCulling() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+	}
+
+	public static void disableCulling() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
+	}
+
 	public MasterRenderer processTerrain(Terrain terrain) {
 		terrains.add(terrain);
 		return this;

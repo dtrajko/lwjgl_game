@@ -29,6 +29,7 @@ import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
+import toolbox.MousePicker;
 
 public class MainGameLoop {
 
@@ -123,13 +124,15 @@ public class MainGameLoop {
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
-		lights.add(new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(1f, 1f, 3f), new Vector3f(1f, 0.01f, 0.0001f))); // blue
+		Light light1 = new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
+		lights.add(light1);
 		Entity lamp2 = new Entity(lampModel, new Vector3f(75, terrain.getHeightOfTerrain(75, -30), -30), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(75, terrain.getHeightOfTerrain(75, -30) + 20, -30), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.0002f))); // red
 		Entity lamp3 = new Entity(lampModel, new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165), -165), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165) + 20, -165), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow
 		Entity lamp4 = new Entity(lampModel, new Vector3f(155, terrain.getHeightOfTerrain(155, 120), 120), 0, 0, 0, 2);
-		lights.add(new Light(new Vector3f(155, terrain.getHeightOfTerrain(155, 120) + 20, 120), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow 2
+		Light light4 = new Light(new Vector3f(155, terrain.getHeightOfTerrain(155, 120) + 20, 120), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f)); // yellow 2 for lamp4
+		lights.add(light4);
 
 		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
 
@@ -144,9 +147,22 @@ public class MainGameLoop {
 		guis.add(gui_health);
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
+		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
+
 		while(!Display.isCloseRequested()) {
 			player.move(terrain);
 			camera.move();
+
+			// mouse picker (dragging entities around)
+			if (picker.isDragEnabled()) {
+				picker.update();
+				// System.out.println(picker.getCurrentRay());
+				Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+				if (terrainPoint != null) {
+					lamp1.setPosition(terrainPoint);
+					light1.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 20, terrainPoint.z));
+				}	
+			}
 
 			// render
 			renderer.processEntity(player);
