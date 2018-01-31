@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import collision.AABB;
 import collision.IntersectData;
@@ -30,10 +33,20 @@ import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.MousePicker;
+import water.WaterFrameBuffers;
+import water.WaterRenderer;
+import water.WaterShader;
+import water.WaterTile;
 
 public class MainGameLoop {
 
 	public static void main(String[] args) {
+
+		List<Entity> entities = new ArrayList<Entity>();
+		List<Terrain> terrains = new ArrayList<Terrain>();
+		List<Light> lights = new ArrayList<Light>();
+		List<WaterTile> waters = new ArrayList<WaterTile>();
+		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
@@ -104,6 +117,10 @@ public class MainGameLoop {
 		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(280, terrain.getHeightOfTerrain(280, -260) - 2, -260), 0, 0, 0, 5);
 		Entity pineTree4 = new Entity(pineTreeModel, new Vector3f(320, terrain.getHeightOfTerrain(320, -280) - 2, -280), 0, 0, 0, 5);
 
+		Entity pineTree5 = new Entity(pineTreeModel, new Vector3f(-240, terrain.getHeightOfTerrain(-240, -50) - 2, -50), 0, 0, 0, 5);
+		Entity pineTree6 = new Entity(pineTreeModel, new Vector3f(-250, terrain.getHeightOfTerrain(-250, -110) - 2, -110), 0, 0, 0, 5);
+		Entity pineTree7 = new Entity(pineTreeModel, new Vector3f(-250, terrain.getHeightOfTerrain(-250, -160) - 2, -160), 0, 0, 0, 5);
+
 		Entity stall1 = new Entity(stallModel, new Vector3f(260, terrain.getHeightOfTerrain(260, 280), 280), 0, 0, 0, 3);
 		stall1.increaseRotation(0, 50f, 0);
 		Entity stall2 = new Entity(stallModel, new Vector3f(-70, terrain.getHeightOfTerrain(-70, -190), -190), 0, 0, 0, 3);
@@ -112,16 +129,17 @@ public class MainGameLoop {
 		Entity fern = new Entity(fernModel, new Vector3f(25, terrain.getHeightOfTerrain(25, 70), 70), 0, 0, 0, 2);
 		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
 		
-		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-220, terrain.getHeightOfTerrain(-220, 0), 0), 0, 0, 0, 3);
-		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-220, terrain.getHeightOfTerrain(-220, 50), 50), 0, 0, 0, 3);
-		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-220, terrain.getHeightOfTerrain(-220, 100), 100), 0, 0, 0, 3);
-		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-220, terrain.getHeightOfTerrain(-220, 150), 150), 0, 0, 0, 3);
+		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-170, terrain.getHeightOfTerrain(-170, -25), -25), 0, 0, 0, 3);
+		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-116, terrain.getHeightOfTerrain(-116, -142), -142), 0, 0, 0, 3);
+		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-110, terrain.getHeightOfTerrain(-110, -95), -95), 0, 0, 0, 3);
+		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-136, terrain.getHeightOfTerrain(-136, -40), -40), 0, 0, 0, 3);
 
 		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
 		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
 
+		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
+
 		// lights
-		List<Light> lights = new ArrayList<Light>();
 		lights.add(new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
@@ -134,22 +152,57 @@ public class MainGameLoop {
 		Light light4 = new Light(new Vector3f(155, terrain.getHeightOfTerrain(155, 120) + 20, 120), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f)); // yellow 2 for lamp4
 		lights.add(light4);
 
-		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
+		terrains.add(terrain);
+		entities.add(player);
+		entities.add(fern);
+		entities.add(fern1);
+		entities.add(fern2);
+		entities.add(fern3);
+		entities.add(fern4);
+		entities.add(tree1);
+		entities.add(tree2);
+		entities.add(tree3);
+		entities.add(tree4); // lowPolyTree
+		entities.add(pineTree1);
+		entities.add(pineTree2);
+		entities.add(pineTree3);
+		entities.add(pineTree4);
+		entities.add(pineTree5); // by the water
+		entities.add(pineTree6); // by the water
+		entities.add(pineTree7); // by the water
+		entities.add(box1);
+		entities.add(box2);
+		entities.add(box3);
+		entities.add(box4);
+		entities.add(box5);
+		entities.add(stall1);
+		entities.add(stall2);
+		entities.add(lamp1);
+		entities.add(lamp2);
+		entities.add(lamp3);
+		entities.add(lamp4);
 
 		Camera camera = new Camera(player, terrain);
 
 		MasterRenderer renderer = new MasterRenderer(loader);
 
-		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(-0.75f, -0.8f), new Vector2f(0.2f, 0.2f));
-		GuiTexture gui_health = new GuiTexture(loader.loadTexture("health"), new Vector2f(0.55f, -0.85f), new Vector2f(0.4f, 0.4f));
-		guis.add(gui);
+		GuiTexture gui_logo = new GuiTexture(loader.loadTexture("PlayStationLogo"), new Vector2f(-0.65f, -0.9f), new Vector2f(0.3f, 0.3f));
+		GuiTexture gui_health = new GuiTexture(loader.loadTexture("health"), new Vector2f(0.65f, -0.85f), new Vector2f(0.3f, 0.3f));
+		guis.add(gui_logo);
 		guis.add(gui_health);
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
 
+		// water
+		WaterFrameBuffers fbos = new WaterFrameBuffers();
+		WaterShader  waterShader = new WaterShader();
+		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
+		WaterTile water = new WaterTile(-190, -105, -1f);
+		waters.add(water);
+
 		while(!Display.isCloseRequested()) {
+
 			player.move(terrain);
 			camera.move();
 
@@ -164,19 +217,27 @@ public class MainGameLoop {
 				}	
 			}
 
-			// render
-			renderer.processEntity(player);
-			renderer.processTerrain(terrain);
-			renderer.processEntity(fern);
-			renderer.processEntity(fern1).processEntity(fern2).processEntity(fern3).processEntity(fern4);
-			renderer.processEntity(tree1).processEntity(tree2).processEntity(tree3);
-			renderer.processEntity(tree4); // lowPolyTree
-			renderer.processEntity(pineTree1).processEntity(pineTree2).processEntity(pineTree3).processEntity(pineTree4);
-			renderer.processEntity(box1).processEntity(box2).processEntity(box3).processEntity(box4).processEntity(box5);
-			renderer.processEntity(stall1).processEntity(stall2);
-			renderer.processEntity(lamp1).processEntity(lamp2).processEntity(lamp3).processEntity(lamp4);
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			
+			// render reflection texture
+			fbos.bindReflectionFrameBuffer();
+			float distance = 2 * (camera.getPosition().y - water.getHeight());
+			camera.getPosition().y -= distance;
+			camera.invertPitch();
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
+			camera.getPosition().y += distance;
+			camera.invertPitch();
 
-			renderer.render(lights, camera);
+			// render refraction texture
+			fbos.bindRefractionFrameBuffer();
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+			
+			// render to screen
+			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+			fbos.unbindCurrentFrameBuffer();
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 10000));
+
+			waterRenderer.render(waters, camera);
 			guiRenderer.render(guis);
 
 			if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
@@ -235,6 +296,8 @@ public class MainGameLoop {
 			DisplayManager.updateDisplay();
 		}
 	
+		fbos.cleanUp();
+		waterShader.cleanUp();
 		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();

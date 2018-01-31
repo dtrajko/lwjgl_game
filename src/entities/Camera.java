@@ -12,7 +12,7 @@ public class Camera {
 	private float distanceFromPlayer = 60;
 	private float angleAroundPlayer = 0;
 	private Vector3f position = new Vector3f(0, 30, 30);
-	private float pitch = 10;
+	private float pitch = 20;
 	private float yaw = 0;
 	private float roll;
 	private Player player;
@@ -36,6 +36,10 @@ public class Camera {
 		this.calculateCameraPosition(horizontalDistance, verticalDistance);
 		// change camera angle to point towards the player
 		this.yaw = 180 - (player.getRotY() + this.angleAroundPlayer);
+	}
+
+	public void invertPitch() {
+		this.pitch = -pitch;
 	}
 
 	public Vector3f getPosition() {
