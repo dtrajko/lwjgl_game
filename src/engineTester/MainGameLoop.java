@@ -27,6 +27,7 @@ import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
 import renderEngine.EntityRenderer;
+import renderEngine.Game;
 import shaders.StaticShader;
 import terrains.Terrain;
 import textures.ModelTexture;
@@ -41,6 +42,8 @@ import water.WaterTile;
 public class MainGameLoop {
 
 	public static void main(String[] args) {
+
+		Game game = new Game();
 
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Terrain> terrains = new ArrayList<Terrain>();
@@ -129,10 +132,10 @@ public class MainGameLoop {
 		Entity fern = new Entity(fernModel, new Vector3f(25, terrain.getHeightOfTerrain(25, 70), 70), 0, 0, 0, 2);
 		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
 		
-		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-170, terrain.getHeightOfTerrain(-170, -25), -25), 0, 0, 0, 3);
+		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-235, terrain.getHeightOfTerrain(-235, -75), -75), 0, 0, 0, 3);
 		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-116, terrain.getHeightOfTerrain(-116, -142), -142), 0, 0, 0, 3);
 		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-110, terrain.getHeightOfTerrain(-110, -95), -95), 0, 0, 0, 3);
-		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-136, terrain.getHeightOfTerrain(-136, -40), -40), 0, 0, 0, 3);
+		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-160, terrain.getHeightOfTerrain(-160, -195), -195), 0, 0, 0, 3);
 
 		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
 		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
@@ -148,8 +151,8 @@ public class MainGameLoop {
 		lights.add(new Light(new Vector3f(75, terrain.getHeightOfTerrain(75, -30) + 20, -30), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.0002f))); // red
 		Entity lamp3 = new Entity(lampModel, new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165), -165), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165) + 20, -165), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow
-		Entity lamp4 = new Entity(lampModel, new Vector3f(155, terrain.getHeightOfTerrain(155, 120), 120), 0, 0, 0, 2);
-		Light light4 = new Light(new Vector3f(155, terrain.getHeightOfTerrain(155, 120) + 20, 120), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f)); // yellow 2 for lamp4
+		Entity lamp4 = new Entity(lampModel, new Vector3f(-180, terrain.getHeightOfTerrain(-180, -24), -24), 0, 0, 0, 2);
+		Light light4 = new Light(new Vector3f(-180, terrain.getHeightOfTerrain(-180, -24) + 20, -24), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f)); // yellow 2 for lamp4
 		lights.add(light4);
 
 		terrains.add(terrain);

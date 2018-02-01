@@ -89,7 +89,7 @@ public class SkyboxRenderer {
 	private int texture;
 	private int nightTexture;
 	private SkyboxShader shader;
-	private float time = 0;
+	private float time = 7000; // dawn
 	
 	public SkyboxRenderer(Loader loader, Matrix4f projectionMatrix) {
 		cube = loader.loadToVAO(VERTICES, 3);
@@ -120,7 +120,7 @@ public class SkyboxRenderer {
 		int texture1;
 		int texture2;
 
-		time += DisplayManager.getFrameTimeSeconds() * 1000;
+		time += DisplayManager.getFrameTimeSeconds() * 100;
 		time %= 24000;
 		float blendFactor;
 

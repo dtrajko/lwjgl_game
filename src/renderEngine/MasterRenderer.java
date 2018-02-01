@@ -23,7 +23,7 @@ import entities.Light;
 public class MasterRenderer {
 
 	private static final float FOV = 70; // field of view angle
-	private static final float NEAR_PLANE = 0.1f;
+	private static final float NEAR_PLANE = 1.0f;
 	private static final float FAR_PLANE = 2000;
 	
 	private static final float RED = 0.5444f;
@@ -44,7 +44,7 @@ public class MasterRenderer {
 	private SkyboxRenderer skyboxRenderer;
 
 	public MasterRenderer(Loader loader) {
-		enableCulling();
+		// enableCulling();
 		createProjectionMatrix();
 		this.renderer = new EntityRenderer(shader, projectionMatrix);
 		this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);

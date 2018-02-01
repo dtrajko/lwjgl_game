@@ -9,6 +9,9 @@ import terrains.Terrain;
 
 public class Camera {
 
+	private static final float ZOOM_COEF = 0.1f;
+	private static final float PITCH_COEF = 0.15f;
+
 	private float distanceFromPlayer = 60;
 	private float angleAroundPlayer = 0;
 	private Vector3f position = new Vector3f(0, 30, 30);
@@ -80,13 +83,13 @@ public class Camera {
 	}
 	
 	private void calculateZoom() {
-		float zoomLevel = Mouse.getDWheel() * 0.1f;
+		float zoomLevel = Mouse.getDWheel() * ZOOM_COEF;
 		distanceFromPlayer -= zoomLevel;
 	}
 	
 	private void calculatePitch() {
 		if (Mouse.isButtonDown(1)) {
-			float pitchChange = Mouse.getDY() * 0.1f;
+			float pitchChange = Mouse.getDY() * PITCH_COEF;
 			pitch -= pitchChange;
 			if (pitch < 0.05f) {
 				// pitch = 0.05f;
