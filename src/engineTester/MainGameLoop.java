@@ -83,13 +83,13 @@ public class MainGameLoop {
 		TexturedModel pineTreeModel = new TexturedModel(pineTreeModelRaw, new ModelTexture(loader.loadTexture("pine")));
 		TexturedModel stallModel = new TexturedModel(stallModelRaw, new ModelTexture(loader.loadTexture("stallTexture")));
 		TexturedModel bunnyModel = new TexturedModel(OBJLoader.loadOBJModel("bunny", loader), new ModelTexture(loader.loadTexture("fur")));
-		TexturedModel dragonModel = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("dragon")));
 		TexturedModel playerModel = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
-		TexturedModel blueDevil = new TexturedModel(OBJLoader.loadOBJModel("bluedevil", loader), new ModelTexture(loader.loadTexture("bluedevil")));
-		TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 		TexturedModel lampModel = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
+		// TexturedModel dragonModel = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("dragon")));
+		// TexturedModel blueDevil = new TexturedModel(OBJLoader.loadOBJModel("bluedevil", loader), new ModelTexture(loader.loadTexture("bluedevil")));
+		// TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern_texture_atlas")).setNumberOfRows(2);
 		TexturedModel fernModelAtlas = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), fernTextureAtlas);
@@ -133,17 +133,18 @@ public class MainGameLoop {
 		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
 		
 		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-235, terrain.getHeightOfTerrain(-235, -75), -75), 0, 0, 0, 3);
-		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-116, terrain.getHeightOfTerrain(-116, -142), -142), 0, 0, 0, 3);
-		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-110, terrain.getHeightOfTerrain(-110, -95), -95), 0, 0, 0, 3);
+		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -175), -175), 0, 0, 0, 3);
+		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -45), -45), 0, 0, 0, 3);
 		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-160, terrain.getHeightOfTerrain(-160, -195), -195), 0, 0, 0, 3);
 
 		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
 		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
 
-		Player player = new Player(playerModel, new Vector3f(0, 0, -100), 0, 0, 0, 1f);
+		Player player = new Player(playerModel, new Vector3f(-40, terrain.getHeightOfTerrain(-40, -145), -145), 0, -70, 0, 1f);
 
 		// lights
-		lights.add(new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f))); // world light (sun)
+		Light sun = new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		lights.add(sun);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
 		lights.add(light1);
@@ -238,9 +239,9 @@ public class MainGameLoop {
 			// render to screen
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			fbos.unbindCurrentFrameBuffer();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 10000));
+			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
 
-			waterRenderer.render(waters, camera);
+			waterRenderer.render(waters, camera, sun);
 			guiRenderer.render(guis);
 
 			if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
