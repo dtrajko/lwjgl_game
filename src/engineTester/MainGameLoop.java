@@ -110,8 +110,9 @@ public class MainGameLoop {
 		box1.increaseRotation(0, -25f, 0);
 		Entity box2 = new Entity(boxModel, new Vector3f(100, terrain.getHeightOfTerrain(100, 200) + 8, 200), 0, 0, 0, 10);
 		box2.setAABB(new AABB(new Vector3f(90, -10, 190), new Vector3f(110, 22, 210)));
-		Entity box3 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 30, 120), 0, 0, 0, 35);
-		box3.setAABB(new AABB(new Vector3f(-135, -5, 85), new Vector3f(-65, 58, 155)));
+		Entity box3XL = new Entity(boxModel, new Vector3f(350, terrain.getHeightOfTerrain(350, 165) + 50, 165), 0, 0, 0, 25);
+		box3XL.setAABB(new AABB(new Vector3f(320, 20, 135), new Vector3f(380, 100, 195)));
+		
 		Entity box4 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 113, 120), 0, 0, 0, 30);
 		box4.setAABB(new AABB(new Vector3f(-131, 80, 89), new Vector3f(-69, 143, 151)));
 		Entity box5 = new Entity(boxModel, new Vector3f(-100, terrain.getHeightOfTerrain(-100, 120) + 185, 120), 0, 0, 0, 25);
@@ -178,7 +179,7 @@ public class MainGameLoop {
 		entities.add(pineTree7); // by the water
 		entities.add(box1);
 		entities.add(box2);
-		entities.add(box3);
+		entities.add(box3XL);
 		entities.add(box4);
 		entities.add(box5);
 		entities.add(stall1);
@@ -260,9 +261,9 @@ public class MainGameLoop {
 				} else {
 					player.setGravityEnabled(true);
 				}
-			} else if (player.getAABB().intersectAABB(box3.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= 58) {
-					player.getPosition().y = 58;
+			} else if (player.getAABB().intersectAABB(box3XL.getAABB()).isIntersecting()) {
+				if (player.getPosition().y <= 75) {
+					player.getPosition().y = 75;
 					player.setGravityEnabled(false);
 				} else {
 					player.setGravityEnabled(true);
