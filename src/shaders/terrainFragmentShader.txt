@@ -20,6 +20,8 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
 
+const float levels = 0;
+
 void main(void) {
 
 	vec4 blendMapColour = texture(blendMap, pass_textureCoordinates);
@@ -32,6 +34,12 @@ void main(void) {
 	vec4 bTextureColour = texture(bTexture, tiledCoords) * blendMapColour.b;
 
 	vec4 totalColour = backgroundTextureColour + rTextureColour + gTextureColour + bTextureColour;
+	
+	if (levels > 0) {
+		float amount = (totalColour.r + totalColour.g + totalColour.b) / 3.0;
+		amount = floor(amount * levels) / levels;
+		totalColour.rgb = amount * totalColour.rgb;
+	}
 
 	vec3 unitNormal = normalize(surfaceNormal);	
 	vec3 unitVectorToCamera = normalize(toCameraVector);

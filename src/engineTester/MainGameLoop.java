@@ -67,17 +67,19 @@ public class MainGameLoop {
 		/**************** END TERRAIN TEXTURE STUFF ****************/
 
 		// terrains
-		Terrain terrain = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "heightmap");
+		Terrain terrain = new Terrain(-0.5f, -0.5f, loader, texturePack, blendMap, "heightmap_crater");
 
 		// models
 		ModelData treeData = OBJFileLoader.loadOBJ("tree");
 		ModelData lowPolyTreeData = OBJFileLoader.loadOBJ("lowPolyTree");
 		ModelData pineTreeData = OBJFileLoader.loadOBJ("pine");
 		ModelData stallData = OBJFileLoader.loadOBJ("stall");
+		ModelData bobbleTreeData = OBJFileLoader.loadOBJ("bobbleTree");
 		RawModel treeModelRaw = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
 		RawModel lowPolyTreeModelRaw = loader.loadToVAO(lowPolyTreeData.getVertices(), lowPolyTreeData.getTextureCoords(), lowPolyTreeData.getNormals(), lowPolyTreeData.getIndices());
 		RawModel pineTreeModelRaw = loader.loadToVAO(pineTreeData.getVertices(), pineTreeData.getTextureCoords(), pineTreeData.getNormals(), pineTreeData.getIndices());
 		RawModel stallModelRaw = loader.loadToVAO(stallData.getVertices(), stallData.getTextureCoords(), stallData.getNormals(), stallData.getIndices());
+		RawModel bobbleTreeModelRaw = loader.loadToVAO(bobbleTreeData.getVertices(), bobbleTreeData.getTextureCoords(), bobbleTreeData.getNormals(), bobbleTreeData.getIndices());
 		TexturedModel treeModel = new TexturedModel(treeModelRaw, new ModelTexture(loader.loadTexture("tree")));
 		TexturedModel lowPolyTreeModel = new TexturedModel(lowPolyTreeModelRaw, new ModelTexture(loader.loadTexture("lowPolyTree")));
 		TexturedModel pineTreeModel = new TexturedModel(pineTreeModelRaw, new ModelTexture(loader.loadTexture("pine")));
@@ -87,6 +89,7 @@ public class MainGameLoop {
 		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 		TexturedModel lampModel = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
+		TexturedModel bobbleTreeModel = new TexturedModel(bobbleTreeModelRaw, new ModelTexture(loader.loadTexture("bobbleTree")));
 		// TexturedModel dragonModel = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("dragon")));
 		// TexturedModel blueDevil = new TexturedModel(OBJLoader.loadOBJModel("bluedevil", loader), new ModelTexture(loader.loadTexture("bluedevil")));
 		// TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
@@ -101,7 +104,7 @@ public class MainGameLoop {
 		Entity tree3 = new Entity(treeModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -70), -70), 0, 0, 0, 12);
 		tree3.setAABB(new AABB(new Vector3f(23, terrain.getHeightOfTerrain(23, -72), -72), new Vector3f(27, terrain.getHeightOfTerrain(27, -68) + 30, -68)));
 
-		Entity tree4 = new Entity(lowPolyTreeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -250) - 10, -250), 0, 0, 0, 10);
+		Entity bobbleTree = new Entity(bobbleTreeModel, new Vector3f(100, terrain.getHeightOfTerrain(100, -250), -250), 0, 0, 0, 2);
 
 		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, 350) + 20, 350), 0, 0, 0, 20);
 		box1.setAABB(new AABB(new Vector3f(-380, -10, 330), new Vector3f(-340, 42, 370)));
@@ -166,7 +169,7 @@ public class MainGameLoop {
 		entities.add(tree1);
 		entities.add(tree2);
 		entities.add(tree3);
-		entities.add(tree4); // lowPolyTree
+		entities.add(bobbleTree); // bobbleTree
 		entities.add(pineTree1);
 		entities.add(pineTree2);
 		entities.add(pineTree3);
