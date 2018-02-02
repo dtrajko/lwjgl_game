@@ -86,7 +86,6 @@ public class MainGameLoop {
 		TexturedModel stallModel = new TexturedModel(stallModelRaw, new ModelTexture(loader.loadTexture("stallTexture")));
 		TexturedModel bunnyModel = new TexturedModel(OBJLoader.loadOBJModel("bunny", loader), new ModelTexture(loader.loadTexture("fur")));
 		TexturedModel playerModel = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
-		TexturedModel fernModel = new TexturedModel(OBJLoader.loadOBJModel("fern", loader), new ModelTexture(loader.loadTexture("fern")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 		TexturedModel lampModel = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 		TexturedModel bobbleTreeModel = new TexturedModel(bobbleTreeModelRaw, new ModelTexture(loader.loadTexture("bobbleTree")));
@@ -132,9 +131,9 @@ public class MainGameLoop {
 		Entity stall2 = new Entity(stallModel, new Vector3f(-70, terrain.getHeightOfTerrain(-70, -190), -190), 0, 0, 0, 3);
 		stall2.increaseRotation(0, -120, 0);
 
-		Entity fern = new Entity(fernModel, new Vector3f(25, terrain.getHeightOfTerrain(25, 70), 70), 0, 0, 0, 2);
+		Entity fern = new Entity(fernModelAtlas, 2, new Vector3f(25, terrain.getHeightOfTerrain(25, 70), 70), 0, 0, 0, 6);
 		fern.getModel().getTexture().setHasTransparency(true).setUseFakeLighting(true);
-		
+
 		Entity fern1 = new Entity(fernModelAtlas, 0, new Vector3f(-235, terrain.getHeightOfTerrain(-235, -75), -75), 0, 0, 0, 3);
 		Entity fern2 = new Entity(fernModelAtlas, 1, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -175), -175), 0, 0, 0, 3);
 		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -45), -45), 0, 0, 0, 3);
