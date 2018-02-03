@@ -5,6 +5,7 @@ import shaders.TerrainShader;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
 import models.TexturedModel;
+import normalMappingRenderer.NormalMappingRenderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,43 +26,50 @@ public class MasterRenderer {
 	private static final float FOV = 70; // field of view angle
 	private static final float NEAR_PLANE = 1.0f;
 	private static final float FAR_PLANE = 2000;
-	
-	private static final float RED = 0.5444f;
-	private static final float GREEN = 0.62f;
-	private static final float BLUE = 0.69f;
-	
+
+	public static final float RED = 0.5444f;
+	public static final float GREEN = 0.62f;
+	public static final float BLUE = 0.69f;
+
 	private Matrix4f projectionMatrix;
 
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer renderer;
 
-	private TerrainShader terrainShader = new TerrainShader();
 	private TerrainRenderer terrainRenderer;
+	private TerrainShader terrainShader = new TerrainShader();
+
+	private NormalMappingRenderer normalMapRenderer;
 
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
-	
+
 	private SkyboxRenderer skyboxRenderer;
 
 	public MasterRenderer(Loader loader) {
-		// enableCulling();
+		enableCulling();
 		createProjectionMatrix();
 		this.renderer = new EntityRenderer(shader, projectionMatrix);
 		this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		this.skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+		this.normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
 	}
 
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
-	
-	public void renderScene(List<Entity> entities, List<Terrain> terrains, List<Light> lights,
-			Camera camera, Vector4f clipPlane) {
+
+	public void renderScene(List<Entity> entities, List<Entity> normalEntities, List<Terrain> terrains, 
+			List<Light> lights, Camera camera, Vector4f clipPlane) {
 		for (Terrain terrain : terrains) {
-			processTerrain(terrain);
+			this.processTerrain(terrain);
 		}
 		for (Entity entity : entities) {
-			processEntity(entity);
+			this.processEntity(entity);
+		}
+		for (Entity normalEntity : normalEntities) {
+			this.processNormalMapEntity(normalEntity);
 		}
 		render(lights, camera, clipPlane);
 	}
@@ -77,6 +85,8 @@ public class MasterRenderer {
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
+		
+		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
 
 		terrainShader.start();
 		terrainShader.loadClipPlane(clipPlane);
@@ -90,8 +100,9 @@ public class MasterRenderer {
 
 		terrains.clear();
 		entities.clear();
+		normalMapEntities.clear();
 	}
-	
+
 	public static void enableCulling() {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
@@ -119,6 +130,19 @@ public class MasterRenderer {
 		return this;
 	}
 
+	public MasterRenderer processNormalMapEntity(Entity entity) {
+		TexturedModel entityModel = entity.getModel();
+		List<Entity> batch = normalMapEntities.get(entityModel);
+		if (batch != null) {
+			batch.add(entity);
+		} else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			normalMapEntities.put(entityModel, newBatch);
+		}
+		return this;
+	}
+
 	public void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -132,7 +156,7 @@ public class MasterRenderer {
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
-		
+
 		projectionMatrix = new Matrix4f();
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
@@ -145,5 +169,6 @@ public class MasterRenderer {
 	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();
+		normalMapRenderer.cleanUp();
 	}
 }

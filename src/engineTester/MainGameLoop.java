@@ -20,6 +20,7 @@ import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.RawModel;
 import models.TexturedModel;
+import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
 import renderEngine.DisplayManager;
@@ -46,6 +47,7 @@ public class MainGameLoop {
 		Game game = new Game();
 
 		List<Entity> entities = new ArrayList<Entity>();
+		List<Entity> normalMapEntities = new ArrayList<Entity>(); // entities using normal map rendering
 		List<Terrain> terrains = new ArrayList<Terrain>();
 		List<Light> lights = new ArrayList<Light>();
 		List<WaterTile> waters = new ArrayList<WaterTile>();
@@ -159,6 +161,28 @@ public class MainGameLoop {
 		Light light4 = new Light(new Vector3f(-180, terrain.getHeightOfTerrain(-180, -24) + 20, -24), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f)); // yellow 2 for lamp4
 		lights.add(light4);
 
+		// normal map entities
+		TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),
+				new ModelTexture(loader.loadTexture("barrel")));
+		barrelModel.getTexture().setNormalMap(loader.loadTexture("barrelNormal"));
+		barrelModel.getTexture().setShineDamper(10);
+		barrelModel.getTexture().setReflectivity(0.5f);
+		Entity barrel = new Entity(barrelModel, new Vector3f(-185, 10, -100), 0, 0, 0, 1f);
+
+		TexturedModel crateModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader),
+				new ModelTexture(loader.loadTexture("crate")));
+		crateModel.getTexture().setNormalMap(loader.loadTexture("crateNormal"));
+		crateModel.getTexture().setShineDamper(10);
+		crateModel.getTexture().setReflectivity(0.5f);
+		Entity crate = new Entity(crateModel, new Vector3f(-145, 25, 62), 0, 0, 0, 0.1f);
+
+		TexturedModel boulderModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("boulder", loader),
+				new ModelTexture(loader.loadTexture("boulder")));
+		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
+		boulderModel.getTexture().setShineDamper(10);
+		boulderModel.getTexture().setReflectivity(0.5f);
+		Entity boulder = new Entity(boulderModel, new Vector3f(-136, 25, 202), 0, 0, 0, 2.0f);
+
 		terrains.add(terrain);
 		entities.add(player);
 		entities.add(fern);
@@ -188,6 +212,9 @@ public class MainGameLoop {
 		entities.add(lamp2);
 		entities.add(lamp3);
 		entities.add(lamp4);
+		normalMapEntities.add(barrel);
+		normalMapEntities.add(crate);
+		normalMapEntities.add(boulder);
 
 		Camera camera = new Camera(player, terrain);
 
@@ -231,18 +258,18 @@ public class MainGameLoop {
 			float distance = 2 * (camera.getPosition().y - water.getHeight());
 			camera.getPosition().y -= distance;
 			camera.invertPitch();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
+			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
 			camera.getPosition().y += distance;
 			camera.invertPitch();
 
 			// render refraction texture
 			fbos.bindRefractionFrameBuffer();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
 			
 			// render to screen
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			fbos.unbindCurrentFrameBuffer();
-			renderer.renderScene(entities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
+			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
 
 			waterRenderer.render(waters, camera, sun);
 			guiRenderer.render(guis);
