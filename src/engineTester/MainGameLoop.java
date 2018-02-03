@@ -1,5 +1,6 @@
 package engineTester;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import models.RawModel;
@@ -55,6 +59,12 @@ public class MainGameLoop {
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
+		TextMaster.init(loader);
+
+		FontType font = new FontType(loader.loadTexture("tahoma", 0), new File("res/tahoma.fnt"));
+		GUIText text = new GUIText("Frankenstein's monster in Wonderland",
+			1.5f, font, new Vector2f(-0.06f, 0.01f), 0.5f, true);
+		text.setColour(0.2f, 0.4f, 0.8f);
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
 
@@ -168,6 +178,7 @@ public class MainGameLoop {
 		barrelModel.getTexture().setShineDamper(10);
 		barrelModel.getTexture().setReflectivity(0.5f);
 		Entity barrel = new Entity(barrelModel, new Vector3f(-185, 10, -100), 0, 0, 0, 1f);
+		barrel.setAABB(new AABB(new Vector3f(-187, 4, -102), new Vector3f(-183, 18, -98)));
 
 		TexturedModel crateModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader),
 				new ModelTexture(loader.loadTexture("crate")));
@@ -181,7 +192,7 @@ public class MainGameLoop {
 		boulderModel.getTexture().setNormalMap(loader.loadTexture("boulderNormal"));
 		boulderModel.getTexture().setShineDamper(10);
 		boulderModel.getTexture().setReflectivity(0.5f);
-		Entity boulder = new Entity(boulderModel, new Vector3f(-136, 25, 202), 0, 0, 0, 2.0f);
+		Entity boulder = new Entity(boulderModel, new Vector3f(-136, 40, 202), 0, 0, 0, 2.0f);
 
 		terrains.add(terrain);
 		entities.add(player);
@@ -319,17 +330,26 @@ public class MainGameLoop {
 			if (player.getAABB().intersectAABB(tree2.getAABB()).isIntersecting()) {
 				tree2.increaseRotation(0, 2f, 0);
 			}
-
-			IntersectData intersectData = player.getAABB().intersectAABB(tree3.getAABB());
-			if (intersectData.isIntersecting()) {
+			if (player.getAABB().intersectAABB(tree3.getAABB()).isIntersecting()) {
 				tree3.increaseRotation(0, 2f, 0);
-				// System.out.println("IntersectData:" + " isIntersecting = " 
-				// + intersectData.isIntersecting() + " maxDistance = " + intersectData.getMaxDistance());
 			}
+			
+			if (player.getAABB().intersectAABB(barrel.getAABB()).isIntersecting()) {
+				barrel.increaseRotation(0, 4f, 0);
+				if (player.getPosition().y <= 16f) {
+					player.getPosition().y = 16f;
+					player.setGravityEnabled(false);
+				} else {
+					player.setGravityEnabled(true);
+				}
+			}
+
+			TextMaster.render();
 
 			DisplayManager.updateDisplay();
 		}
 	
+		TextMaster.cleanUp();
 		fbos.cleanUp();
 		waterShader.cleanUp();
 		guiRenderer.cleanUp();
