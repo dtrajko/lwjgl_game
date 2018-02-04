@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -27,6 +29,10 @@ import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
+import particles.Particle;
+import particles.ParticleMaster;
+import particles.ParticleSystemComplex;
+import particles.ParticleSystemSimple;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -59,16 +65,13 @@ public class MainGameLoop {
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
+		MasterRenderer renderer = new MasterRenderer(loader);
+		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 		TextMaster.init(loader);
-
-		FontType font = new FontType(loader.loadTexture("tahoma", 0), new File("res/tahoma.fnt"));
-		GUIText text = new GUIText("Frankenstein's monster in Wonderland",
-			1.5f, font, new Vector2f(-0.06f, 0.01f), 0.5f, true);
-		text.setColour(0.2f, 0.4f, 0.8f);
 		
 		FontType font2 = new FontType(loader.loadTexture("candara", 0), new File("res/candara.fnt"));
 		GUIText text2 = new GUIText("A sample string of text!",
-			2.0f, font2, new Vector2f(-0.1f, 0.06f), 0.5f, true);
+			2.0f, font2, new Vector2f(-0.1f, 0.02f), 0.5f, true);
 		text2.setColour(1.0f, 0.4f, 0.0f);
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
@@ -234,8 +237,6 @@ public class MainGameLoop {
 
 		Camera camera = new Camera(player, terrain);
 
-		MasterRenderer renderer = new MasterRenderer(loader);
-
 		GuiTexture gui_logo = new GuiTexture(loader.loadTexture("PlayStationLogo"), new Vector2f(-0.65f, -0.9f), new Vector2f(0.3f, 0.3f));
 		GuiTexture gui_health = new GuiTexture(loader.loadTexture("health"), new Vector2f(0.65f, -0.85f), new Vector2f(0.3f, 0.3f));
 		guis.add(gui_logo);
@@ -250,6 +251,9 @@ public class MainGameLoop {
 		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
 		WaterTile water = new WaterTile(-190, -105, -1f);
 		waters.add(water);
+		
+		ParticleSystemSimple particleSystemSimple = new ParticleSystemSimple(50, 25, 0.3f, 4);
+		ParticleSystemComplex particleSystemComplex = new ParticleSystemComplex(200, 5, 0.05f, 30, 0.5f);
 
 		while(!Display.isCloseRequested()) {
 
@@ -266,6 +270,18 @@ public class MainGameLoop {
 					light1.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 20, terrainPoint.z));
 				}	
 			}
+
+			if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
+				// new Particle(new Vector3f(player.getPosition()), new Vector3f(0, 30, 0), 1, 4, 0, 1);
+				// particleSystemSimple.generateParticles(player.getPosition());
+				particleSystemComplex.generateParticles(new Vector3f(
+						player.getPosition().getX(),
+						player.getPosition().getY() + 15,
+						player.getPosition().getZ()
+				));
+			}
+
+			ParticleMaster.update();
 
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
@@ -286,9 +302,12 @@ public class MainGameLoop {
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 			fbos.unbindCurrentFrameBuffer();
 			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
-
 			waterRenderer.render(waters, camera, sun);
+
+			ParticleMaster.renderParticles(camera);
+
 			guiRenderer.render(guis);
+			TextMaster.render();
 
 			if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
 				if (player.getPosition().y <= 42) {
@@ -349,11 +368,10 @@ public class MainGameLoop {
 				}
 			}
 
-			TextMaster.render();
-
 			DisplayManager.updateDisplay();
 		}
-	
+
+		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
 		fbos.cleanUp();
 		waterShader.cleanUp();

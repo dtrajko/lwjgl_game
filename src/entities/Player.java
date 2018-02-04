@@ -54,6 +54,10 @@ public class Player extends Entity {
 		}
 		// System.out.println("Gravity enabled? " + gravityEnabled + ", gravity amount = " + gravity);
 	}
+	
+	public static float getGravity() {
+		return GRAVITY;
+	}
 
 	public void increasePosition(float dx, float dy, float dz) {
 		super.increasePosition(dx, dy, dz);
