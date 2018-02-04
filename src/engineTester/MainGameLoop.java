@@ -65,6 +65,11 @@ public class MainGameLoop {
 		GUIText text = new GUIText("Frankenstein's monster in Wonderland",
 			1.5f, font, new Vector2f(-0.06f, 0.01f), 0.5f, true);
 		text.setColour(0.2f, 0.4f, 0.8f);
+		
+		FontType font2 = new FontType(loader.loadTexture("candara", 0), new File("res/candara.fnt"));
+		GUIText text2 = new GUIText("A sample string of text!",
+			2.0f, font2, new Vector2f(-0.1f, 0.06f), 0.5f, true);
+		text2.setColour(1.0f, 0.4f, 0.0f);
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
 
