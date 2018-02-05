@@ -91,24 +91,33 @@ public class MainGameLoop {
 
 		// models
 		ModelData treeData = OBJFileLoader.loadOBJ("tree");
-		ModelData lowPolyTreeData = OBJFileLoader.loadOBJ("lowPolyTree");
 		ModelData pineTreeData = OBJFileLoader.loadOBJ("pine");
 		ModelData stallData = OBJFileLoader.loadOBJ("stall");
 		ModelData bobbleTreeData = OBJFileLoader.loadOBJ("bobbleTree");
+		ModelData steveData = OBJFileLoader.loadOBJ("steve");
+		// ModelData lowPolyTreeData = OBJFileLoader.loadOBJ("lowPolyTree");
+		// ModelData donutData = OBJFileLoader.loadOBJ("donut");
+		// ModelData piperData = OBJFileLoader.loadOBJ("piper_pa18");
 		RawModel treeModelRaw = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
-		RawModel lowPolyTreeModelRaw = loader.loadToVAO(lowPolyTreeData.getVertices(), lowPolyTreeData.getTextureCoords(), lowPolyTreeData.getNormals(), lowPolyTreeData.getIndices());
 		RawModel pineTreeModelRaw = loader.loadToVAO(pineTreeData.getVertices(), pineTreeData.getTextureCoords(), pineTreeData.getNormals(), pineTreeData.getIndices());
 		RawModel stallModelRaw = loader.loadToVAO(stallData.getVertices(), stallData.getTextureCoords(), stallData.getNormals(), stallData.getIndices());
 		RawModel bobbleTreeModelRaw = loader.loadToVAO(bobbleTreeData.getVertices(), bobbleTreeData.getTextureCoords(), bobbleTreeData.getNormals(), bobbleTreeData.getIndices());
+		RawModel steveModelRaw = loader.loadToVAO(steveData.getVertices(), steveData.getTextureCoords(), steveData.getNormals(), steveData.getIndices());
+		// RawModel lowPolyTreeModelRaw = loader.loadToVAO(lowPolyTreeData.getVertices(), lowPolyTreeData.getTextureCoords(), lowPolyTreeData.getNormals(), lowPolyTreeData.getIndices());
+		// RawModel donutModelRaw = loader.loadToVAO(donutData.getVertices(), donutData.getTextureCoords(), donutData.getNormals(), donutData.getIndices());
+		// RawModel piperModelRaw = loader.loadToVAO(piperData.getVertices(), piperData.getTextureCoords(), piperData.getNormals(), piperData.getIndices());
 		TexturedModel treeModel = new TexturedModel(treeModelRaw, new ModelTexture(loader.loadTexture("tree")));
-		TexturedModel lowPolyTreeModel = new TexturedModel(lowPolyTreeModelRaw, new ModelTexture(loader.loadTexture("lowPolyTree")));
 		TexturedModel pineTreeModel = new TexturedModel(pineTreeModelRaw, new ModelTexture(loader.loadTexture("pine")));
 		TexturedModel stallModel = new TexturedModel(stallModelRaw, new ModelTexture(loader.loadTexture("stallTexture")));
-		TexturedModel bunnyModel = new TexturedModel(OBJLoader.loadOBJModel("bunny", loader), new ModelTexture(loader.loadTexture("fur")));
-		TexturedModel playerModel = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
 		TexturedModel boxModel = new TexturedModel(OBJLoader.loadOBJModel("box", loader), new ModelTexture(loader.loadTexture("box")));
 		TexturedModel lampModel = new TexturedModel(OBJLoader.loadOBJModel("lamp", loader), new ModelTexture(loader.loadTexture("lamp")));
 		TexturedModel bobbleTreeModel = new TexturedModel(bobbleTreeModelRaw, new ModelTexture(loader.loadTexture("bobbleTree")));
+		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
+		// TexturedModel lowPolyTreeModel = new TexturedModel(lowPolyTreeModelRaw, new ModelTexture(loader.loadTexture("lowPolyTree")));
+		// TexturedModel bunnyModel = new TexturedModel(OBJLoader.loadOBJModel("bunny", loader), new ModelTexture(loader.loadTexture("fur")));
+		// TexturedModel playerModel = new TexturedModel(OBJLoader.loadOBJModel("person", loader), new ModelTexture(loader.loadTexture("playerTexture")));
+		// TexturedModel donutModel = new TexturedModel(donutModelRaw, new ModelTexture(loader.loadTexture("donut")));
+		// TexturedModel piperModel = new TexturedModel(piperModelRaw, new ModelTexture(loader.loadTexture("piper_pa18")));
 		// TexturedModel dragonModel = new TexturedModel(OBJLoader.loadOBJModel("dragon", loader), new ModelTexture(loader.loadTexture("dragon")));
 		// TexturedModel blueDevil = new TexturedModel(OBJLoader.loadOBJModel("bluedevil", loader), new ModelTexture(loader.loadTexture("bluedevil")));
 		// TexturedModel grassModel = new TexturedModel(OBJLoader.loadOBJModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
@@ -160,13 +169,14 @@ public class MainGameLoop {
 		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -45), -45), 0, 0, 0, 3);
 		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-160, terrain.getHeightOfTerrain(-160, -195), -195), 0, 0, 0, 3);
 
-		Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
-		bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
+		// Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
+		// bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
+		// Entity donut = new Entity(donutModel, new Vector3f(-55, 10, -25), 0, 0, 0, 10f);
 
-		Player player = new Player(playerModel, new Vector3f(-40, terrain.getHeightOfTerrain(-40, -145), -145), 0, -70, 0, 1f);
+		Player player = new Player(steveModel, new Vector3f(-40, terrain.getHeightOfTerrain(-40, -145) + 2, -145), 0, -70, 0, 4f);
 
 		// lights
-		Light sun = new Light(new Vector3f(1000, 10000, -7000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		Light sun = new Light(new Vector3f(5000, 10000, 5000), new Vector3f(1f, 1f, 1f)); // world light (sun)
 		lights.add(sun);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(270, terrain.getHeightOfTerrain(270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
@@ -231,6 +241,7 @@ public class MainGameLoop {
 		entities.add(lamp2);
 		entities.add(lamp3);
 		entities.add(lamp4);
+		// entities.add(donut);
 		normalMapEntities.add(barrel);
 		normalMapEntities.add(crate);
 		normalMapEntities.add(boulder);
