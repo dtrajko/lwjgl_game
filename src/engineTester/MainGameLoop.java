@@ -33,6 +33,7 @@ import particles.Particle;
 import particles.ParticleMaster;
 import particles.ParticleSystemComplex;
 import particles.ParticleSystemSimple;
+import particles.ParticleTexture;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
@@ -263,8 +264,14 @@ public class MainGameLoop {
 		WaterTile water = new WaterTile(-190, -105, -1f);
 		waters.add(water);
 		
-		ParticleSystemSimple particleSystemSimple = new ParticleSystemSimple(50, 25, 0.3f, 4);
-		ParticleSystemComplex particleSystemComplex = new ParticleSystemComplex(200, 5, 0.05f, 30, 0.5f);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4);
+		
+		// ParticleSystemSimple particleSystem = new ParticleSystemSimple(particleTexture, 40, 10, 0.1f, 1);
+		ParticleSystemComplex particleSystem = new ParticleSystemComplex(particleTexture, 40, 10, 0.1f, 1, 1.6f);
+		particleSystem.setLifeError(0.1f);
+		particleSystem.setSpeedError(0.25f);
+		particleSystem.setScaleError(0.5f);
+		particleSystem.randomizeRotation();
 
 		while(!Display.isCloseRequested()) {
 
@@ -285,14 +292,14 @@ public class MainGameLoop {
 			if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
 				// new Particle(new Vector3f(player.getPosition()), new Vector3f(0, 30, 0), 1, 4, 0, 1);
 				// particleSystemSimple.generateParticles(player.getPosition());
-				particleSystemComplex.generateParticles(new Vector3f(
+				particleSystem.generateParticles(new Vector3f(
 						player.getPosition().getX(),
 						player.getPosition().getY() + 15,
 						player.getPosition().getZ()
 				));
 			}
 
-			ParticleMaster.update();
+			ParticleMaster.update(camera);
 
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			
