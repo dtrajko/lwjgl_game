@@ -6,9 +6,14 @@ public class ParticleTexture {
 	private int numberOfRows;
 	private boolean additive;
 
-	public ParticleTexture(int textureID, int numberOfRows) {
+	public ParticleTexture(int textureID, int numberOfRows, boolean additive) {
 		this.textureID = textureID;
 		this.numberOfRows = numberOfRows;
+		this.additive = additive;
+	}
+
+	protected boolean usesAdditiveBlending() {
+		return additive;
 	}
 
 	public int getTextureID() {

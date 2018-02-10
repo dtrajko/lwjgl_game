@@ -91,7 +91,7 @@ public class ParticleSystemComplex {
 		velocity.scale(generateValue(averageSpeed, speedError));
 		float scale = generateValue(averageScale, scaleError);
 		float lifeLength = generateValue(averageLifeLength, lifeError);
-		new Particle(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, generateRotation(), scale);
+		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, generateRotation(), scale);
 	}
 
 	private float generateValue(float average, float errorMargin) {
@@ -117,7 +117,8 @@ public class ParticleSystemComplex {
 		float y = (float) (rootOneMinusZSquared * Math.sin(theta));
 
 		Vector4f direction = new Vector4f(x, y, z, 1);
-		if (coneDirection.x != 0 || coneDirection.y != 0 || (coneDirection.z != 1 && coneDirection.z != -1)) {
+		if (coneDirection.x != 0 || coneDirection.y != 0 ||
+			(coneDirection.z != 0 && coneDirection.z != 1 && coneDirection.z != -1)) {
 			Vector3f rotateAxis = Vector3f.cross(coneDirection, new Vector3f(0, 0, 1), null);
 			rotateAxis.normalise();
 			float rotateAngle = (float) Math.acos(Vector3f.dot(coneDirection, new Vector3f(0, 0, 1)));

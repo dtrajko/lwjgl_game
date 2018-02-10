@@ -183,7 +183,6 @@ public class MainGameLoop {
 		Light light1 = new Light(new Vector3f(270, terrain.getHeightOfTerrain(270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
 		lights.add(light1);
 		Entity lamp2 = new Entity(lampModel, new Vector3f(75, terrain.getHeightOfTerrain(75, -30), -30), 0, 0, 0, 2);
-		lights.add(new Light(new Vector3f(75, terrain.getHeightOfTerrain(75, -30) + 20, -30), new Vector3f(2f, 0f, 0f), new Vector3f(1f, 0.01f, 0.0002f))); // red
 		Entity lamp3 = new Entity(lampModel, new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165), -165), 0, 0, 0, 2);
 		lights.add(new Light(new Vector3f(-75, terrain.getHeightOfTerrain(-75, -165) + 20, -165), new Vector3f(2f, 2f, 0f), new Vector3f(1f, 0.01f, 0.001f))); // yellow
 		Entity lamp4 = new Entity(lampModel, new Vector3f(-180, terrain.getHeightOfTerrain(-180, -24), -24), 0, 0, 0, 2);
@@ -264,14 +263,34 @@ public class MainGameLoop {
 		WaterTile water = new WaterTile(-190, -105, -1f);
 		waters.add(water);
 		
-		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4);
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4, true);
+		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture("fire"), 8, true);
+		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture("smoke"), 8, false);
 		
-		// ParticleSystemSimple particleSystem = new ParticleSystemSimple(particleTexture, 40, 10, 0.1f, 1);
-		ParticleSystemComplex particleSystem = new ParticleSystemComplex(particleTexture, 40, 10, 0.1f, 1, 1.6f);
+		// ParticleSystemSimple particleSystem = new ParticleSystemSimple(particleTexture, 40f, 10f, 0.1f, 1f);
+		ParticleSystemComplex particleSystem = new ParticleSystemComplex(particleTexture,
+			/* pps */ 50f, /* speed */ 0.5f, /* gravity */ -0.05f, /* life */ 20f, /* scale */ 2f);
 		particleSystem.setLifeError(0.1f);
 		particleSystem.setSpeedError(0.25f);
 		particleSystem.setScaleError(0.5f);
 		particleSystem.randomizeRotation();
+		
+		ParticleSystemComplex particleSystemFire = new ParticleSystemComplex(particleTextureFire,
+			100f, 1f, -0.01f, 2f, 10f);
+		particleSystemFire.setLifeError(0.1f);
+		particleSystemFire.setSpeedError(0.25f);
+		particleSystemFire.setScaleError(0.5f);
+		particleSystemFire.randomizeRotation();
+		ParticleSystemComplex particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke,
+			100f, 1f, -0.05f, 20f, 5f);
+		particleSystemSmoke.setLifeError(0.5f);
+		particleSystemSmoke.setSpeedError(0.5f);
+		particleSystemSmoke.setScaleError(0.5f);
+		particleSystemSmoke.randomizeRotation();
+		particleSystemSmoke.setDirection(new Vector3f(-0.5f, -0.5f, -0.5f), 1f);
+
+		Light fireLight = new Light(new Vector3f(-43, terrain.getHeightOfTerrain(-43, -56) - 2, -56), new Vector3f(1f, 1f, 1f), new Vector3f(1f, 0.01f, 0.0002f));
+		lights.add(fireLight);
 
 		while(!Display.isCloseRequested()) {
 
@@ -294,10 +313,14 @@ public class MainGameLoop {
 				// particleSystemSimple.generateParticles(player.getPosition());
 				particleSystem.generateParticles(new Vector3f(
 						player.getPosition().getX(),
-						player.getPosition().getY() + 15,
+						player.getPosition().getY() + 12,
 						player.getPosition().getZ()
 				));
+				// particleSystem.setDirection(new Vector3f(0.5f, 0.5f, 0.5f), 0f);
 			}
+
+			particleSystemFire.generateParticles(new Vector3f(-43, terrain.getHeightOfTerrain(-43, -56), -56));
+			particleSystemSmoke.generateParticles(new Vector3f(-43, terrain.getHeightOfTerrain(-43, -56) + 1, -56));
 
 			ParticleMaster.update(camera);
 

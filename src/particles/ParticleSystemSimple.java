@@ -40,6 +40,6 @@ public class ParticleSystemSimple {
 		Vector3f velocity = new Vector3f(dirX, 1, dirZ);
 		velocity.normalise();
 		velocity.scale(speed);
-		new Particle(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, 0, 1);
+		new Particle().setActive(this.texture, new Vector3f(center), velocity, gravityComplient, lifeLength, 0, 1);
 	}
 }

@@ -24,21 +24,28 @@ public class Particle {
 	
 	private float elapsedTime = 0;
 	private float distance;
+	
+	private Vector3f reusableChange = new Vector3f();
+	
+	private boolean alive = false;
 
-	public Particle(ParticleTexture texture, Vector3f position, Vector3f velocity, float gravityEffect, float lifeLength, float rotation,
-			float scale) {
-		this.texture = texture;
+	public Particle() {
+	}
+	
+	public void setActive(ParticleTexture texture, Vector3f position, Vector3f velocity, 
+			float gravityEffect, float lifeLength, float rotation, float scale) {
+		this.alive = true;
 		this.position = position;
 		this.velocity = velocity;
 		this.gravityEffect = gravityEffect;
 		this.lifeLength = lifeLength;
 		this.rotation = rotation;
 		this.scale = scale;
+		this.texture = texture;
 		ParticleMaster.addParticle(this);
+		// System.out.println("Particle setActive");
 	}
-	
-	
-	
+
 	public float getDistance() {
 		return distance;
 	}
@@ -70,33 +77,33 @@ public class Particle {
 	public float getScale() {
 		return scale;
 	}
-	
-	 protected boolean update(Camera camera) {
-		 velocity.y += Player.getGravity() * this.gravityEffect * DisplayManager.getFrameTimeSeconds();
-		 Vector3f change = new Vector3f(velocity);
-		 change.scale(DisplayManager.getFrameTimeSeconds());
-		 Vector3f.add(change, this.position, this.position);
-		 distance = Vector3f.sub(camera.getPosition(), position, null).lengthSquared();
-		 updateTextureCoordInfo();
-		 this.elapsedTime += DisplayManager.getFrameTimeSeconds();
-		 return this.elapsedTime < this.lifeLength;
-	 }
-	 
-	 private void updateTextureCoordInfo() {
-		 float lifeFactor = elapsedTime / lifeLength;
-		 int stageCount = texture.getNumberOfRows() * texture.getNumberOfRows();
-		 float atlasProgression = lifeFactor * stageCount;
-		 int index1 = (int) Math.floor(atlasProgression);
-		 int index2 = index1 < stageCount - 1 ? index1 + 1 : index1;
-		 this.blend = atlasProgression % 1;
-		 setTextureOffset(texOffset1, index1);
-		 setTextureOffset(texOffset2, index2);
-	 }
 
-	 private void setTextureOffset(Vector2f offset, int index) {
-		 int column = index % texture.getNumberOfRows();
-		 int row = index / texture.getNumberOfRows();
-		 offset.x = (float) column / texture.getNumberOfRows();
-		 offset.y = (float) row / texture.getNumberOfRows();
-	 }
+	protected boolean update(Camera camera) {
+		velocity.y += Player.getGravity() * this.gravityEffect * DisplayManager.getFrameTimeSeconds();
+		reusableChange.set(velocity);
+		reusableChange.scale(DisplayManager.getFrameTimeSeconds());
+		Vector3f.add(reusableChange, this.position, this.position);
+		updateTextureCoordInfo();
+		distance = Vector3f.sub(camera.getPosition(), position, null).lengthSquared();
+		this.elapsedTime += DisplayManager.getFrameTimeSeconds();
+		return this.elapsedTime < this.lifeLength;
+	}
+	 
+	private void updateTextureCoordInfo() {
+		float lifeFactor = elapsedTime / lifeLength;
+		int stageCount = texture.getNumberOfRows() * texture.getNumberOfRows();
+		float atlasProgression = lifeFactor * stageCount;
+		int index1 = (int) Math.floor(atlasProgression);
+		int index2 = index1 < stageCount - 1 ? index1 + 1 : index1;
+		this.blend = atlasProgression % 1;
+		setTextureOffset(texOffset1, index1);
+		setTextureOffset(texOffset2, index2);
+	}
+
+	private void setTextureOffset(Vector2f offset, int index) {
+		int column = index % texture.getNumberOfRows();
+		int row = index / texture.getNumberOfRows();
+		offset.x = (float) column / texture.getNumberOfRows();
+		offset.y = (float) row / texture.getNumberOfRows();
+	}
 }
