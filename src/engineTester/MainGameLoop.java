@@ -184,10 +184,6 @@ public class MainGameLoop {
 		Entity fern3 = new Entity(fernModelAtlas, 2, new Vector3f(-225, terrain.getHeightOfTerrain(-225, -45), -45), 0, 0, 0, 3);
 		Entity fern4 = new Entity(fernModelAtlas, 3, new Vector3f(-160, terrain.getHeightOfTerrain(-160, -195), -195), 0, 0, 0, 3);
 
-		// Entity bunny = new Entity(bunnyModel, new Vector3f(25, terrain.getHeightOfTerrain(25, -20), -20), 0, 0, 0, 0.5f);
-		// bunny.getModel().getTexture().setShineDamper(50).setReflectivity(50);
-		// Entity donut = new Entity(donutModel, new Vector3f(-55, 10, -25), 0, 0, 0, 10f);
-
 		// normal map entities
 		TexturedModel barrelModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("barrel", loader),
 				new ModelTexture(loader.loadTexture("barrel")));
@@ -223,7 +219,7 @@ public class MainGameLoop {
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 
 		// lights
-		Light sun = new Light(new Vector3f(5000, 10000, 5000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		Light sun = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
 		lights.add(sun);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
