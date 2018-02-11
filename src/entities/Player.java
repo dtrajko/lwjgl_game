@@ -16,6 +16,7 @@ public class Player extends Entity {
 	private static final float GRAVITY = -30;
 	private static final float JUMP_POWER = 30;
 	private static final float TERRAIN_HEIGHT = 0;
+	private static final float HEIGHT = 5.5f;
 
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
@@ -54,7 +55,11 @@ public class Player extends Entity {
 		}
 		// System.out.println("Gravity enabled? " + gravityEnabled + ", gravity amount = " + gravity);
 	}
-	
+
+	public static float getHeight() {
+		return HEIGHT;
+	}
+
 	public static float getGravity() {
 		return GRAVITY;
 	}
@@ -129,12 +134,6 @@ public class Player extends Entity {
 				+ " Max Z = " + this.getAABB().getMaxExtents().z
 			);
 			*/
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
-			// move left sidewise
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-			// move right sidewise
 		}
 	}
 	

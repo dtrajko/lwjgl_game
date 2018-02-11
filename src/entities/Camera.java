@@ -11,15 +11,26 @@ public class Camera {
 
 	private static final float ZOOM_COEF = 0.1f;
 	private static final float PITCH_COEF = 0.15f;
+	
+	private static final float DISTANCE_FROM_PLAYER = 60;
+	private static final float PITCH_THIRD_PERSON = 20;
+	private static final float PITCH_FIRST_PERSON = 10;
 
 	private float distanceFromPlayer = 60;
 	private float angleAroundPlayer = 0;
 	private Vector3f position = new Vector3f(0, 30, 30);
-	private float pitch = 20;
+	private float pitch = PITCH_THIRD_PERSON;
 	private float yaw = 0;
 	private float roll;
 	private Player player;
 	private Terrain terrain = null;
+	
+	private enum Perspective {
+		FIRST_PERSON,
+		THIRD_PERSON,
+	}
+	
+	private Perspective currentPerspective = Perspective.THIRD_PERSON;
 
 	public Camera(Player player) {
 		this.player = player;
@@ -31,6 +42,7 @@ public class Camera {
 	}
 
 	public void move() {
+		checkInputs();
 		this.calculateZoom();
 		this.calculatePitch();
 		this.calculateAngleAroundPlayer();
@@ -79,9 +91,15 @@ public class Camera {
 	}
 
 	private float calculateVerticalDistance() {
-		return (float) (this.distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+		float verticalDistance;
+		if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
+			verticalDistance = player.getHeight();
+		} else {
+			verticalDistance = (float) (this.distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+		}
+		return verticalDistance;
 	}
-	
+
 	private void calculateZoom() {
 		float zoomLevel = Mouse.getDWheel() * ZOOM_COEF;
 		distanceFromPlayer -= zoomLevel;
@@ -101,6 +119,28 @@ public class Camera {
 		if (Mouse.isButtonDown(0)) {
 			float angleChange = Mouse.getDX() * 0.3f;
 			angleAroundPlayer -= angleChange;
+		}
+	}
+
+	public void checkInputs() {
+
+		// camera perspective
+		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+			if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
+				this.currentPerspective = Camera.Perspective.FIRST_PERSON;
+				this.distanceFromPlayer = 0;
+				this.pitch = this.PITCH_FIRST_PERSON;
+			} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
+				this.currentPerspective = Camera.Perspective.THIRD_PERSON;
+				this.distanceFromPlayer = this.DISTANCE_FROM_PLAYER;
+				this.pitch = this.PITCH_THIRD_PERSON;
+			}
+		}
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+			// move left sidewise
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
+			// move right sidewise
 		}
 	}
 }
