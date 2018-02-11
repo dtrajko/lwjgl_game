@@ -286,7 +286,7 @@ public class MainGameLoop {
 		WaterFrameBuffers fbos = new WaterFrameBuffers();
 		WaterShader  waterShader = new WaterShader();
 		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
-		WaterTile water = new WaterTile(-400, -400, 0f);
+		WaterTile water = new WaterTile(-400, -400, -10f);
 		waters.add(water);
 		
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4, true);
@@ -350,6 +350,7 @@ public class MainGameLoop {
 
 			ParticleMaster.update(camera);
 
+			renderer.renderShadowMap(normalMapEntities, sun);
 			renderer.renderShadowMap(entities, sun);
 
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
