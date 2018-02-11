@@ -2,6 +2,7 @@ package renderEngine;
 
 import shaders.StaticShader;
 import shaders.TerrainShader;
+import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
 import terrains.Terrain;
 import models.TexturedModel;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -23,9 +25,9 @@ import entities.Light;
 
 public class MasterRenderer {
 
-	private static final float FOV = 70; // field of view angle
-	private static final float NEAR_PLANE = 1.0f;
-	private static final float FAR_PLANE = 5000;
+	public static final float FOV = 70; // field of view angle
+	public static final float NEAR_PLANE = 1.0f;
+	public static final float FAR_PLANE = 5000;
 
 	public static final float RED = 0.5444f;
 	public static final float GREEN = 0.62f;
@@ -41,19 +43,21 @@ public class MasterRenderer {
 
 	private NormalMappingRenderer normalMapRenderer;
 
+	private SkyboxRenderer skyboxRenderer;
+	private ShadowMapMasterRenderer shadowMapRenderer;
+
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private Map<TexturedModel, List<Entity>> normalMapEntities = new HashMap<TexturedModel, List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 
-	private SkyboxRenderer skyboxRenderer;
-
-	public MasterRenderer(Loader loader) {
+	public MasterRenderer(Loader loader, Camera cam) {
 		enableCulling();
 		createProjectionMatrix();
 		this.renderer = new EntityRenderer(shader, projectionMatrix);
 		this.terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
 		this.skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		this.normalMapRenderer = new NormalMappingRenderer(projectionMatrix);
+		this.shadowMapRenderer = new ShadowMapMasterRenderer(cam);
 	}
 
 	public Matrix4f getProjectionMatrix() {
@@ -93,7 +97,7 @@ public class MasterRenderer {
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
-		terrainRenderer.render(terrains);
+		terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());
 		terrainShader.stop();
 		
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
@@ -145,30 +149,44 @@ public class MasterRenderer {
 
 	public void prepare() {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glClearColor(RED, GREEN, BLUE, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(RED, GREEN, BLUE, 0.5f);
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		GL13.glActiveTexture(GL13.GL_TEXTURE5);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getShadowMapTexture());
 	}
 
 	private void createProjectionMatrix() {
+		projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
-		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);
+		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
-
-		projectionMatrix = new Matrix4f();
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
 		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
 		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = -((2 * FAR_PLANE * NEAR_PLANE) / frustum_length);;
+		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);;
 		projectionMatrix.m33 = 0;
+	}
+
+	public void renderShadowMap(List<Entity> entityList, Light sun) {
+		for (Entity entity : entityList) {
+			processEntity(entity);
+		}
+		shadowMapRenderer.render(entities, sun);
+		entities.clear();
+	}
+
+	public int getShadowMapTexture() {
+		return this.shadowMapRenderer.getShadowMap();
 	}
 
 	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();
 		normalMapRenderer.cleanUp();
+		shadowMapRenderer.cleanUp();
 	}
 }
