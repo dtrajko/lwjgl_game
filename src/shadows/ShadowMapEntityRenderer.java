@@ -50,6 +50,9 @@ public class ShadowMapEntityRenderer {
 				MasterRenderer.disableCulling();
 			}
 			for (Entity entity : entities.get(model)) {
+				if (!entity.isRenderingEnabled()) {
+					continue;
+				}
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(),
 						GL11.GL_UNSIGNED_INT, 0);

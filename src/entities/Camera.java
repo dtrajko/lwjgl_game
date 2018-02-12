@@ -14,7 +14,7 @@ public class Camera {
 	
 	private static final float DISTANCE_FROM_PLAYER = 60;
 	private static final float PITCH_THIRD_PERSON = 20;
-	private static final float PITCH_FIRST_PERSON = 10;
+	private static final float PITCH_FIRST_PERSON = 15;
 
 	private float distanceFromPlayer = 60;
 	private float angleAroundPlayer = 0;
@@ -130,10 +130,12 @@ public class Camera {
 				this.currentPerspective = Camera.Perspective.FIRST_PERSON;
 				this.distanceFromPlayer = 0;
 				this.pitch = this.PITCH_FIRST_PERSON;
+				this.player.setRenderingEnabled(false);
 			} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
 				this.currentPerspective = Camera.Perspective.THIRD_PERSON;
 				this.distanceFromPlayer = this.DISTANCE_FROM_PLAYER;
 				this.pitch = this.PITCH_THIRD_PERSON;
+				this.player.setRenderingEnabled(true);
 			}
 		}
 

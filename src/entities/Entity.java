@@ -15,6 +15,8 @@ public class Entity {
 	private int textureIndex = 0;
 	
 	private AABB aabb;
+	
+	private boolean renderingEnabled = true;
 
 	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super();
@@ -35,6 +37,14 @@ public class Entity {
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
+	}
+
+	public boolean isRenderingEnabled() {
+		return renderingEnabled;
+	}
+
+	public void setRenderingEnabled(boolean renderingEnabled) {
+		this.renderingEnabled = renderingEnabled;
 	}
 
 	public void setAABB(AABB aabb) {
