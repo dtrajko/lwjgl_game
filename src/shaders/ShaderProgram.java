@@ -3,6 +3,8 @@ package shaders;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -99,13 +101,15 @@ public abstract class ShaderProgram {
 	private static int loadShader(String file, int type) {
 		StringBuilder shaderSource = new StringBuilder();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(file);
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader reader = new BufferedReader(isr);
 			String line;
 			while((line = reader.readLine()) != null) {
 				shaderSource.append(line).append("\n");
 			}
 			reader.close();
-		} catch(IOException e) {
+		} catch(Exception e) {
 			System.err.println("Could not read file!");
 			e.printStackTrace();
 			System.exit(-1);

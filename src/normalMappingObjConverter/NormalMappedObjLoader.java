@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,17 +18,17 @@ import renderEngine.Loader;
 
 public class NormalMappedObjLoader {
 
-	private static final String RES_LOC = "res/";
+	private static final String RES_LOC = "";
+	private static BufferedReader reader;
 
 	public static RawModel loadOBJ(String objFileName, Loader loader) {
-		FileReader isr = null;
-		File objFile = new File(RES_LOC + objFileName + ".obj");
 		try {
-			isr = new FileReader(objFile);
-		} catch (FileNotFoundException e) {
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(RES_LOC + objFileName + ".obj");
+			InputStreamReader isr = new InputStreamReader(is);
+			reader = new BufferedReader(isr);
+		} catch (Exception e) {
 			System.err.println("File not found in res; don't use any extention");
 		}
-		BufferedReader reader = new BufferedReader(isr);
 		String line;
 		List<VertexNM> vertices = new ArrayList<VertexNM>();
 		List<Vector2f> textures = new ArrayList<Vector2f>();

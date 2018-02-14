@@ -70,7 +70,7 @@ public class MainGameLoop {
 		Loader loader = new Loader();
 		TextMaster.init(loader);
 		
-		FontType font2 = new FontType(loader.loadTexture("candara", 0), new File("res/candara.fnt"));
+		FontType font2 = new FontType(loader.loadTexture("candara", 0), "candara");
 		GUIText text2 = new GUIText("A sample string of text!",
 			2.0f, font2, new Vector2f(-0.1f, 0.02f), 0.5f, true);
 		text2.setColour(1.0f, 0.4f, 0.0f);
