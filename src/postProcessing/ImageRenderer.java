@@ -1,18 +1,20 @@
 package postProcessing;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 public class ImageRenderer {
 
 	private Fbo fbo;
 
-	protected ImageRenderer(int width, int height) {
+	public ImageRenderer(int width, int height) {
 		this.fbo = new Fbo(width, height, Fbo.NONE);
 	}
 
-	protected ImageRenderer() {}
+	public ImageRenderer() {
+	}
 
-	protected void renderQuad() {
+	public void renderQuad() {
 		if (fbo != null) {
 			fbo.bindFrameBuffer();
 		}
@@ -23,11 +25,14 @@ public class ImageRenderer {
 		}
 	}
 
-	protected int getOutputTexture() {
-		return fbo.getColourTexture();
+	public int getOutputTexture() {
+		if (fbo != null) {
+			return fbo.getColourTexture();
+		}
+		return -1;
 	}
 
-	protected void cleanUp() {
+	public void cleanUp() {
 		if (fbo != null) {
 			fbo.cleanUp();
 		}
