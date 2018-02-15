@@ -58,12 +58,18 @@ public class DisplayManager {
 				DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
 			}
 			fullscreenMode = !fullscreenMode;
+			if (!Game.isRunning()) {
+				Game.toggleIsRunning();
+			}
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			if (fullscreenMode) {
 				DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
 			}
 			fullscreenMode = !fullscreenMode;
+			if (!Game.isRunning()) {
+				Game.toggleIsRunning();
+			}
 		}
 	}
 

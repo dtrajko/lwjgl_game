@@ -24,6 +24,7 @@ import fontMeshCreator.GUIText;
 import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
+import input.InputHelper;
 import models.RawModel;
 import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
@@ -57,8 +58,6 @@ public class MainGameLoop {
 
 	public static void main(String[] args) {
 
-		Game game = new Game();
-
 		List<Entity> entities = new ArrayList<Entity>();
 		List<Entity> normalMapEntities = new ArrayList<Entity>(); // entities using normal map rendering
 		List<Terrain> terrains = new ArrayList<Terrain>();
@@ -74,6 +73,11 @@ public class MainGameLoop {
 		GUIText text2 = new GUIText("A sample string of text!",
 			2.0f, font2, new Vector2f(-0.1f, 0.02f), 0.5f, true);
 		text2.setColour(1.0f, 0.4f, 0.0f);
+		TextMaster.loadText(text2);
+
+		GUIText text_pause = new GUIText("PAUSED",
+				3.0f, font2, new Vector2f(0.25f, 0.45f), 0.5f, true);
+		text_pause.setColour(0.5f, 1.0f, 0.5f);
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
 
@@ -272,8 +276,8 @@ public class MainGameLoop {
 		guis.add(gui_logo);
 		guis.add(gui_health);
 
-		GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(), 
-			new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
+		// GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(), 
+		//     new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
 		// guis.add(shadowMap);
 
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
@@ -324,115 +328,121 @@ public class MainGameLoop {
 
 			DisplayManager.switchDisplayMode();
 
-			player.move(terrain);
-			camera.move();
+			InputHelper.update();
+			Game.checkIfRunning();
 
-			// mouse picker (dragging entities around)
-			if (picker.isDragEnabled()) {
-				picker.update();
-				// System.out.println(picker.getCurrentRay());
-				Vector3f terrainPoint = picker.getCurrentTerrainPoint();
-				if (terrainPoint != null) {
-					lamp1.setPosition(terrainPoint);
-					light1.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 20, terrainPoint.z));
-				}	
+			if (Game.isRunning()) {
+
+				player.move(terrain);
+				camera.move();
+
+				// mouse picker (dragging entities around)
+				if (picker.isDragEnabled()) {
+					picker.update();
+					// System.out.println(picker.getCurrentRay());
+					Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+					if (terrainPoint != null) {
+						lamp1.setPosition(terrainPoint);
+						light1.setPosition(new Vector3f(terrainPoint.x, terrainPoint.y + 20, terrainPoint.z));
+					}	
+				}
+
+				if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
+					// new Particle(new Vector3f(player.getPosition()), new Vector3f(0, 30, 0), 1, 4, 0, 1);
+					// particleSystemSimple.generateParticles(player.getPosition());
+					particleSystem.generateParticles(new Vector3f(
+							player.getPosition().getX(),
+							player.getPosition().getY() + 12,
+							player.getPosition().getZ()
+					));
+					// particleSystem.setDirection(new Vector3f(0.5f, 0.5f, 0.5f), 0f);
+				}
+
+				particleSystemFire.generateParticles(new Vector3f(-67, terrain.getHeightOfTerrain(-67, -120), -120));
+				particleSystemSmoke.generateParticles(new Vector3f(-67, terrain.getHeightOfTerrain(-67, -120) + 1, -120));
+
+				ParticleMaster.update(camera);
+
+				renderer.renderShadowMap(normalMapEntities, sun);
+				renderer.renderShadowMap(entities, sun);
+
+				GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+				
+				// render reflection texture
+				fbos.bindReflectionFrameBuffer();
+				float distance = 2 * (camera.getPosition().y - water.getHeight());
+				camera.getPosition().y -= distance;
+				camera.invertPitch();
+				renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
+				camera.getPosition().y += distance;
+				camera.invertPitch();
+
+				// render refraction texture
+				fbos.bindRefractionFrameBuffer();
+				renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
+				
+				// render to screen
+				GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+				fbos.unbindCurrentFrameBuffer();
+
+				multisampleFbo.bindFrameBuffer();
+				renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
+				waterRenderer.render(waters, camera, sun);
+				ParticleMaster.renderParticles(camera);
+				multisampleFbo.unbindFrameBuffer();
+				multisampleFbo.resolveToFbo(outputFbo);
+				// multisampleFbo.resolveToScreen();
+				PostProcessing.doPostProcessing(outputFbo.getColourTexture());
+
+				guiRenderer.render(guis);
+
+				if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
+					if (player.getPosition().y <= 42) {
+						player.getPosition().y = 42;
+						player.setGravityEnabled(false);
+					} else {
+						player.setGravityEnabled(true);
+					}
+				} else if (player.getAABB().intersectAABB(box2.getAABB()).isIntersecting()) {
+					if (player.getPosition().y <= 22) {
+						player.getPosition().y = 22;
+						player.setGravityEnabled(false);
+					} else {
+						player.setGravityEnabled(true);
+					}
+				} else if (player.getAABB().intersectAABB(box3XL.getAABB()).isIntersecting()) {
+					if (player.getPosition().y <= box3XL_y + 75) {
+						player.getPosition().y = box3XL_y + 75;
+						player.setGravityEnabled(false);
+					} else {
+						player.setGravityEnabled(true);
+					}
+				} else {
+					player.setGravityEnabled(true);
+				}
+
+				if (player.getAABB().intersectAABB(tree1.getAABB()).isIntersecting()) {
+					tree1.increaseRotation(0, 2f, 0);
+				}
+				if (player.getAABB().intersectAABB(tree2.getAABB()).isIntersecting()) {
+					tree2.increaseRotation(0, 2f, 0);
+				}
+				if (player.getAABB().intersectAABB(tree3.getAABB()).isIntersecting()) {
+					tree3.increaseRotation(0, 2f, 0);
+				}
+
+				if (player.getAABB().intersectAABB(barrel.getAABB()).isIntersecting()) {
+					barrel.increaseRotation(0, 4f, 0);
+					if (player.getPosition().y <= 16f) {
+						player.getPosition().y = 16f;
+						player.setGravityEnabled(false);
+					} else {
+						player.setGravityEnabled(true);
+					}
+				}
 			}
 
-			if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
-				// new Particle(new Vector3f(player.getPosition()), new Vector3f(0, 30, 0), 1, 4, 0, 1);
-				// particleSystemSimple.generateParticles(player.getPosition());
-				particleSystem.generateParticles(new Vector3f(
-						player.getPosition().getX(),
-						player.getPosition().getY() + 12,
-						player.getPosition().getZ()
-				));
-				// particleSystem.setDirection(new Vector3f(0.5f, 0.5f, 0.5f), 0f);
-			}
-
-			particleSystemFire.generateParticles(new Vector3f(-67, terrain.getHeightOfTerrain(-67, -120), -120));
-			particleSystemSmoke.generateParticles(new Vector3f(-67, terrain.getHeightOfTerrain(-67, -120) + 1, -120));
-
-			ParticleMaster.update(camera);
-
-			renderer.renderShadowMap(normalMapEntities, sun);
-			renderer.renderShadowMap(entities, sun);
-
-			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-			
-			// render reflection texture
-			fbos.bindReflectionFrameBuffer();
-			float distance = 2 * (camera.getPosition().y - water.getHeight());
-			camera.getPosition().y -= distance;
-			camera.invertPitch();
-			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, 1, 0, -water.getHeight()));
-			camera.getPosition().y += distance;
-			camera.invertPitch();
-
-			// render refraction texture
-			fbos.bindRefractionFrameBuffer();
-			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, water.getHeight()));
-			
-			// render to screen
-			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-			fbos.unbindCurrentFrameBuffer();
-
-			multisampleFbo.bindFrameBuffer();
-			renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
-			waterRenderer.render(waters, camera, sun);
-			ParticleMaster.renderParticles(camera);
-			multisampleFbo.unbindFrameBuffer();
-			multisampleFbo.resolveToFbo(outputFbo);
-			// multisampleFbo.resolveToScreen();
-			PostProcessing.doPostProcessing(outputFbo.getColourTexture());
-
-			guiRenderer.render(guis);
 			TextMaster.render();
-
-			if (player.getAABB().intersectAABB(box1.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= 42) {
-					player.getPosition().y = 42;
-					player.setGravityEnabled(false);
-				} else {
-					player.setGravityEnabled(true);
-				}
-			} else if (player.getAABB().intersectAABB(box2.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= 22) {
-					player.getPosition().y = 22;
-					player.setGravityEnabled(false);
-				} else {
-					player.setGravityEnabled(true);
-				}
-			} else if (player.getAABB().intersectAABB(box3XL.getAABB()).isIntersecting()) {
-				if (player.getPosition().y <= box3XL_y + 75) {
-					player.getPosition().y = box3XL_y + 75;
-					player.setGravityEnabled(false);
-				} else {
-					player.setGravityEnabled(true);
-				}
-			} else {
-				player.setGravityEnabled(true);
-			}
-			
-			if (player.getAABB().intersectAABB(tree1.getAABB()).isIntersecting()) {
-				tree1.increaseRotation(0, 2f, 0);
-			}
-			if (player.getAABB().intersectAABB(tree2.getAABB()).isIntersecting()) {
-				tree2.increaseRotation(0, 2f, 0);
-			}
-			if (player.getAABB().intersectAABB(tree3.getAABB()).isIntersecting()) {
-				tree3.increaseRotation(0, 2f, 0);
-			}
-			
-			if (player.getAABB().intersectAABB(barrel.getAABB()).isIntersecting()) {
-				barrel.increaseRotation(0, 4f, 0);
-				if (player.getPosition().y <= 16f) {
-					player.getPosition().y = 16f;
-					player.setGravityEnabled(false);
-				} else {
-					player.setGravityEnabled(true);
-				}
-			}
-
 			DisplayManager.updateDisplay();
 		}
 

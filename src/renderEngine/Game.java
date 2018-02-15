@@ -2,18 +2,28 @@ package renderEngine;
 
 import org.lwjgl.input.Keyboard;
 
+import input.InputHelper;
+
 public class Game {
 
-	private boolean isRunning = true;
-	
-	public void setIsRunning() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
-			this.isRunning = !this.isRunning;
-			System.out.println("Game is running: " + isRunning);
+	private static boolean isRunning = true;
+
+	public static void checkIfRunning() {
+		if (InputHelper.isKeyPressed(Keyboard.KEY_P)) {
+			toggleIsRunning();
+			System.out.println("Game is running: " + Game.isRunning);
 		}
 	}
 
-	public boolean isRunning() {
-		return this.isRunning;
+	public static boolean isRunning() {
+		return Game.isRunning;
+	}
+
+	public static void setIsRunning(boolean isRunning) {
+		Game.isRunning = isRunning;
+	}
+
+	public static void toggleIsRunning() {
+		Game.isRunning = !Game.isRunning;
 	}
 }
