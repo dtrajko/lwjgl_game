@@ -129,15 +129,15 @@ public class DisplayManager {
 			}
 	 
 			if (targetDisplayMode == null) {
-				System.out.println("Failed to find value mode: "+width+"x"+height+" fs="+fullscreen);
+				System.out.println("Failed to find value mode: " + width + "x" + height + " fs=" + fullscreen);
 				return;
 			}
-	 
+
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(fullscreen);
-				 
+
 		} catch (LWJGLException e) {
-			System.out.println("Unable to setup mode "+width+"x"+height+" fullscreen="+fullscreen + e);
+			System.out.println("Unable to setup mode " + width + "x" + height + " fullscreen=" + fullscreen + e);
 		}
 	}
 }
