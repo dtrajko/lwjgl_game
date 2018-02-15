@@ -19,8 +19,8 @@ public class PostProcessing {
 	private static VerticalBlur   vBlur1;
 	private static HorizontalBlur hBlur2;
 	private static VerticalBlur   vBlur2;
-	private static int BLUR_COEF_1 = 4;
-	private static int BLUR_COEF_2 = 8;
+	private static int BLUR_COEF_1 = 0;
+	private static int BLUR_COEF_2 = 0;
 
 	public static void init(Loader loader){
 		quad = loader.loadToVAO(POSITIONS, 2);
