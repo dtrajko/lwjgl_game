@@ -322,6 +322,8 @@ public class MainGameLoop {
 
 		while(!Display.isCloseRequested()) {
 
+			DisplayManager.switchDisplayMode();
+
 			player.move(terrain);
 			camera.move();
 
