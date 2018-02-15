@@ -26,7 +26,7 @@ public class DisplayManager {
 
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create(new PixelFormat().withSamples(8).withDepthBits(24), attribs);
+			Display.create(new PixelFormat().withDepthBits(24), attribs); // .withSamples(8) - use multisampling
 			Display.setTitle("LWJGL Game");
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 		} catch (LWJGLException e) {
