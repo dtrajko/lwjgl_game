@@ -122,7 +122,11 @@ public class MainGameLoop {
 		cherryModel.getTexture().setHasTransparency(true);
 		cherryModel.getTexture().setShineDamper(10);
 		cherryModel.getTexture().setReflectivity(0.5f);
-		cherryModel.getTexture().setSpecularMap(loader.loadTexture("cherryS"));
+		cherryModel.getTexture().setExtraInfoMap(loader.loadTexture("cherryS"));
+
+		TexturedModel lanternModel = new TexturedModel(OBJFileLoader.loadOBJ("lantern", loader), 
+				new ModelTexture(loader.loadTexture("lantern")));
+		lanternModel.getTexture().setExtraInfoMap(loader.loadTexture("lanternS"));
 
 		int tree1_x = -722;
 		int tree1_z = -622;
@@ -154,7 +158,8 @@ public class MainGameLoop {
 		Entity bobbleTree = new Entity(bobbleTreeModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -700), -700), 0, 0, 0, 2);
 
 		Entity cherry = new Entity(cherryModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -200), -200), 0, 0, 0, 5);
-
+		Entity lantern = new Entity(lanternModel, new Vector3f(-140, terrain.getHeightOfTerrain(-140, -450), -450), 0, 0, 0, 2);
+				
 		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, -350) + 20, -350), 0, 0, 0, 20);
 		box1.setAABB(new AABB(new Vector3f(-380, -10, -330), new Vector3f(-340, 42, -370)));
 		box1.increaseRotation(0, -25f, 0);
@@ -199,7 +204,7 @@ public class MainGameLoop {
 		barrelModel.getTexture().setShineDamper(10);
 		barrelModel.getTexture().setReflectivity(0.5f);
 		barrelModel.getTexture().setHasTransparency(true);
-		barrelModel.getTexture().setSpecularMap(loader.loadTexture("barrelS"));
+		barrelModel.getTexture().setExtraInfoMap(loader.loadTexture("barrelS"));
 
 		int barrel_x = -685;
 		int barrel_z = -600;
@@ -230,7 +235,7 @@ public class MainGameLoop {
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 
 		// lights
-		Light sun = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		Light sun = new Light(new Vector3f(15000, 10, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
 		lights.add(sun);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
@@ -273,6 +278,7 @@ public class MainGameLoop {
 		entities.add(lamp4);
 		// entities.add(donut);
 		entities.add(cherry);
+		entities.add(lantern);
 
 		normalMapEntities.add(barrel);
 		normalMapEntities.add(crate);

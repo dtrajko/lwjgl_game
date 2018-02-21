@@ -81,6 +81,9 @@ void main(void) {
 	if (usesSpecularMap > 0.5) {
 		vec4 mapInfo = texture(specularMap, pass_textureCoordinates);
 		totalSpecular *= mapInfo.r;
+		if (mapInfo.g > 0.5) {
+			totalDiffuse = vec3(1.0);
+		}
 	}
 
 	out_Color = vec4(totalDiffuse, 1.0) * texture(modelTexture, pass_textureCoordinates) + vec4(totalSpecular, 1.0);
