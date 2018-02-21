@@ -32,6 +32,11 @@ public class StaticShader extends ShaderProgram {
 	private int location_numberOfRows;
 	private int location_offset;
 	private int location_plane;
+	private int location_modelTexture;
+	private int location_toShadowMapSpace;
+	private int location_shadowMap;
+	private int location_specularMap;
+	private int location_usesSpecularMap;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -48,6 +53,9 @@ public class StaticShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+		location_specularMap = super.getUniformLocation("specularMap");
+		location_usesSpecularMap = super.getUniformLocation("usesSpecularMap");
+		location_modelTexture = super.getUniformLocation("modelTexture");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_shineDamper = super.getUniformLocation("shineDamper");
@@ -57,6 +65,8 @@ public class StaticShader extends ShaderProgram {
 		location_numberOfRows = super.getUniformLocation("numberOfRows");
 		location_offset = super.getUniformLocation("offset");
 		location_plane = super.getUniformLocation("plane");
+		location_toShadowMapSpace = super.getUniformLocation("toShadowMapSpace");
+		location_shadowMap = super.getUniformLocation("shadowMap");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
@@ -69,12 +79,26 @@ public class StaticShader extends ShaderProgram {
 		}
 	}
 
+	public void connectTextureUnits() {
+		super.loadInt(location_shadowMap, 5);
+		super.loadInt(location_modelTexture, 0);
+		super.loadInt(location_specularMap, 1);
+	}
+
+	public void loadUseSpecularMap(boolean useMap) {
+		super.loadBoolean(location_usesSpecularMap, useMap);
+	}
+
 	public void loadClipPlane(Vector4f plane) {
 		super.load4DVector(location_plane, plane);
 	}
 
 	public void loadNumberOfRows(int numberOfRows) {
 		super.loadFloat(location_numberOfRows, numberOfRows);
+	}
+
+	public void loadToShadowSpaceMatrix(Matrix4f matrix) {
+		super.loadMatrix(location_toShadowMapSpace, matrix);
 	}
 
 	public void loadOffset(float x, float y) {

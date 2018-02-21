@@ -35,6 +35,14 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 
+	public List<Integer> getVAOs() {
+		return vaos;
+	}
+
+	public List<Integer> getVBOs() {
+		return vbos;
+	}
+
 	public int loadToVAO(float[] positions, float[] textureCoords) {
 		int vaoID = createVAO();
 		storeDataInAttributeList(0, 2, positions);

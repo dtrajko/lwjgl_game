@@ -15,7 +15,7 @@ public class OBJLoader {
 	
 	private static BufferedReader reader;
 
-	public static RawModel loadOBJModel(String fileName, Loader loader) {
+	public static RawModel loadOBJ(String fileName, Loader loader) {
 		try {
 			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName + ".obj");
 			InputStreamReader isr = new InputStreamReader(is);
