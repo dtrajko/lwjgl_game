@@ -41,6 +41,8 @@ public class TerrainShader extends ShaderProgram {
 
 	@Override
 	protected void bindAttributes() {
+		super.bindFragOutput(0, "out_Color");
+		super.bindFragOutput(1, "out_BrightColor");
 		super.bindAttribute(0, "position");
 		super.bindAttribute(1, "textureCoordinates");
 		super.bindAttribute(2, "normal");

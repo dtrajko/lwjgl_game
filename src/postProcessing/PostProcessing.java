@@ -49,16 +49,16 @@ public class PostProcessing {
 		vBlur2 = new VerticalBlur(width2, heigt2);
 	}
 
-	public static void doPostProcessing(int colourTexture){
+	public static void doPostProcessing(int colourTexture, int brightTexture){
 		start();
 		if (BLUR_COEF_1 > 0 || BLUR_COEF_2 > 0) {
-			colourTexture = hBlur1.render(colourTexture);
-			colourTexture = vBlur1.render(colourTexture);
-			colourTexture = hBlur2.render(colourTexture);
-			colourTexture = vBlur2.render(colourTexture);
+			brightTexture = hBlur1.render(brightTexture);
+			brightTexture = vBlur1.render(brightTexture);
+			brightTexture = hBlur2.render(brightTexture);
+			brightTexture = vBlur2.render(brightTexture);
 		}
 		// colourTexture = brightFilter.render(colourTexture);
-		combineFilter.render(colourTexture, colourTexture);
+		combineFilter.render(colourTexture, brightTexture);
 		contrastChanger.render(colourTexture);
 		end();
 	}

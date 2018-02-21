@@ -152,7 +152,7 @@ public class MainGameLoop {
 		Entity bobbleTree = new Entity(bobbleTreeModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -700), -700), 0, 0, 0, 2);
 
 		Entity cherry = new Entity(cherryModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -200), -200), 0, 0, 0, 5);
-		Entity lantern = new Entity(lanternModel, new Vector3f(-140, terrain.getHeightOfTerrain(-140, -450), -450), 0, 0, 0, 2);
+		Entity lantern = new Entity(lanternModel, new Vector3f(-140, terrain.getHeightOfTerrain(-140, -450), -450), 0, 0, 0, 1.5f);
 				
 		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, -350) + 20, -350), 0, 0, 0, 20);
 		box1.setAABB(new AABB(new Vector3f(-380, -10, -330), new Vector3f(-340, 42, -370)));
@@ -229,7 +229,7 @@ public class MainGameLoop {
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 
 		// lights
-		Light sun = new Light(new Vector3f(15000, 10, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		Light sun = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
 		lights.add(sun);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
@@ -329,6 +329,7 @@ public class MainGameLoop {
 
 		Fbo multisampleFbo = new Fbo(Display.getWidth(), Display.getHeight());
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
+		Fbo outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		PostProcessing.init(loader);
 
 		while(!Display.isCloseRequested()) {
@@ -397,9 +398,10 @@ public class MainGameLoop {
 				waterRenderer.render(waters, camera, sun);
 				ParticleMaster.renderParticles(camera);
 				multisampleFbo.unbindFrameBuffer();
-				multisampleFbo.resolveToFbo(outputFbo);
+				multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
+				multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
 				// multisampleFbo.resolveToScreen();
-				PostProcessing.doPostProcessing(outputFbo.getColourTexture());
+				PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 
 				guiRenderer.render(guis);
 
@@ -455,6 +457,7 @@ public class MainGameLoop {
 
 		PostProcessing.cleanUp();
 		outputFbo.cleanUp();
+		outputFbo2.cleanUp();
 		multisampleFbo.cleanUp();
 		ParticleMaster.cleanUp();
 		TextMaster.cleanUp();
