@@ -5,6 +5,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import bloom.BrightFilter;
+import bloom.CombineFilter;
 import gaussianBlur.HorizontalBlur;
 import gaussianBlur.VerticalBlur;
 import models.RawModel;
@@ -15,6 +17,9 @@ public class PostProcessing {
 	private static final float[] POSITIONS = { -1, 1, -1, -1, 1, 1, 1, -1 };	
 	private static RawModel quad;
 	private static ContrastChanger contrastChanger;
+	private static BrightFilter brightFilter;
+	private static CombineFilter combineFilter;
+
 	private static HorizontalBlur hBlur1;
 	private static VerticalBlur   vBlur1;
 	private static HorizontalBlur hBlur2;
@@ -25,6 +30,9 @@ public class PostProcessing {
 	public static void init(Loader loader){
 		quad = loader.loadToVAO(POSITIONS, 2);
 		contrastChanger = new ContrastChanger();
+		brightFilter = new BrightFilter(Display.getWidth() / 2, Display.getHeight() / 2);
+		combineFilter = new CombineFilter();
+
 		int width1 = Display.getWidth();
 		int heigt1 = Display.getHeight();
 		int width2 = width1;
@@ -49,12 +57,16 @@ public class PostProcessing {
 			colourTexture = hBlur2.render(colourTexture);
 			colourTexture = vBlur2.render(colourTexture);
 		}
+		// colourTexture = brightFilter.render(colourTexture);
+		combineFilter.render(colourTexture, colourTexture);
 		contrastChanger.render(colourTexture);
 		end();
 	}
 
 	public static void cleanUp(){
 		contrastChanger.cleanUp();
+		brightFilter.cleanUp();
+		combineFilter.cleanUp();
 		hBlur1.cleanUp();
 		vBlur1.cleanUp();
 		hBlur2.cleanUp();

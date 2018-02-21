@@ -37,5 +37,4 @@ public class ImageRenderer {
 			fbo.cleanUp();
 		}
 	}
-
 }

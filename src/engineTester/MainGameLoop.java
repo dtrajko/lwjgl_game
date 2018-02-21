@@ -135,12 +135,6 @@ public class MainGameLoop {
 				new Vector3f(tree1_x - 2, terrain.getHeightOfTerrain(tree1_x - 2, tree1_z - 2), tree1_z - 2), 
 				new Vector3f(tree1_x + 2, terrain.getHeightOfTerrain(tree1_x + 2, tree1_z + 2) + 35, tree1_z + 2)));
 
-		System.out.println("VAO ID of Tree1 entity: " + tree1.getModel().getRawModel().getVaoID());
-		List<Integer> vaos = loader.getVAOs();
-		System.out.println("VAOs: " + vaos);
-		List<Integer> vbos = loader.getVBOs();
-		System.out.println("VBOs: " + vbos);
-
 		int tree2_x = -100;
 		int tree2_z = -70;
 		Entity tree2 = new Entity(treeModel, new Vector3f(tree2_x, terrain.getHeightOfTerrain(tree2_x, tree2_z), tree2_z), 0, 0, 0, 12);
