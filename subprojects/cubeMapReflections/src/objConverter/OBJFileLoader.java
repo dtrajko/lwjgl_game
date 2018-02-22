@@ -15,7 +15,7 @@ import renderEngine.Loader;
 
 public class OBJFileLoader {
 
-	private static final String RES_LOC = "res/";
+	private static final String RES_LOC = "resources/";
 
 	public static RawModel loadOBJ(String objFileName, Loader loader) {
 		FileReader isr = null;
@@ -23,7 +23,7 @@ public class OBJFileLoader {
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
-			System.err.println("File not found in res folder!");
+			System.err.println("File not found in resources folder!");
 			System.exit(-1);
 		}
 		BufferedReader reader = new BufferedReader(isr);

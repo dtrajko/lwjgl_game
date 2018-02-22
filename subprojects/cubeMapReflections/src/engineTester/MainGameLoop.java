@@ -31,6 +31,9 @@ public class MainGameLoop {
 		entities.add(new Entity(loadModel("dragon", loader), new Vector3f(-4, 1, 0), 0, 0.3f));
 
 		while(!Display.isCloseRequested()){
+			
+			DisplayManager.switchDisplayMode();
+
 			camera.move();
 			renderer.renderScene(entities, camera);
 			DisplayManager.updateDisplay();

@@ -32,6 +32,7 @@ public class EntityRenderer {
 	public void render(List<Entity> entities, Camera camera) {
 		shader.start();
 		shader.loadViewMatrix(camera);
+		bindEnvironmentMap();
 		for (Entity entity : entities) {
 			TexturedModel model = entity.getModel();
 			bindModelVao(model);
@@ -45,6 +46,11 @@ public class EntityRenderer {
 
 	public void cleanUp() {
 		shader.cleanUp();
+	}
+	
+	private void bindEnvironmentMap() {
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, environmentMap.getTexture());
 	}
 
 	private void bindModelVao(TexturedModel model) {

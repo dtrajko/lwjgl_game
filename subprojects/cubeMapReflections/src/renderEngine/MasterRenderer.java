@@ -17,8 +17,8 @@ public class MasterRenderer {
 	private static final String[] ENVIRO_MAP_SNOW = {"cposx", "cnegx", "cposy", "cnegy", "cposz", "cnegz"};
 	private static final String[] ENVIRO_MAP_LAKE = {"posx", "negx", "posy", "negy", "posz", "negz"};
 	private static final String[] ENVIRO_MAP_INSIDE = {"lposx", "lnegx", "lposy", "lnegy", "lposz", "lnegz"};
-	//private static final String[] ENVIRO_MAP_3 = {"cposx", "cnegx", "cposy", "cnegy", "cposz", "cnegz"};
-	
+	private static final String[] ENVIRO_MAP_FB = {"fb_posx", "fb_negx", "fb_posy", "fb_negy", "fb_posz", "fb_negz"};
+
 	private static final float FOV = 70;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000;
@@ -30,7 +30,7 @@ public class MasterRenderer {
 	
 	public MasterRenderer(Loader loader){
 		this.projectionMatrix = createProjectionMatrix();
-		CubeMap enviroMap = new CubeMap(ENVIRO_MAP_INSIDE, loader);
+		CubeMap enviroMap = new CubeMap(ENVIRO_MAP_FB, loader);
 		this.environmentRenderer = new SkyboxRenderer(enviroMap, projectionMatrix);
 		this.entityRenderer = new EntityRenderer(projectionMatrix, enviroMap);
 	}

@@ -17,6 +17,7 @@ public class StaticShader extends ShaderProgram{
 	private int location_viewMatrix;
 	private int location_modelTexture;
 	private int location_cameraPosition;
+	private int location_enviroMap;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -35,12 +36,14 @@ public class StaticShader extends ShaderProgram{
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_modelTexture = super.getUniformLocation("modelTexture");
-		this.location_cameraPosition = super.getUniformLocation("cameraPosition"); 
+		this.location_cameraPosition = super.getUniformLocation("cameraPosition");
+		location_enviroMap = super.getUniformLocation("enviroMap");
 		
 	}
 	
 	protected void connectTextureUnits(){
 		super.loadInt(location_modelTexture, 0);
+		super.loadInt(location_enviroMap, 1);
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix){
