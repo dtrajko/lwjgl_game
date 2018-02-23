@@ -63,6 +63,10 @@ public class GUIText {
 		this.centerText = centered;
 	}
 
+	public void setTextString(String textString) {
+		this.textString = textString;
+	}
+
 	/**
 	 * Remove the text from the screen.
 	 */

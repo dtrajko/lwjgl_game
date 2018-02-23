@@ -39,6 +39,7 @@ public class TextMaster {
 			texts.put(font, textBatch);
 		}
 		textBatch.add(text);
+		// System.out.println("Text map size: " + texts.size());
 	}
 
 	public static void removeText(GUIText text) {

@@ -65,8 +65,8 @@ public class MainGameLoop {
 		TextMaster.init(loader);
 		
 		FontType font2 = new FontType(loader.loadTexture("candara", 0), "candara");
-		GUIText text2 = new GUIText("A sample string of text!",
-			2.0f, font2, new Vector2f(-0.1f, 0.02f), 0.5f, true);
+		String sampleText = "A sample string of text!";
+		GUIText text2 = new GUIText(sampleText, 2.0f, font2, new Vector2f(0.02f, 0.02f), 0.5f, false);
 		text2.setColour(1.0f, 0.4f, 0.0f);
 		TextMaster.loadText(text2);
 
@@ -170,10 +170,9 @@ public class MainGameLoop {
 				new Vector3f(box3XL_x + 30, box3XL_y + 80, box3XL_z + 30)));
 
 		Entity pineTree1 = new Entity(pineTreeModel, new Vector3f(-300, terrain.getHeightOfTerrain(-300, -500) - 2, -500), 0, 0, 0, 5);
-		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(-255, terrain.getHeightOfTerrain(-255, -720) - 2, -720), 0, 0, 0, 5); // 
-		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(-380, terrain.getHeightOfTerrain(-380, -560) - 2, -560), 0, 0, 0, 5);
+		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(-255, terrain.getHeightOfTerrain(-255, -720) - 2, -720), 0, 0, 0, 5); 
+		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(-500, terrain.getHeightOfTerrain(-500, -490) - 2, -490), 0, 0, 0, 5);
 		Entity pineTree4 = new Entity(pineTreeModel, new Vector3f(-420, terrain.getHeightOfTerrain(-420, -480) - 2, -480), 0, 0, 0, 5);
-
 		Entity pineTree5 = new Entity(pineTreeModel, new Vector3f(-480, terrain.getHeightOfTerrain(-480, -560) - 2, -560), 0, 0, 0, 5);
 		Entity pineTree6 = new Entity(pineTreeModel, new Vector3f(-550, terrain.getHeightOfTerrain(-550, -610) - 2, -610), 0, 0, 0, 5);
 		Entity pineTree7 = new Entity(pineTreeModel, new Vector3f(-550, terrain.getHeightOfTerrain(-550, -660) - 2, -660), 0, 0, 0, 5);
@@ -355,6 +354,10 @@ public class MainGameLoop {
 
 				player.move(terrain);
 				camera.move();
+
+				// TextMaster.removeText(text2);
+				text2.setTextString(sampleText + " | FPS: " + DisplayManager.getFPS());
+				TextMaster.loadText(text2);
 
 				// mouse picker (dragging entities around)
 				if (picker.isDragEnabled()) {

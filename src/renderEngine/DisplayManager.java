@@ -22,7 +22,8 @@ public class DisplayManager {
 	private static long lastFrameTime;
 	private static float delta;
 
-	private static int fps;
+	private static int displayFps;
+	private static int currentFps;
 	private static long lastFPS;
 	
 	private static String title = "LWJGL Game";
@@ -33,15 +34,16 @@ public class DisplayManager {
 
 	public static void updateFPS() {
 	    if (getCurrentTime() - lastFPS > 1000) {
-	    	Display.setTitle(title + " | FPS: " + fps);
-	        fps = 0; //reset the FPS counter
+	    	displayFps = currentFps;
+	    	Display.setTitle(title + " | FPS: " + displayFps);
+	    	currentFps = 0; //reset the FPS counter
 	        lastFPS += 1000; //add one second
 	    }
-	    fps++;
+	    currentFps++;
 	}
-	
+
 	public static int getFPS() {
-		return fps;
+		return displayFps;
 	}
 
 	public static void createDisplay(){
