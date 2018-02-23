@@ -58,8 +58,8 @@ public class PostProcessing {
 			brightTexture = vBlur2.render(brightTexture);
 		}
 		// colourTexture = brightFilter.render(colourTexture);
-		combineFilter.render(colourTexture, brightTexture);
-		contrastChanger.render(colourTexture);
+		// contrastChanger.render(colourTexture);
+		combineFilter.render(colourTexture, colourTexture); // disable brightTexture
 		end();
 	}
 
