@@ -128,6 +128,9 @@ public class MainGameLoop {
 				new ModelTexture(loader.loadTexture("lantern")));
 		lanternModel.getTexture().setExtraInfoMap(loader.loadTexture("lanternS"));
 
+		TexturedModel houseModel = new TexturedModel(OBJFileLoader.loadOBJ("res/socuwan scene/Houses/model", loader), 
+				new ModelTexture(loader.loadTexture("res/socuwan scene/Houses/diffuse")));
+
 		int tree1_x = -722;
 		int tree1_z = -622;
 		Entity tree1 = new Entity(treeModel, new Vector3f(tree1_x, terrain.getHeightOfTerrain(tree1_x, tree1_z), tree1_z), 0, 0, 0, 14);
@@ -142,17 +145,14 @@ public class MainGameLoop {
 				new Vector3f(tree2_x - 2, terrain.getHeightOfTerrain(tree2_x - 2, tree2_z - 2), tree2_z - 2), 
 				new Vector3f(tree2_x + 2, terrain.getHeightOfTerrain(tree2_x + 2, tree2_z + 2) + 35, tree2_z + 2)));
 
-		int tree3_x = -220;
-		int tree3_z = -530;
+		int tree3_x = -170;
+		int tree3_z = -340;
 		Entity tree3 = new Entity(treeModel, new Vector3f(tree3_x, terrain.getHeightOfTerrain(tree3_x, tree3_z), tree3_z), 0, 0, 0, 12);
 		tree3.setAABB(new AABB(
 				new Vector3f(tree3_x - 2, terrain.getHeightOfTerrain(tree3_x - 2, tree3_z - 2), tree3_z - 2), 
 				new Vector3f(tree3_x + 2, terrain.getHeightOfTerrain(tree3_x + 2, tree3_z + 2) + 35, tree3_z + 2)));
 
-		Entity bobbleTree = new Entity(bobbleTreeModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -700), -700), 0, 0, 0, 2);
-
-		Entity cherry = new Entity(cherryModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -200), -200), 0, 0, 0, 5);
-		Entity lantern = new Entity(lanternModel, new Vector3f(-140, terrain.getHeightOfTerrain(-140, -450), -450), 0, 0, 0, 1.5f);
+		Entity bobbleTree = new Entity(bobbleTreeModel, new Vector3f(-50, terrain.getHeightOfTerrain(-50, -750), -750), 0, 0, 0, 2);
 				
 		Entity box1 = new Entity(boxModel, new Vector3f(-360, terrain.getHeightOfTerrain(-360, -350) + 20, -350), 0, 0, 0, 20);
 		box1.setAABB(new AABB(new Vector3f(-380, -10, -330), new Vector3f(-340, 42, -370)));
@@ -169,14 +169,14 @@ public class MainGameLoop {
 				new Vector3f(box3XL_x - 30, box3XL_y + 30, box3XL_z - 30), 
 				new Vector3f(box3XL_x + 30, box3XL_y + 80, box3XL_z + 30)));
 
-		Entity pineTree1 = new Entity(pineTreeModel, new Vector3f(-600, terrain.getHeightOfTerrain(-600, -300) - 2, -300), 0, 0, 0, 5);
-		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(-640, terrain.getHeightOfTerrain(-640, -260) - 2, -260), 0, 0, 0, 5);
-		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(-680, terrain.getHeightOfTerrain(-680, -260) - 2, -260), 0, 0, 0, 5);
-		Entity pineTree4 = new Entity(pineTreeModel, new Vector3f(-720, terrain.getHeightOfTerrain(-720, -280) - 2, -280), 0, 0, 0, 5);
+		Entity pineTree1 = new Entity(pineTreeModel, new Vector3f(-300, terrain.getHeightOfTerrain(-300, -500) - 2, -500), 0, 0, 0, 5);
+		Entity pineTree2 = new Entity(pineTreeModel, new Vector3f(-255, terrain.getHeightOfTerrain(-255, -720) - 2, -720), 0, 0, 0, 5); // 
+		Entity pineTree3 = new Entity(pineTreeModel, new Vector3f(-380, terrain.getHeightOfTerrain(-380, -560) - 2, -560), 0, 0, 0, 5);
+		Entity pineTree4 = new Entity(pineTreeModel, new Vector3f(-420, terrain.getHeightOfTerrain(-420, -480) - 2, -480), 0, 0, 0, 5);
 
-		Entity pineTree5 = new Entity(pineTreeModel, new Vector3f(-240, terrain.getHeightOfTerrain(-240, -50) - 2, -50), 0, 0, 0, 5);
-		Entity pineTree6 = new Entity(pineTreeModel, new Vector3f(-250, terrain.getHeightOfTerrain(-250, -110) - 2, -110), 0, 0, 0, 5);
-		Entity pineTree7 = new Entity(pineTreeModel, new Vector3f(-250, terrain.getHeightOfTerrain(-250, -160) - 2, -160), 0, 0, 0, 5);
+		Entity pineTree5 = new Entity(pineTreeModel, new Vector3f(-480, terrain.getHeightOfTerrain(-480, -560) - 2, -560), 0, 0, 0, 5);
+		Entity pineTree6 = new Entity(pineTreeModel, new Vector3f(-550, terrain.getHeightOfTerrain(-550, -610) - 2, -610), 0, 0, 0, 5);
+		Entity pineTree7 = new Entity(pineTreeModel, new Vector3f(-550, terrain.getHeightOfTerrain(-550, -660) - 2, -660), 0, 0, 0, 5);
 
 		Entity stall1 = new Entity(stallModel, new Vector3f(-660, terrain.getHeightOfTerrain(-660, -280), -280), 0, 0, 0, 3);
 		stall1.increaseRotation(0, 50f, 0);
@@ -218,6 +218,10 @@ public class MainGameLoop {
 		boulderModel.getTexture().setShineDamper(10);
 		boulderModel.getTexture().setReflectivity(0.5f);
 		Entity boulder = new Entity(boulderModel, new Vector3f(-536, 40, -402), 0, 0, 0, 2.0f);
+
+		Entity cherry = new Entity(cherryModel, new Vector3f(-200, terrain.getHeightOfTerrain(-200, -200), -200), 0, 0, 0, 5);
+		Entity lantern = new Entity(lanternModel, new Vector3f(-140, terrain.getHeightOfTerrain(-140, -450), -450), 0, 0, 0, 1.5f);
+		Entity house = new Entity(houseModel, new Vector3f(-390, terrain.getHeightOfTerrain(-390, -600) - 0, -600), 0, 0, 0, 14f);
 
 		// player
 		Player player = new Player(steveModel, new Vector3f(-40, terrain.getHeightOfTerrain(-40, -145) + 2, -145), 0, -70, 0, 4f);
@@ -273,6 +277,7 @@ public class MainGameLoop {
 		// entities.add(donut);
 		entities.add(cherry);
 		entities.add(lantern);
+		entities.add(house);
 
 		normalMapEntities.add(barrel);
 		normalMapEntities.add(crate);
@@ -295,7 +300,7 @@ public class MainGameLoop {
 		WaterFrameBuffers fbos = new WaterFrameBuffers();
 		WaterShader  waterShader = new WaterShader();
 		WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
-		WaterTile water = new WaterTile(-400, -400, -10f);
+		WaterTile water = new WaterTile(-400, -400, -5f);
 		waters.add(water);
 		
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4, true);
