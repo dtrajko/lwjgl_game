@@ -202,8 +202,11 @@ public class MainGameLoop {
 
 		int barrel_x = -685;
 		int barrel_z = -600;
-		Entity barrel = new Entity(barrelModel, new Vector3f(barrel_x, 10, barrel_z), 0, 0, 0, 5f);
-		barrel.setAABB(new AABB(new Vector3f(barrel_x - 2, 4, barrel_z - 2), new Vector3f(barrel_x + 2, 18, barrel_z + 2)));
+		int barrel_y = (int) terrain.getHeightOfTerrain(barrel_x, barrel_z) + 25;
+		Entity barrel = new Entity(barrelModel, new Vector3f(barrel_x, barrel_y, barrel_z), 0, 0, 0, 5f);
+		barrel.setAABB(new AABB(
+			new Vector3f(barrel_x - 15, barrel_y - 30, barrel_z - 15), 
+			new Vector3f(barrel_x + 15, barrel_y + 40, barrel_z + 15)));
 
 		TexturedModel crateModel = new TexturedModel(NormalMappedObjLoader.loadOBJ("crate", loader),
 				new ModelTexture(loader.loadTexture("crate")));
@@ -337,7 +340,11 @@ public class MainGameLoop {
 		Fbo outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		PostProcessing.init(loader);
 
+		DisplayManager.startFPS();
+
 		while(!Display.isCloseRequested()) {
+
+			DisplayManager.updateFPS();
 
 			DisplayManager.switchDisplayMode();
 
@@ -446,9 +453,9 @@ public class MainGameLoop {
 				}
 
 				if (player.getAABB().intersectAABB(barrel.getAABB()).isIntersecting()) {
-					barrel.increaseRotation(0, 4f, 0);
-					if (player.getPosition().y <= 16f) {
-						player.getPosition().y = 16f;
+					barrel.increaseRotation(0, 0.5f, 0);
+					if (player.getPosition().y <= barrel_y + 30f) {
+						player.getPosition().y = barrel_y + 30f;
 						player.setGravityEnabled(false);
 					} else {
 						player.setGravityEnabled(true);

@@ -22,6 +22,28 @@ public class DisplayManager {
 	private static long lastFrameTime;
 	private static float delta;
 
+	private static int fps;
+	private static long lastFPS;
+	
+	private static String title = "LWJGL Game";
+
+	public static void startFPS() {
+		lastFPS = getCurrentTime();
+	}
+
+	public static void updateFPS() {
+	    if (getCurrentTime() - lastFPS > 1000) {
+	    	Display.setTitle(title + " | FPS: " + fps);
+	        fps = 0; //reset the FPS counter
+	        lastFPS += 1000; //add one second
+	    }
+	    fps++;
+	}
+	
+	public static int getFPS() {
+		return fps;
+	}
+
 	public static void createDisplay(){
 		
 		ContextAttribs attribs = new ContextAttribs(3, 3)
@@ -32,7 +54,7 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			// DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
 			Display.create(new PixelFormat().withDepthBits(24), attribs); // .withSamples(8) - use multisampling
-			Display.setTitle("LWJGL Game");
+			Display.setTitle(title);
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 		} catch (LWJGLException e) {
 			e.printStackTrace();

@@ -26,27 +26,37 @@ public class PostProcessing {
 	private static VerticalBlur   vBlur2;
 	private static int BLUR_COEF_1 = 0;
 	private static int BLUR_COEF_2 = 0;
+	private static int BRIGHT_COEF = 0;
 
 	public static void init(Loader loader){
 		quad = loader.loadToVAO(POSITIONS, 2);
 		contrastChanger = new ContrastChanger();
-		brightFilter = new BrightFilter(Display.getWidth() / 2, Display.getHeight() / 2);
 		combineFilter = new CombineFilter();
 
-		int width1 = Display.getWidth();
-		int heigt1 = Display.getHeight();
-		int width2 = width1;
-		int heigt2 = heigt1;
-		if (BLUR_COEF_1 > 0 && BLUR_COEF_2 > 0) {
-			width1 /= BLUR_COEF_1;
-			heigt1 /= BLUR_COEF_1;
-			width2 /= BLUR_COEF_2;
-			heigt2 /= BLUR_COEF_2;
+		// bright filter
+		int widthBright = Display.getWidth();
+		int heigtBright = Display.getHeight();
+		if (BRIGHT_COEF > 0) {
+			widthBright /= BRIGHT_COEF;
+			heigtBright /= BRIGHT_COEF;
 		}
-		hBlur1 = new HorizontalBlur(width1, heigt1);
-		vBlur1 = new VerticalBlur(width1, heigt1);
-		hBlur2 = new HorizontalBlur(width2, heigt2);
-		vBlur2 = new VerticalBlur(width2, heigt2);
+		brightFilter = new BrightFilter(widthBright, heigtBright);
+
+		// blur filter
+		int widthBlur1 = Display.getWidth();
+		int heigtBlur1 = Display.getHeight();
+		int widthBlur2 = widthBlur1;
+		int heigtBlur2 = heigtBlur1;
+		if (BLUR_COEF_1 > 0 && BLUR_COEF_2 > 0) {
+			widthBlur1 /= BLUR_COEF_1;
+			heigtBlur1 /= BLUR_COEF_1;
+			widthBlur2 /= BLUR_COEF_2;
+			heigtBlur2 /= BLUR_COEF_2;
+		}
+		hBlur1 = new HorizontalBlur(widthBlur1, heigtBlur1);
+		vBlur1 = new VerticalBlur(widthBlur1, heigtBlur1);
+		hBlur2 = new HorizontalBlur(widthBlur2, heigtBlur2);
+		vBlur2 = new VerticalBlur(widthBlur2, heigtBlur2);
 	}
 
 	public static void doPostProcessing(int colourTexture, int brightTexture){
@@ -57,9 +67,9 @@ public class PostProcessing {
 			brightTexture = hBlur2.render(brightTexture);
 			brightTexture = vBlur2.render(brightTexture);
 		}
-		// colourTexture = brightFilter.render(colourTexture);
-		// contrastChanger.render(colourTexture);
-		combineFilter.render(colourTexture, colourTexture); // disable brightTexture
+		colourTexture = brightFilter.render(colourTexture);
+		contrastChanger.render(colourTexture);
+		combineFilter.render(colourTexture, brightTexture); // disable brightTexture
 		end();
 	}
 
