@@ -20,8 +20,8 @@ uniform float numberOfRows;
 uniform vec2 offset;
 uniform vec4 plane;
 
-const float density = 0.002;
-const float gradient = 1.0;
+const float density = 0;
+const float gradient = 1;
 
 void main(void) {
 

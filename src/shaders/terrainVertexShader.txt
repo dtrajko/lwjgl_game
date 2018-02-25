@@ -19,9 +19,9 @@ uniform float useFakeLighting;
 uniform vec4 plane;
 uniform mat4 toShadowMapSpace;
 
-const float density = 0.002;
-const float gradient = 1.0;
-const float shadowDistance = 150.0;
+const float density = 0;
+const float gradient = 1;
+const float shadowDistance = 200.0;
 const float transitionDistance = 10.0;
 
 void main(void) {
