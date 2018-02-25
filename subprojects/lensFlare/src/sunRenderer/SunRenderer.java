@@ -36,6 +36,7 @@ public class SunRenderer {
 
 	private void prepare(Sun sun, ICamera camera) {
 		OpenGlUtils.antialias(false);
+		GL11.glDepthMask(false);
 		OpenGlUtils.enableAlphaBlending();
 		shader.start();
 		Matrix4f mvpMat = calculateMvpMatrix(sun, camera);
@@ -76,6 +77,7 @@ public class SunRenderer {
 	}
 
 	private void endRendering() {
+		GL11.glDepthMask(true);
 		quad.unbind(0);
 		shader.stop();
 		OpenGlUtils.disableBlending();

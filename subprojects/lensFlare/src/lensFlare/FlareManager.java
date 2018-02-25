@@ -9,13 +9,13 @@ import utils.ICamera;
 
 public class FlareManager {
 
-	private static final Vector2f CENTER_SCREEN = new Vector2f(0.5f, 0.5f);
-	
+	private static final Vector2f CENTER_SCREEN = new Vector2f(0f, 0f);//center changed
+
 	private final FlareTexture[] flareTextures;
 	private final float spacing;
 
 	private FlareRenderer renderer;
-	
+
 	public FlareManager(float spacing, FlareTexture... textures) {
 		this.spacing = spacing;
 		this.flareTextures = textures;
@@ -23,20 +23,20 @@ public class FlareManager {
 	}
 
 	public void render(ICamera camera, Vector3f sunWorldPos) {
-		Vector2f sunCoords = this.convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), camera.getProjectionMatrix());
-		if (sunCoords == null) {
+		Vector2f sunCoords = convertToScreenSpace(sunWorldPos, camera.getViewMatrix(), camera.getProjectionMatrix());
+		if(sunCoords == null){
 			return;
 		}
 		Vector2f sunToCenter = Vector2f.sub(CENTER_SCREEN, sunCoords, null);
-		float brightness = 1 - (sunToCenter.length() / 0.6f);
-		if (brightness > 0) {
-			this.calcFlarePositions(sunToCenter, sunCoords);
-			renderer.render(flareTextures, brightness);
-		}	
+		float brightness = 1 - (sunToCenter.length() / 1.4f);//number doubled
+		if(brightness > 0){
+			calcFlarePositions(sunToCenter, sunCoords);
+			renderer.render(sunCoords, flareTextures, brightness);
+		}
 	}
-
-	private void calcFlarePositions(Vector2f sunToCenter, Vector2f sunCoords) {
-		for (int i = 0; i < this.flareTextures.length; i++) {
+	
+	private void calcFlarePositions(Vector2f sunToCenter, Vector2f sunCoords){
+		for(int i=0;i<flareTextures.length;i++){
 			Vector2f direction = new Vector2f(sunToCenter);
 			direction.scale(i * spacing);
 			Vector2f flarePos = Vector2f.add(sunCoords, direction, null);
@@ -51,13 +51,12 @@ public class FlareManager {
 		if (coords.w <= 0) {
 			return null;
 		}
-		float x = (coords.x / coords.w + 1) / 2f;
-		float y = 1 - ((coords.y / coords.w + 1) / 2f);
-		return new Vector2f(x, y);
+		//no need for conversion below
+		return new Vector2f(coords.x / coords.w, coords.y / coords.w);
 	}
 
 	public void cleanUp() {
 		renderer.cleanUp();
 	}
-		
+
 }

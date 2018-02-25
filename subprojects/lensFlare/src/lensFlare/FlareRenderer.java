@@ -2,8 +2,10 @@ package lensFlare;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.util.vector.Vector2f;
 
+import openglObjects.Query;
 import openglObjects.Vao;
 import utils.OpenGlUtils;
 
@@ -17,11 +19,17 @@ import utils.OpenGlUtils;
 public class FlareRenderer {
 
 	// 4 vertex positions for a 2D quad.
-	private static final float[] POSITIONS = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f, 0.5f };
+	private static final float[] POSITIONS = { -0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, -0.5f };
 
+	private static final float TEST_QUAD_WIDTH = 0.07f;
+	private static final float TEST_QUAD_HEIGHT = TEST_QUAD_WIDTH * Display.getWidth() / Display.getHeight();
+	private static final float TOTAL_SAMPLES = (float) Math.pow(TEST_QUAD_WIDTH * Display.getWidth() * 0.5f, 2) * 4;
 	// A VAO containing the quad's positions in attribute 0
 	private final Vao quad;
 	private final FlareShader shader;
+	private final Query query;
+
+	private float coverage = 0;
 
 	/**
 	 * Initializes the shader program, and creates a VAO for the quad, storing
@@ -29,6 +37,7 @@ public class FlareRenderer {
 	 */
 	public FlareRenderer() {
 		this.shader = new FlareShader();
+		this.query = new Query(GL15.GL_SAMPLES_PASSED);
 		this.quad = Vao.create();
 		quad.bind();
 		quad.storeData(4, POSITIONS);
@@ -46,18 +55,41 @@ public class FlareRenderer {
 	 *            - The brightness that all the FlareTextures should be rendered
 	 *            at.
 	 */
-	public void render(FlareTexture[] flares, float brightness) {
+	public void render(Vector2f sunScreenCoords, FlareTexture[] flares, float brightness) {
 		prepare(brightness);
+		doOcclusionTest(sunScreenCoords);
+		OpenGlUtils.enableAdditiveBlending();
+		OpenGlUtils.enableDepthTesting(false);
 		for (FlareTexture flare : flares) {
 			renderFlare(flare);
 		}
 		endRendering();
 	}
 
+	private void doOcclusionTest(Vector2f sunScreenCoords) {
+		if (query.isResultReady()) {
+			int visibleSamples = query.getResult();
+			this.coverage = Math.min(visibleSamples / TOTAL_SAMPLES, 1f);
+			// System.out.println("doOcclusionTest visibleSamples = " + visibleSamples);
+		}
+		if (!query.isInUse()) {
+			GL11.glColorMask(false, false, false, false);
+			GL11.glDepthMask(false);
+			query.start();
+			OpenGlUtils.enableDepthTesting(true);
+			shader.transform.loadVec4(sunScreenCoords.x, sunScreenCoords.y, TEST_QUAD_WIDTH, TEST_QUAD_HEIGHT);
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+			query.end();
+			GL11.glColorMask(true, true, true, true);
+			GL11.glDepthMask(true);
+		}
+	}
+
 	/**
 	 * Cleans up the shader program. To be used when the application is closed.
 	 */
 	public void cleanUp() {
+		query.delete();
 		shader.cleanUp();
 	}
 
@@ -81,11 +113,8 @@ public class FlareRenderer {
 	 */
 	private void prepare(float brightness) {
 		OpenGlUtils.antialias(false);
-		OpenGlUtils.enableAdditiveBlending();
-		OpenGlUtils.enableDepthTesting(false);
-		OpenGlUtils.cullBackFaces(false);
 		shader.start();
-		shader.brightness.loadFloat(brightness);
+		shader.brightness.loadFloat(brightness * coverage);
 		quad.bind(0);
 	}
 
@@ -125,7 +154,6 @@ public class FlareRenderer {
 		shader.stop();
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);
-		OpenGlUtils.cullBackFaces(true);
 	}
 
 }

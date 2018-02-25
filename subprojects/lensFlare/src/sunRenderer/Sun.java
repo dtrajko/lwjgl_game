@@ -23,8 +23,8 @@ public class Sun {
 		this.scale = scale;
 	}
 
-	public void setDirection(float x, float y, float z) {
-		lightDirection.set(x, y, z);
+	public void setDirection(Vector3f dir) {
+		lightDirection.set(dir);
 		lightDirection.normalise();
 	}
 
