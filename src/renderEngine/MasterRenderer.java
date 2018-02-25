@@ -7,6 +7,7 @@ import skybox.SkyboxRenderer;
 import terrains.Terrain;
 import models.TexturedModel;
 import normalMappingRenderer.NormalMappingRenderer;
+import scene.Scene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import org.lwjgl.util.vector.Vector4f;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
+import environmentMapRenderer.CubeMapCamera;
 
 public class MasterRenderer {
 
@@ -188,5 +190,9 @@ public class MasterRenderer {
 		terrainShader.cleanUp();
 		normalMapRenderer.cleanUp();
 		shadowMapRenderer.cleanUp();
+	}
+
+	public void renderLowQualityScene(Scene scene, CubeMapCamera camera) {
+		// TODO Auto-generated method stub
 	}
 }

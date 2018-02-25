@@ -12,6 +12,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import models.RawModel;
 import renderEngine.Loader;
+import utils.MyFile;
 
 public class OBJFileLoader {
 	
@@ -80,6 +81,68 @@ public class OBJFileLoader {
 				texturesArray, normalsArray);
 		int[] indicesArray = convertIndicesListToArray(indices);
 		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
+	}
+
+	public static ModelData loadOBJ(MyFile objFile) {
+		BufferedReader reader = null;
+		try {
+			reader = objFile.getReader();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			System.err.println("Couldn't find model file: " + objFile);
+			System.exit(-1);
+		}
+		String line;
+		List<Vertex> vertices = new ArrayList<Vertex>();
+		List<Vector2f> textures = new ArrayList<Vector2f>();
+		List<Vector3f> normals = new ArrayList<Vector3f>();
+		List<Integer> indices = new ArrayList<Integer>();
+		try {
+			while (true) {
+				line = reader.readLine();
+				if (line.startsWith("v ")) {
+					String[] currentLine = line.split(" ");
+					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]), (float) Float.valueOf(currentLine[3]));
+					Vertex newVertex = new Vertex(vertices.size(), vertex);
+					vertices.add(newVertex);
+
+				} else if (line.startsWith("vt ")) {
+					String[] currentLine = line.split(" ");
+					Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]));
+					textures.add(texture);
+				} else if (line.startsWith("vn ")) {
+					String[] currentLine = line.split(" ");
+					Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]), (float) Float.valueOf(currentLine[3]));
+					normals.add(normal);
+				} else if (line.startsWith("f ")) {
+					break;
+				}
+			}
+			while (line != null && line.startsWith("f ")) {
+				String[] currentLine = line.split(" ");
+				String[] vertex1 = currentLine[1].split("/");
+				String[] vertex2 = currentLine[2].split("/");
+				String[] vertex3 = currentLine[3].split("/");
+				processVertex(vertex1, vertices, indices);
+				processVertex(vertex2, vertices, indices);
+				processVertex(vertex3, vertices, indices);
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			System.err.println("Couldn't read model file: " + objFile);
+			System.exit(-1);
+		}
+		removeUnusedVertices(vertices);
+		float[] verticesArray = new float[vertices.size() * 3];
+		float[] texturesArray = new float[vertices.size() * 2];
+		float[] normalsArray = new float[vertices.size() * 3];
+		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray, texturesArray, normalsArray);
+		int[] indicesArray = convertIndicesListToArray(indices);
+		return new ModelData(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
 	}
 
 	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {

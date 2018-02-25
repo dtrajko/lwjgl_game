@@ -38,6 +38,12 @@ public class StaticShader extends ShaderProgram {
 	private int location_specularMap;
 	private int location_usesSpecularMap;
 
+	public Object projectionViewMatrix;
+
+	public Object lightDirection;
+
+	public Object plane;
+
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 		

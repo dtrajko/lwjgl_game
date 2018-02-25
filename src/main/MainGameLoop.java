@@ -1,4 +1,4 @@
-package engineTester;
+package main;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,10 +24,11 @@ import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
 import input.InputHelper;
+import lensFlare.FlareManager;
+import lensFlare.FlareTexture;
 import models.RawModel;
 import models.TexturedModel;
 import normalMappingObjConverter.NormalMappedObjLoader;
-import objConverter.ModelData;
 import objConverter.OBJFileLoader;
 import particles.ParticleMaster;
 import particles.ParticleSystemComplex;
@@ -38,12 +39,16 @@ import renderEngine.DisplayManager;
 import renderEngine.Loader;
 import renderEngine.MasterRenderer;
 import renderEngine.OBJLoader;
+import sunRenderer.Sun;
+import sunRenderer.SunRenderer;
 import renderEngine.Game;
 import terrains.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
+import textures.Texture;
 import toolbox.MousePicker;
+import utils.MyFile;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterShader;
@@ -235,8 +240,8 @@ public class MainGameLoop {
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
 
 		// lights
-		Light sun = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
-		lights.add(sun);
+		Light sun_light = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		lights.add(sun_light);
 		Entity lamp1 = new Entity(lampModel, new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) - 0.5f, -143), 0, 0, 0, 2);
 		Light light1 = new Light(new Vector3f(-270, terrain.getHeightOfTerrain(-270, -143) + 20, -143), new Vector3f(2f, 2f, 4f), new Vector3f(1f, 0.01f, 0.001f)); // blue
 		lights.add(light1);
@@ -285,15 +290,6 @@ public class MainGameLoop {
 		normalMapEntities.add(crate);
 		normalMapEntities.add(boulder);
 
-		GuiTexture gui_logo = new GuiTexture(loader.loadTexture("PlayStationLogo"), new Vector2f(-0.65f, -0.9f), new Vector2f(0.3f, 0.3f));
-		GuiTexture gui_health = new GuiTexture(loader.loadTexture("health"), new Vector2f(0.65f, -0.85f), new Vector2f(0.3f, 0.3f));
-		guis.add(gui_logo);
-		guis.add(gui_health);
-
-		// GuiTexture shadowMap = new GuiTexture(renderer.getShadowMapTexture(), 
-		//     new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f));
-		// guis.add(shadowMap);
-
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
@@ -338,6 +334,31 @@ public class MainGameLoop {
 		Fbo outputFbo = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		Fbo outputFbo2 = new Fbo(Display.getWidth(), Display.getHeight(), Fbo.DEPTH_TEXTURE);
 		PostProcessing.init(loader);
+
+		MyFile flareFolder = new MyFile("res", "lensFlare");
+		//loading textures for lens flare
+		Texture texture1 = Texture.newTexture(new MyFile(flareFolder, "tex1.png")).normalMipMap().create();
+		Texture texture2 = Texture.newTexture(new MyFile(flareFolder, "tex2.png")).normalMipMap().create();
+		Texture texture3 = Texture.newTexture(new MyFile(flareFolder, "tex3.png")).normalMipMap().create();
+		Texture texture4 = Texture.newTexture(new MyFile(flareFolder, "tex4.png")).normalMipMap().create();
+		Texture texture5 = Texture.newTexture(new MyFile(flareFolder, "tex5.png")).normalMipMap().create();
+		Texture texture6 = Texture.newTexture(new MyFile(flareFolder, "tex6.png")).normalMipMap().create();
+		Texture texture7 = Texture.newTexture(new MyFile(flareFolder, "tex7.png")).normalMipMap().create();
+		Texture texture8 = Texture.newTexture(new MyFile(flareFolder, "tex8.png")).normalMipMap().create();
+		Texture texture9 = Texture.newTexture(new MyFile(flareFolder, "tex9.png")).normalMipMap().create();
+		Texture sun = Texture.newTexture(new MyFile(flareFolder, "sun.png")).normalMipMap().create();
+
+		//set up lens flare
+		FlareManager lensFlare = new FlareManager(0.16f, new FlareTexture(texture6, 1f),
+				new FlareTexture(texture4, 0.46f), new FlareTexture(texture2, 0.2f), new FlareTexture(texture7, 0.1f), new FlareTexture(texture1, 0.04f),
+				new FlareTexture(texture3, 0.12f), new FlareTexture(texture9, 0.24f), new FlareTexture(texture5, 0.14f), new FlareTexture(texture1, 0.024f), new FlareTexture(texture7, 0.4f),
+				new FlareTexture(texture9, 0.2f), new FlareTexture(texture3, 0.14f), new FlareTexture(texture5, 0.6f), new FlareTexture(texture4, 0.8f),
+				new FlareTexture(texture8, 1.2f));
+
+		//init sun and set sun direction
+		Sun theSun = new Sun(sun, 40);
+		SunRenderer sunRenderer = new SunRenderer();
+		theSun.setDirection(WorldSettings.LIGHT_DIR);
 
 		DisplayManager.startFPS();
 
@@ -386,8 +407,8 @@ public class MainGameLoop {
 
 				ParticleMaster.update(camera);
 
-				renderer.renderShadowMap(normalMapEntities, sun);
-				renderer.renderShadowMap(entities, sun);
+				renderer.renderShadowMap(normalMapEntities, sun_light);
+				renderer.renderShadowMap(entities, sun_light);
 
 				GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 				
@@ -410,11 +431,17 @@ public class MainGameLoop {
 
 				multisampleFbo.bindFrameBuffer();
 				renderer.renderScene(entities, normalMapEntities, terrains, lights, camera, new Vector4f(0, -1, 0, 100000));
-				waterRenderer.render(waters, camera, sun);
+
+				waterRenderer.render(waters, camera, sun_light);
+				
+				// sunRenderer.render(theSun, camera);
+				// lensFlare.render(camera, theSun.getWorldPosition(camera.getPosition()));
+
 				ParticleMaster.renderParticles(camera);
 				multisampleFbo.unbindFrameBuffer();
 				multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT0, outputFbo);
 				multisampleFbo.resolveToFbo(GL30.GL_COLOR_ATTACHMENT1, outputFbo2);
+
 				// multisampleFbo.resolveToScreen();
 				PostProcessing.doPostProcessing(outputFbo.getColourTexture(), outputFbo2.getColourTexture());
 
