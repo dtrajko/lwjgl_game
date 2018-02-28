@@ -13,6 +13,7 @@ import scene.Scene;
 import sunRenderer.Sun;
 import sunRenderer.SunRenderer;
 import textures.Texture;
+import utils.DisplayManager;
 import utils.MyFile;
 
 public class MainApp {
@@ -59,6 +60,7 @@ public class MainApp {
 		theSun.setDirection(WorldSettings.LIGHT_DIR);
 
 		while (!Display.isCloseRequested()) {
+			DisplayManager.switchDisplayMode();
 			scene.getCamera().move();
 			scene.getAnimatedModel().update();
 			engine.renderScene(scene);

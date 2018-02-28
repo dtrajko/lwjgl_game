@@ -31,7 +31,7 @@ public class RenderEngine {
 	 * Updates the display.
 	 */
 	public void update() {
-		DisplayManager.update();
+		DisplayManager.updateDisplay();
 	}
 
 	/**
