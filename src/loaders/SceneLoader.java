@@ -93,6 +93,9 @@ public class SceneLoader {
 	private MyFile[] readEntityFiles(BufferedReader reader, MyFile sceneFile) {
 		try {
 			String line = reader.readLine();
+			if (line.isEmpty()) {
+				return new MyFile[0];
+			}
 			String[] names = line.split(LoaderSettings.SEPARATOR);
 			MyFile[] files = new MyFile[names.length];
 			for(int i=0;i<files.length;i++){
@@ -106,5 +109,4 @@ public class SceneLoader {
 			return null;
 		}
 	}
-
 }

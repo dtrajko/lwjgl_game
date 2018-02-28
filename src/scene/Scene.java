@@ -40,21 +40,15 @@ public class Scene {
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
-	public Scene(AnimatedModel model, ICamera cam) {
-		this.environmentMap = Texture.newEmptyCubeMap(256);
-		this.animatedModel = model;
-		this.camera = cam;
-	}
-
-	public Scene(ICamera camera, AnimatedModel model, Skybox sky) {
+	public Scene(ICamera camera, AnimatedModel animatedModel, Skybox sky) {
 		this.camera = camera;
 		this.sky = sky;
-		environmentMap = Texture.newEmptyCubeMap(256);
+		this.animatedModel = animatedModel;
+		environmentMap = Texture.newEmptyCubeMap(512);
 		waterTiles.add(new WaterTile(-20, 6, waterHeight));
 		waterTiles.add(new WaterTile(-10, 6, waterHeight));
 		waterTiles.add(new WaterTile(0, 6, waterHeight));
 		waterTiles.add(new WaterTile(10, 6, waterHeight));
-		this.animatedModel = model;
 	}
 
 	public Texture getEnvironmentMap(){
@@ -88,6 +82,7 @@ public class Scene {
 		for (Entity entity : standardEntities) {
 			entity.delete();
 		}
+		animatedModel.delete();
 		environmentMap.delete();
 	}
 

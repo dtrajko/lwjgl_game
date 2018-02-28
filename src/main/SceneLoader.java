@@ -24,15 +24,15 @@ public class SceneLoader {
 	 */
 	public static Scene loadScene(MyFile resFolder) {
 		ICamera camera = new Camera();
-		AnimatedModel entity = AnimatedModelLoader.loadEntity(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
+		AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
 				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
-		entity.doAnimation(animation);
+		animatedModel.doAnimation(animation);
 
 		SkyboxLoader skyLoader = new SkyboxLoader();
 		MyFile sceneFile = new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene");
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		Scene scene = new Scene(camera, entity, sky);
+		Scene scene = new Scene(camera, animatedModel, sky);
 		scene.setLightDirection(GeneralSettings.LIGHT_DIR);
 		return scene;
 	}

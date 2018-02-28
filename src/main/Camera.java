@@ -27,7 +27,7 @@ public class Camera implements ICamera {
 	private static final float NEAR_PLANE = 0.2f;
 	private static final float FAR_PLANE = 400;
 
-	private static final float Y_OFFSET = 5;
+	private static final float Y_OFFSET = 10;
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
