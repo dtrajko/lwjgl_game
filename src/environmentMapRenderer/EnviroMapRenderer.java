@@ -8,14 +8,13 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderEngine.MasterRenderer;
+import scene.ICamera;
 import scene.Scene;
 import textures.Texture;
 
 public class EnviroMapRenderer {
 
 	public static void renderEnvironmentMap(Texture cubeMap, Scene scene, Vector3f center, MasterRenderer renderer) {
-
-		CubeMapCamera camera = new CubeMapCamera(center);
 
 		//create fbo
 		int fbo = GL30.glGenFramebuffers();
@@ -40,13 +39,13 @@ public class EnviroMapRenderer {
 					GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubeMap.textureId, 0);
 			
 			//point camera in the right direction
-			camera.switchToFace(i);
-			
+			scene.getCamera().switchToFace(i);
+
 			//render scene to fbo, and therefore to the current face of the cubemap
-			renderer.renderLowQualityScene(scene, camera);
+			renderer.renderLowQualityScene(scene, scene.getCamera());
 
 		}
-		
+
 		//stop rendering to fbo
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());

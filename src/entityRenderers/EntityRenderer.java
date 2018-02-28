@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector4f;
 import openglObjects.Vao;
 import scene.Entity;
 import scene.Skin;
-import utils.ICamera;
+import scene.ICamera;
 import utils.OpenGlUtils;
 
 public class EntityRenderer {

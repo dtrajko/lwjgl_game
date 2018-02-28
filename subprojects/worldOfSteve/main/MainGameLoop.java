@@ -262,26 +262,23 @@ public class MainGameLoop {
 		entities.add(tree1);
 		entities.add(tree2);
 		entities.add(tree3);
-		entities.add(bobbleTree); // bobbleTree
+		entities.add(bobbleTree);
 		entities.add(pineTree1);
 		entities.add(pineTree2);
 		entities.add(pineTree3);
 		entities.add(pineTree4);
-		entities.add(pineTree5); // by the water
-		entities.add(pineTree6); // by the water
-		entities.add(pineTree7); // by the water
+		entities.add(pineTree5);
+		entities.add(pineTree6);
+		entities.add(pineTree7);
 		entities.add(box1);
 		entities.add(box2);
 		entities.add(box3XL);
-		// entities.add(box4);
-		// entities.add(box5);
 		entities.add(stall1);
 		entities.add(stall2);
 		entities.add(lamp1);
 		entities.add(lamp2);
 		entities.add(lamp3);
 		entities.add(lamp4);
-		// entities.add(donut);
 		entities.add(cherry);
 		entities.add(lantern);
 		entities.add(house);

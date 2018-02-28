@@ -7,7 +7,7 @@ public class LoaderSettings {
 	public static final MyFile RES_FOLDER = new MyFile("res");
 	
 	protected static final String ENTITIES_FOLDER = "entities";
-	protected static final String SKYBOX_FOLDER = "skybox";
+	public static final String SKYBOX_FOLDER = "skybox";
 	protected static final String[] SKYBOX_TEX_FILES = {"posX.png", "negX.png", "posY.png", "negY.png", "posZ.png", "negZ.png"};
 	protected static final float SKYBOX_SIZE = 100;
 	protected static final String ENTITY_LIST_FILE = "entityList.txt";

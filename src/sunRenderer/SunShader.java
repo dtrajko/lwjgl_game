@@ -25,16 +25,4 @@ public class SunShader extends ShaderProgram {
 		super.stop();
 	}
 
-	@Override
-	protected void bindAttributes() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

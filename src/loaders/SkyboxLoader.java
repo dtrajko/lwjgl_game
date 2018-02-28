@@ -6,7 +6,7 @@ import utils.MyFile;
 
 public class SkyboxLoader {
 
-	protected Skybox loadSkyBox(MyFile skyboxFolder) {
+	public Skybox loadSkyBox(MyFile skyboxFolder) {
 		MyFile[] textureFiles = getSkyboxTexFiles(skyboxFolder);
 		Texture cubeMap = Texture.newCubeMap(textureFiles);
 		return new Skybox(cubeMap, LoaderSettings.SKYBOX_SIZE);

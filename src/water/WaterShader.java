@@ -1,82 +1,47 @@
 package water;
 
-import org.lwjgl.util.vector.Matrix4f;
 import shaders.ShaderProgram;
-import toolbox.Maths;
-import entities.Camera;
-import entities.Light;
+import shaders.UniformFloat;
+import shaders.UniformMatrix;
+import shaders.UniformSampler;
+import shaders.UniformVec3;
+import utils.MyFile;
 
 public class WaterShader extends ShaderProgram {
 
-    private final static String VERTEX_FILE = "water/waterVertex.txt";
-    private final static String FRAGMENT_FILE = "water/waterFragment.txt";
+	private static final MyFile VERTEX_SHADER = new MyFile("water", "waterVertex.txt");
+	private static final MyFile FRAGMENT_SHADER = new MyFile("water", "waterFragment.txt");
 
-    private int location_modelMatrix;
-    private int location_viewMatrix;
-    private int location_projectionMatrix;
-    private int location_reflectionTexture;
-    private int location_refractionTexture;
-    private int location_dudvMap;
-    private int location_moveFactor;
-    private int location_cameraPosition;
-    private int location_normalMap;
-    private int location_lightColour;
-    private int location_lightPosition;
-    private int location_depthMap;
+	protected UniformMatrix modelMatrix = new UniformMatrix("modelMatrix");
+	protected UniformMatrix viewMatrix = new UniformMatrix("viewMatrix");
+	protected UniformMatrix projectionMatrix = new UniformMatrix("projectionMatrix");
 
-    public WaterShader() {
-        super(VERTEX_FILE, FRAGMENT_FILE);
-    }
+	protected UniformFloat moveFactor = new UniformFloat("moveFactor");
+	protected UniformVec3 cameraPosition = new UniformVec3("cameraPosition");
+	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
 
-    @Override
-    protected void bindAttributes() {
-        bindAttribute(0, "position");
-    }
+	private UniformSampler reflectionTexture = new UniformSampler("reflectionTexture");
+	private UniformSampler refractionTexture = new UniformSampler("refractionTexture");
+	private UniformSampler dudvMap = new UniformSampler("dudvMap");
+	private UniformSampler normalMap = new UniformSampler("normalMap");
+	private UniformSampler depthMap = new UniformSampler("depthMap");
 
-    @Override
-    protected void getAllUniformLocations() {
-        location_projectionMatrix = getUniformLocation("projectionMatrix");
-        location_viewMatrix = getUniformLocation("viewMatrix");
-        location_modelMatrix = getUniformLocation("modelMatrix");
-        location_reflectionTexture = getUniformLocation("reflectionTexture");
-        location_refractionTexture = getUniformLocation("refractionTexture");
-        location_dudvMap = getUniformLocation("dudvMap");
-        location_moveFactor = getUniformLocation("moveFactor");
-        location_cameraPosition = getUniformLocation("cameraPosition");
-        location_normalMap = getUniformLocation("normalMap");
-        location_lightColour = getUniformLocation("lightColour");
-        location_lightPosition = getUniformLocation("lightPosition");
-        location_depthMap = getUniformLocation("depthMap");
-    }
+	public WaterShader() {
+		super(VERTEX_SHADER, FRAGMENT_SHADER, "position");
+		super.storeAllUniformLocations(modelMatrix, viewMatrix, projectionMatrix, moveFactor,
+				cameraPosition, lightDirection, reflectionTexture, refractionTexture,
+				dudvMap, normalMap, depthMap);
+		connectTextureUnits();
+	}
 
-    public void connectTextureUnits() {
-    	super.loadInt(location_reflectionTexture, 0);
-    	super.loadInt(location_refractionTexture, 1);
-    	super.loadInt(location_dudvMap, 2);
-    	super.loadInt(location_normalMap, 3);
-    	super.loadInt(location_depthMap, 4);
-    }
+	private void connectTextureUnits() {
+		super.start();
+		reflectionTexture.loadTexUnit(0);
+		refractionTexture.loadTexUnit(1);
+		dudvMap.loadTexUnit(2);
+		normalMap.loadTexUnit(3);
+		depthMap.loadTexUnit(4);
+		super.stop();
+	}
 
-    public void loadLight(Light sun) {
-    	super.loadVector(location_lightColour, sun.getColour());
-    	super.loadVector(location_lightPosition, sun.getPosition());
-    }
-
-    public void loadMoveFactor(float factor) {
-    	super.loadFloat(location_moveFactor, factor);
-    }
-
-    public void loadProjectionMatrix(Matrix4f projection) {
-        loadMatrix(location_projectionMatrix, projection);
-    }
-
-    public void loadViewMatrix(Camera camera){
-        Matrix4f viewMatrix = Maths.createViewMatrix(camera);
-        loadMatrix(location_viewMatrix, viewMatrix);
-        super.loadVector(location_cameraPosition, camera.getPosition());
-    }
-
-    public void loadModelMatrix(Matrix4f modelMatrix){
-        loadMatrix(location_modelMatrix, modelMatrix);
-    }
 }

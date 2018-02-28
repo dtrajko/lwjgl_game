@@ -7,7 +7,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import utils.ICamera;
+import scene.ICamera;
 import utils.SmoothFloat;
 
 public class Camera implements ICamera{
@@ -188,5 +188,35 @@ public class Camera implements ICamera{
 		}
 		angleAroundPlayer.update(0.01f);
 	}
-	
+
+	@Override
+	public void switchToFace(int faceIndex) {
+		switch (faceIndex) {
+		case 0:
+			pitch = 0;
+			yaw = 90;
+			break;
+		case 1:
+			pitch = 0;
+			yaw = -90;
+			break;
+		case 2:
+			pitch = -90;
+			yaw = 180;
+			break;
+		case 3:
+			pitch = 90;
+			yaw = 180;
+			break;
+		case 4:
+			pitch = 0;
+			yaw = 180;
+			break;
+		case 5:
+			pitch = 0;
+			yaw = 0;
+			break;
+		}
+		updateViewMatrix();
+	}
 }

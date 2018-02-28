@@ -36,14 +36,4 @@ public class EntityShader extends ShaderProgram {
 		super.stop();
 	}
 
-	@Override
-	protected void bindAttributes() {
-		
-	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		// TODO Auto-generated method stub
-		
-	}
 }

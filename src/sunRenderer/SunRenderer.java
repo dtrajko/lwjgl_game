@@ -5,7 +5,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import openglObjects.Vao;
-import utils.ICamera;
+import scene.ICamera;
 import utils.OpenGlUtils;
 
 public class SunRenderer {

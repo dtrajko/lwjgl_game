@@ -3,12 +3,15 @@ package loaders;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import animatedModel.AnimatedModel;
+import animation.Animation;
 import extra.Camera;
+import main.GeneralSettings;
 import main.WorldSettings;
 import scene.Entity;
 import scene.Scene;
 import skybox.Skybox;
-import utils.ICamera;
+import scene.ICamera;
 import utils.MyFile;
 
 public class SceneLoader {
@@ -20,8 +23,8 @@ public class SceneLoader {
 		this.entityLoader = entityLoader;
 		this.skyLoader = skyLoader;
 	}
-
-	public Scene loadScene(MyFile sceneFile) {
+	
+	public Scene loadScene(MyFile resFolder, MyFile sceneFile) {
 		MyFile sceneList = new MyFile(sceneFile, LoaderSettings.ENTITY_LIST_FILE);
 		BufferedReader reader = getReader(sceneList);
 		MyFile[] terrainFiles = readEntityFiles(reader, sceneFile);
@@ -29,19 +32,24 @@ public class SceneLoader {
 		MyFile[] entityFiles = readEntityFiles(reader, sceneFile);
 		closeReader(reader);
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		return createScene(terrainFiles, entityFiles, shinyFiles, sky);
+		ICamera camera = new Camera();
+		AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
+				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
+		animatedModel.doAnimation(animation);
+		return createScene(animatedModel, terrainFiles, entityFiles, shinyFiles, sky);
 	}
 
-	private Scene createScene(MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, Skybox sky){
+	private Scene createScene(AnimatedModel animatedModel, MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, Skybox sky){
 		ICamera camera = new Camera();
-		Scene scene = new Scene(camera, sky);
+		Scene scene = new Scene(camera, animatedModel, sky);
 		scene.setLightDirection(WorldSettings.LIGHT_DIR);
 		addEntities(scene, entityFiles);
 		addShinyEntities(scene, shinyFiles);
 		addTerrains(scene, terrainFiles);
 		return scene;
 	}
-	
+
 	private void addEntities(Scene scene, MyFile[] entityFiles){
 		for(MyFile file : entityFiles){
 			Entity entity = entityLoader.loadEntity(file);
