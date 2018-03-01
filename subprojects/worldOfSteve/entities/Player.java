@@ -23,9 +23,6 @@ public class Player extends Entity {
 	private float upwardSpeed = 0;
 	
 	private boolean isInAir = false;
-	
-	private float speedCoeficient = 3;
-
 	private boolean gravityEnabled = true;
 
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
@@ -95,9 +92,9 @@ public class Player extends Entity {
 	public void checkInputs() {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			currentSpeed = RUN_SPEED * speedCoeficient;
+			currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			currentSpeed = -RUN_SPEED * speedCoeficient;
+			currentSpeed = -RUN_SPEED;
 		} else {
 			currentSpeed = 0;
 		}
@@ -113,27 +110,12 @@ public class Player extends Entity {
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
 		}
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-			speedCoeficient = 5;
-		} else {
-			speedCoeficient = 3;
-		}
-
 		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
 			System.out.println("Player location: "
 				+ " X = " + super.getPosition().x
 				+ " Y = " + super.getPosition().y
 				+ " Z = " + super.getPosition().z
 			);
-			/*
-			System.out.println("Player AABB location:"
-				+ " Min X = " + this.getAABB().getMinExtents().x
-				+ " Max X = " + this.getAABB().getMaxExtents().x
-				+ " Min Z = " + this.getAABB().getMinExtents().z
-				+ " Max Z = " + this.getAABB().getMaxExtents().z
-			);
-			*/
 		}
 	}
 	

@@ -7,6 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import entities.Player;
+import extra.Camera;
 import skybox.Skybox;
 import textures.Texture;
 import utils.MyFile;
@@ -41,8 +42,8 @@ public class Scene {
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
-	public Scene(ICamera camera, Player animatedPlayer, Skybox sky) {
-		this.camera = camera;
+	public Scene(Player animatedPlayer, Skybox sky) {
+		this.camera = new Camera();
 		camera.setScene(this);
 		this.sky = sky;
 		this.animatedPlayer = animatedPlayer;

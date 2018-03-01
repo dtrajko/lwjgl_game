@@ -66,14 +66,11 @@ public class RenderEngine {
 		WaterFrameBuffers waterFbos = new WaterFrameBuffers();
 		SkyboxRenderer skyRenderer = new SkyboxRenderer();
 		WaterRenderer waterRenderer = new WaterRenderer(waterFbos);
-		ShinyRenderer shinyRenderer = new ShinyRenderer();
-		MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, 
-				skyRenderer, waterRenderer, waterFbos, shinyRenderer);
+		MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, skyRenderer, waterRenderer, waterFbos);
 		return new RenderEngine(renderer);
 	}
 
 	public void renderEnvironmentMap(Texture enviroMap, Scene scene, Vector3f center){
 		EnviroMapRenderer.renderEnvironmentMap(enviroMap, scene, center, renderer);
 	}
-
 }

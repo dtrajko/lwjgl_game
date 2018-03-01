@@ -13,6 +13,7 @@ import scene.Scene;
 import sunRenderer.Sun;
 import sunRenderer.SunRenderer;
 import textures.Texture;
+import utils.DisplayManager;
 import utils.MyFile;
 
 public class MainApp {
@@ -60,6 +61,7 @@ public class MainApp {
 
 		System.out.println("Start the game loop.");
 
+		DisplayManager.startFPS();
 		while (!Display.isCloseRequested()) {
 			scene.getCamera().move();
 			scene.getAnimatedPlayer().update();

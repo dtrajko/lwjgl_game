@@ -1,6 +1,7 @@
 package entities;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
@@ -23,9 +24,6 @@ public class Player extends AnimatedModel {
 	private float upwardSpeed = 0;
 	
 	private boolean isInAir = false;
-	
-	private float speedCoeficient = 3;
-
 	private boolean gravityEnabled = true;
 
 	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
@@ -58,6 +56,9 @@ public class Player extends AnimatedModel {
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
+		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() +
+			" | PosX= " + Math.round(this.getPosition().x) + " PoxY= " + Math.round(this.getPosition().y) + " PosZ=" + Math.round(this.getPosition().z) +
+			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()));
 	}
 
 	public static float getHeight() {
@@ -70,9 +71,6 @@ public class Player extends AnimatedModel {
 
 	public void increasePosition(float dx, float dy, float dz) {
 		super.increasePosition(dx, dy, dz);
-		// dtrajko: experimental code for AABB
-		super.getAABB().setMinExtents(new Vector3f(super.getPosition().x - 2, super.getPosition().y - 2, super.getPosition().z - 2));
-		super.getAABB().setMaxExtents(new Vector3f(super.getPosition().x + 2, super.getPosition().y + 2, super.getPosition().z + 2));
 	}
 
 	// prevent shaking when standing on objects
@@ -98,30 +96,24 @@ public class Player extends AnimatedModel {
 
 	public void checkInputs() {
 
+		currentSpeed = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			currentSpeed = -RUN_SPEED * speedCoeficient;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			currentSpeed = RUN_SPEED * speedCoeficient;
-		} else {
-			currentSpeed = 0;
+			currentSpeed = -RUN_SPEED;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			currentSpeed = RUN_SPEED;
 		}
 
+		currentTurnSpeed = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			currentTurnSpeed = TURN_SPEED;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			currentTurnSpeed = -TURN_SPEED;
-		} else {
-			currentTurnSpeed = 0;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			currentTurnSpeed = TURN_SPEED;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
-		}
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
-			speedCoeficient = 5;
-		} else {
-			speedCoeficient = 3;
 		}
 	}
 

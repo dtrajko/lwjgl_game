@@ -23,7 +23,6 @@ public class SceneLoaderAux {
 	 * @return The entire scene.
 	 */
 	public static Scene loadScene(MyFile resFolder) {
-		ICamera camera = new CameraAux();
 		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
 				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
@@ -32,7 +31,7 @@ public class SceneLoaderAux {
 		SkyboxLoader skyLoader = new SkyboxLoader();
 		MyFile sceneFile = new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene");
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		Scene scene = new Scene(camera, animatedPlayer, sky);
+		Scene scene = new Scene(animatedPlayer, sky);
 		scene.setLightDirection(GeneralSettings.LIGHT_DIR);
 		return scene;
 	}

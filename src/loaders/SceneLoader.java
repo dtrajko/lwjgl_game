@@ -43,8 +43,7 @@ public class SceneLoader {
 	}
 
 	private Scene createScene(Player animatedPlayer, MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, Skybox sky){
-		ICamera camera = new Camera();
-		scene = new Scene(camera, animatedPlayer, sky);
+		scene = new Scene(animatedPlayer, sky);
 		scene.setLightDirection(WorldSettings.LIGHT_DIR);
 		addEntities(scene, entityFiles);
 		addShinyEntities(scene, shinyFiles);

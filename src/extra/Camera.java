@@ -11,38 +11,36 @@ import scene.Scene;
 import utils.SmoothFloat;
 
 public class Camera implements ICamera {
-	
-	private Scene scene;
 
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.5f;
 	private static final float FAR_PLANE = 1000;
 
 	private static final float ZOOM_COEF = 0.1f;
-	// private static final float PITCH_COEF = 0.15f;
+	private static final float PITCH_COEF = 0.15f;
 
 	private static final float DISTANCE_FROM_PLAYER = 20;
 	private static final float PITCH_THIRD_PERSON = 10;
 	private static final float PITCH_FIRST_PERSON = 10;
 
-	private static final float Y_OFFSET = 5;
+	private static final float Y_OFFSET = 10;
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
 
-	private Vector3f position = new Vector3f(0, 20, 10);
+	private Vector3f position = new Vector3f(0, 0, 0);
 
 	private float pitch = PITCH_THIRD_PERSON;
 	private float yaw = 0;
 	private float roll;
 
-	private float angleAroundPlayer = 180;
+	private float angleAroundPlayer = 0;
 	private float distanceFromPlayer = DISTANCE_FROM_PLAYER;
 	
 	// private Vector2f center = new Vector2f();
-	
-	private Player player;
 
+	private Scene scene;
+	private Player player = null;
 
 	private enum Perspective {
 		FIRST_PERSON,
@@ -54,6 +52,13 @@ public class Camera implements ICamera {
 	public Camera() {
 		this.projectionMatrix = createProjectionMatrix();
 		System.out.println("extra.Camera object instantiated.");
+	}
+
+	@Override
+	public void setScene(Scene scene) {
+		this.scene = scene;
+		this.player = scene.getAnimatedPlayer();
+		System.out.println("Camera set the Scene and the Player");
 	}
 
 	private void updateViewMatrix() {
@@ -82,41 +87,20 @@ public class Camera implements ICamera {
 	}
 
 	public void move() {
-		
-		this.player = scene.getAnimatedPlayer();
-
-		// checkInputs();
-		movePosition();
-		calculatePitch();
-		calculateAngleAroundPlayer();
-		calculateZoom();
-		float horizontalDistance = calculateHorizontalDistance();
-		float verticalDistance = calculateVerticalDistance();
-		calculateCameraPosition(horizontalDistance, verticalDistance);
-		this.yaw =360 - angleAroundPlayer;
+		if (this.player == null) {
+			this.player = scene.getAnimatedPlayer();
+		}
+		this.checkInputs();
+		this.calculateZoom();
+		this.calculatePitch();
+		this.calculateAngleAroundPlayer();
+		float horizontalDistance = this.calculateHorizontalDistance();
+		float verticalDistance = this.calculateVerticalDistance();
+		this.calculateCameraPosition(horizontalDistance, verticalDistance);
+		// change camera angle to point towards the player
+		this.yaw = 180 - (player.getRotY() + this.angleAroundPlayer);
 		yaw %= 360;
 		updateViewMatrix();
-		
-		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
-			System.out.println("Player position: " 
-				+ " X: " + player.getPosition().x 
-				+ " Y: " + player.getPosition().y
-				+ " Z: " + player.getPosition().z
-			);
-			System.out.println("Camera position: " 
-					+ " X: " + position.x
-					+ " Y: " + position.y
-					+ " Z: " + position.z
-					+ " distanceFromPlayer: " + distanceFromPlayer
-				);
-		}
-	}
-
-	private void movePosition() {
-		position.x = player.getPosition().x;
-		position.y = player.getPosition().y;
-		position.z = player.getPosition().z;
-		
 	}
 
 	public void invertPitch(){
@@ -149,7 +133,6 @@ public class Camera implements ICamera {
 		float offsetZ = (float) (horizDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
-		// position.y = verticDistance + Y_OFFSET;
 		position.y = player.getPosition().y + verticDistance + Y_OFFSET;
 	}
 
@@ -168,7 +151,7 @@ public class Camera implements ICamera {
 
 	private void calculatePitch(){
 		if(Mouse.isButtonDown(1)){
-			float pitchChange = Mouse.getDY() * 0.2f;
+			float pitchChange = Mouse.getDY() * PITCH_COEF;
 			pitch -= pitchChange;
 			if(pitch < -90f){
 				pitch = -90f;
@@ -203,11 +186,23 @@ public class Camera implements ICamera {
 				this.player.setRenderingEnabled(true);
 			}
 		}
-
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
 			// TODO move left sidewise
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			// TODO move right sidewise
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
+			System.out.println("Player position: " 
+				+ " X: " + player.getPosition().x 
+				+ " Y: " + player.getPosition().y
+				+ " Z: " + player.getPosition().z
+			);
+			System.out.println("Camera position: " 
+					+ " X: " + position.x
+					+ " Y: " + position.y
+					+ " Z: " + position.z
+					+ " distanceFromPlayer: " + distanceFromPlayer
+				);
 		}
 	}
 
@@ -262,11 +257,5 @@ public class Camera implements ICamera {
 			break;
 		}
 		updateViewMatrix();
-	}
-
-	@Override
-	public void setScene(Scene scene) {
-		this.scene = scene;
-		this.player = scene.getAnimatedPlayer();
 	}
 }

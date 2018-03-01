@@ -5,13 +5,9 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
 
 import entityRenderers.EntityRenderer;
-import environmentMapRenderer.CubeMapCamera;
-import openglObjects.Vao;
 import renderer.AnimatedModelRenderer;
 import scene.ICamera;
 import scene.Scene;
-import shinyRenderer.ShinyRenderer;
-import skybox.CubeGenerator;
 import skybox.SkyboxRenderer;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -28,7 +24,6 @@ public class MasterRenderer {
 	private SkyboxRenderer skyRenderer;
 	private AnimatedModelRenderer animModelRenderer;
 	private EntityRenderer entityRenderer;
-	private ShinyRenderer shinyRenderer;
 	private WaterRenderer waterRenderer;
 	private WaterFrameBuffers waterFbos;
 
@@ -38,13 +33,12 @@ public class MasterRenderer {
 	}
 
 	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, EntityRenderer entityRenderer, SkyboxRenderer skyRenderer, 
-			WaterRenderer waterRenderer, WaterFrameBuffers waterFbos, ShinyRenderer shinyRenderer) {
+			WaterRenderer waterRenderer, WaterFrameBuffers waterFbos) {
 		this.animModelRenderer = animModelRenderer;
 		this.entityRenderer = entityRenderer;
 		this.skyRenderer = skyRenderer;
 		this.waterRenderer = waterRenderer;
 		this.waterFbos = waterFbos;
-		this.shinyRenderer = shinyRenderer;
 	}
 
 	protected void renderScene(Scene scene) {
@@ -94,10 +88,9 @@ public class MasterRenderer {
 	private void renderMainPass(Scene scene){
 		prepare();
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
-		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
-		shinyRenderer.render(scene.getShinyEntities(), scene.getEnvironmentMap(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());
-		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
+		// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 	}
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){

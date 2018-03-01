@@ -32,6 +32,15 @@ public class DisplayManager {
 		lastFPS = getCurrentTime();
 	}
 
+	public static String getTitle() {
+		return TITLE;
+	}
+
+	public static void setTitle(String newTitle) {
+		title = newTitle;
+		Display.setTitle(title);
+	}
+
 	public static void updateFPS() {
 	    if (getCurrentTime() - lastFPS > 1000) {
 	    	displayFps = currentFps;
@@ -69,6 +78,7 @@ public class DisplayManager {
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime) / 1000f;
 		lastFrameTime = currentFrameTime;
+		updateFPS();
 	}
 
 	public static float getFrameTimeSeconds() {

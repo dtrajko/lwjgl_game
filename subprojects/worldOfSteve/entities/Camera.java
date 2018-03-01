@@ -12,8 +12,6 @@ import utils.ICamera;
 
 public class Camera implements ICamera {
 
-	
-	
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 300;
@@ -41,9 +39,9 @@ public class Camera implements ICamera {
 
 
 
-	private Player player;
 	private Terrain terrain = null;
-	
+	private Player player;
+
 	private enum Perspective {
 		FIRST_PERSON,
 		THIRD_PERSON,
@@ -87,7 +85,10 @@ public class Camera implements ICamera {
 	}
 
 	public void move() {
-		checkInputs();
+
+
+
+		this.checkInputs();
 		this.calculateZoom();
 		this.calculatePitch();
 		this.calculateAngleAroundPlayer();
@@ -96,6 +97,7 @@ public class Camera implements ICamera {
 		this.calculateCameraPosition(horizontalDistance, verticalDistance);
 		// change camera angle to point towards the player
 		this.yaw = 180 - (player.getRotY() + this.angleAroundPlayer);
+		yaw %= 360;
 		updateViewMatrix();
 	}
 
@@ -136,14 +138,8 @@ public class Camera implements ICamera {
 		return (float) (this.distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
 	}
 
-	private float calculateVerticalDistance() {
-		float verticalDistance;
-		if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
-			verticalDistance = player.getHeight();
-		} else {
-			verticalDistance = (float) (this.distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
-		}
-		return verticalDistance;
+	private float calculateVerticalDistance(){
+		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
 	}
 
 	private void calculateZoom() {
