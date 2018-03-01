@@ -1,9 +1,11 @@
 package animatedModel;
 
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import animation.Animation;
 import animation.Animator;
+import entities.Entity;
 import openglObjects.Vao;
 import textures.Texture;
 
@@ -19,7 +21,7 @@ import textures.Texture;
  * @author Karl
  *
  */
-public class AnimatedModel {
+public class AnimatedModel extends Entity {
 
 	// skin
 	private final Vao model;
@@ -53,7 +55,9 @@ public class AnimatedModel {
 	 *            this entity.
 	 * 
 	 */
-	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount) {
+	public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount, 
+			Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super(position, rotX, rotY, rotZ, scale);
 		this.model = model;
 		this.texture = texture;
 		this.rootJoint = rootJoint;

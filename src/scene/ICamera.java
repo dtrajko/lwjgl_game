@@ -12,5 +12,9 @@ public interface ICamera {
 	public Vector3f getPosition();
 	void reflect(float height);
 	public void switchToFace(int i);
+	public void setScene(Scene scene);
+	public double getPitch();
+	public double getYaw();
+	public double getRoll();
 
 }

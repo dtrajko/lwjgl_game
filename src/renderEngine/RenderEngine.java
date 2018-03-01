@@ -41,6 +41,7 @@ public class RenderEngine {
 	 *            - the game scene.
 	 */
 	public void renderScene(Scene scene) {
+		DisplayManager.switchDisplayMode();
 		renderer.renderScene(scene);
 	}
 
@@ -66,8 +67,8 @@ public class RenderEngine {
 		SkyboxRenderer skyRenderer = new SkyboxRenderer();
 		WaterRenderer waterRenderer = new WaterRenderer(waterFbos);
 		ShinyRenderer shinyRenderer = new ShinyRenderer();
-		MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, skyRenderer, waterRenderer, waterFbos,
-				shinyRenderer);
+		MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, 
+				skyRenderer, waterRenderer, waterFbos, shinyRenderer);
 		return new RenderEngine(renderer);
 	}
 

@@ -1,7 +1,7 @@
 package main;
 
-import animatedModel.AnimatedModel;
 import animation.Animation;
+import entities.Player;
 import loaders.AnimatedModelLoader;
 import loaders.AnimationLoader;
 import loaders.LoaderSettings;
@@ -11,7 +11,7 @@ import scene.Scene;
 import skybox.Skybox;
 import utils.MyFile;
 
-public class SceneLoader {
+public class SceneLoaderAux {
 
 	/**
 	 * Sets up the scene. Loads the entity, load the animation, tells the entity
@@ -23,16 +23,16 @@ public class SceneLoader {
 	 * @return The entire scene.
 	 */
 	public static Scene loadScene(MyFile resFolder) {
-		ICamera camera = new Camera();
-		AnimatedModel animatedModel = AnimatedModelLoader.loadEntity(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
+		ICamera camera = new CameraAux();
+		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
 				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
-		animatedModel.doAnimation(animation);
+		animatedPlayer.doAnimation(animation);
 
 		SkyboxLoader skyLoader = new SkyboxLoader();
 		MyFile sceneFile = new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene");
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		Scene scene = new Scene(camera, animatedModel, sky);
+		Scene scene = new Scene(camera, animatedPlayer, sky);
 		scene.setLightDirection(GeneralSettings.LIGHT_DIR);
 		return scene;
 	}

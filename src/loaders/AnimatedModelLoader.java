@@ -1,5 +1,7 @@
 package loaders;
 
+import org.lwjgl.util.vector.Vector3f;
+
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
 import colladaLoader.ColladaLoader;
@@ -7,6 +9,7 @@ import dataStructures.AnimatedModelData;
 import dataStructures.JointData;
 import dataStructures.MeshData;
 import dataStructures.SkeletonData;
+import entities.Player;
 import main.GeneralSettings;
 import openglObjects.Vao;
 import textures.Texture;
@@ -29,7 +32,16 @@ public class AnimatedModelLoader {
 		Texture texture = loadTexture(textureFile);
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = createJoints(skeletonData.headJoint);
-		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount);
+		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(), 0f, 0f, 0f, 1f);
+	}
+
+	public static Player loadPlayer(MyFile modelFile, MyFile textureFile) {
+		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, GeneralSettings.MAX_WEIGHTS);
+		Vao model = createVao(entityData.getMeshData());
+		Texture texture = loadTexture(textureFile);
+		SkeletonData skeletonData = entityData.getJointsData();
+		Joint headJoint = createJoints(skeletonData.headJoint);
+		return new Player(model, texture, headJoint, skeletonData.jointCount, new Vector3f(), 0f, 0f, 0f, 1f);
 	}
 
 	/**

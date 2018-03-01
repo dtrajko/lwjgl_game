@@ -13,7 +13,7 @@ import utils.ICamera;
 import utils.OpenGlUtils;
 
 public class EntityRenderer {
-	
+
 	private EntityShader shader;
 
 	public EntityRenderer() {
@@ -31,7 +31,7 @@ public class EntityRenderer {
 		}
 		finish();
 	}
-	
+
 	public void cleanUp(){
 		shader.cleanUp();
 	}
@@ -58,5 +58,4 @@ public class EntityRenderer {
 		shader.hasExtraMap.loadBoolean(skin.hasExtraMap());
 		OpenGlUtils.cullBackFaces(!skin.hasTransparency());
 	}
-
 }

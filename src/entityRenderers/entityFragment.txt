@@ -10,7 +10,7 @@ uniform sampler2D diffuseMap;
 uniform sampler2D extraMap;
 uniform float hasExtraMap;
 
-const vec2 center = vec2(-2.53, 3.42);
+const vec2 center = vec2(0, 0); // -2.53, 3.42
 
 //I want to use the glsl smoothstep function, but for some unknown reason it doesn't work on my laptop, but only when exported as a jar. Works fine in Eclipse!
 float smoothlyStep(float edge0, float edge1, float x){

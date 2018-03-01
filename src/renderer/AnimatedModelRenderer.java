@@ -3,12 +3,14 @@ package renderer;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import animatedModel.AnimatedModel;
-import scene.Entity;
+import entities.Entity;
 import scene.ICamera;
+import toolbox.Maths;
 import utils.OpenGlUtils;
 
 /**
@@ -49,6 +51,7 @@ public class AnimatedModelRenderer {
 		entity.getTexture().bindToUnit(0);
 		entity.getModel().bind(0, 1, 2, 3, 4);
 		shader.jointTransforms.loadMatrixArray(entity.getJointTransforms());
+		// prepareInstance(entity);
 		GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 		entity.getModel().unbind(0, 1, 2, 3, 4);
 		finish();
@@ -78,6 +81,12 @@ public class AnimatedModelRenderer {
 		OpenGlUtils.antialias(true);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);
+	}
+
+	public void prepareInstance(Entity entity) {
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
+				entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
+			shader.loadTransformationMatrix(transformationMatrix);
 	}
 
 	/**

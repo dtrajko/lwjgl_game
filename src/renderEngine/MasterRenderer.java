@@ -49,14 +49,13 @@ public class MasterRenderer {
 
 	protected void renderScene(Scene scene) {
 		prepare();
-		animModelRenderer.render(scene.getAnimatedModel(), scene.getCamera(), scene.getLightDirection());
+		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterRefractionPass(scene);
 		renderWaterReflectionPass(scene);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		renderMainPass(scene);
-
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class MasterRenderer {
 	
 	private void renderMainPass(Scene scene){
 		prepare();
-		animModelRenderer.render(scene.getAnimatedModel(), scene.getCamera(), scene.getLightDirection());
+		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
 		shinyRenderer.render(scene.getShinyEntities(), scene.getEnvironmentMap(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());

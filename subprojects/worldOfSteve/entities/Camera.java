@@ -12,6 +12,8 @@ import utils.ICamera;
 
 public class Camera implements ICamera {
 
+	
+	
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 300;
@@ -22,18 +24,23 @@ public class Camera implements ICamera {
 	private static final float DISTANCE_FROM_PLAYER = 60;
 	private static final float PITCH_THIRD_PERSON = 20;
 	private static final float PITCH_FIRST_PERSON = 15;
-	
+
+
+
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
 	
 	private Vector3f position = new Vector3f(0, 30, 30);
 
-	private float distanceFromPlayer = 60;
-	private float angleAroundPlayer = 0;
-
 	private float pitch = PITCH_THIRD_PERSON;
 	private float yaw = 0;
 	private float roll;
+
+	private float angleAroundPlayer = 0;
+	private float distanceFromPlayer = 60;
+
+
+
 	private Player player;
 	private Terrain terrain = null;
 	

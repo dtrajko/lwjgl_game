@@ -6,6 +6,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
+import entities.Player;
 import skybox.Skybox;
 import textures.Texture;
 import utils.MyFile;
@@ -30,7 +31,7 @@ public class Scene {
 
 	private final ICamera camera;
 
-	private final AnimatedModel animatedModel;
+	private final Player animatedPlayer;
 
 	private Vector3f lightDirection = new Vector3f(0, -1, 0);
 
@@ -40,10 +41,12 @@ public class Scene {
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
-	public Scene(ICamera camera, AnimatedModel animatedModel, Skybox sky) {
+	public Scene(ICamera camera, Player animatedPlayer, Skybox sky) {
 		this.camera = camera;
+		camera.setScene(this);
 		this.sky = sky;
-		this.animatedModel = animatedModel;
+		this.animatedPlayer = animatedPlayer;
+		System.out.println("animatedModel class: " + animatedPlayer.getClass());
 		environmentMap = Texture.newEmptyCubeMap(512);
 		waterTiles.add(new WaterTile(-20, 6, waterHeight));
 		waterTiles.add(new WaterTile(-10, 6, waterHeight));
@@ -62,8 +65,8 @@ public class Scene {
 		return camera;
 	}
 
-	public AnimatedModel getAnimatedModel() {
-		return animatedModel;
+	public Player getAnimatedPlayer() {
+		return animatedPlayer;
 	}
 
 	/**
@@ -82,7 +85,7 @@ public class Scene {
 		for (Entity entity : standardEntities) {
 			entity.delete();
 		}
-		animatedModel.delete();
+		animatedPlayer.delete();
 		environmentMap.delete();
 	}
 

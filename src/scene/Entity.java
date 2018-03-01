@@ -1,5 +1,7 @@
 package scene;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class Entity {
 	
 	private final Model model;
@@ -59,5 +61,4 @@ public class Entity {
 	public void setSeenUnderWater(boolean seenUnderWater) {
 		this.seenUnderWater = seenUnderWater;
 	}
-
 }

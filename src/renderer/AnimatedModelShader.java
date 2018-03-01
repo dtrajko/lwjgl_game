@@ -1,5 +1,8 @@
 package renderer;
 
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
+
 import shaders.ShaderProgram;
 import shaders.UniformMat4Array;
 import shaders.UniformMatrix;
@@ -14,6 +17,9 @@ public class AnimatedModelShader extends ShaderProgram {
 
 	private static final MyFile VERTEX_SHADER = new MyFile("renderer", "animatedEntityVertex.glsl");
 	private static final MyFile FRAGMENT_SHADER = new MyFile("renderer", "animatedEntityFragment.glsl");
+
+	private int location_transformationMatrix;
+	private int location_offset;
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
 	protected UniformVec3 lightDirection = new UniformVec3("lightDirection");
@@ -42,4 +48,11 @@ public class AnimatedModelShader extends ShaderProgram {
 		super.stop();
 	}
 
+	public void loadTransformationMatrix(Matrix4f matrix) {
+		super.loadMatrix(location_transformationMatrix, matrix);
+	}
+
+	public void loadOffset(float x, float y) {
+		super.load2DVector(location_offset, new Vector2f(x, y));
+	}
 }

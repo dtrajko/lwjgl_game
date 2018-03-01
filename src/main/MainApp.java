@@ -13,7 +13,6 @@ import scene.Scene;
 import sunRenderer.Sun;
 import sunRenderer.SunRenderer;
 import textures.Texture;
-import utils.DisplayManager;
 import utils.MyFile;
 
 public class MainApp {
@@ -30,8 +29,8 @@ public class MainApp {
 
 		RenderEngine engine = RenderEngine.init();
 		SceneLoader loader = SceneLoaderFactory.createSceneLoader();
+		
 		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
-
 		engine.renderEnvironmentMap(scene.getEnvironmentMap(), scene, new Vector3f(0, 2, 0));
 
 		MyFile flareFolder = new MyFile("res", "lensFlare");
@@ -59,10 +58,11 @@ public class MainApp {
 		SunRenderer sunRenderer = new SunRenderer();
 		theSun.setDirection(WorldSettings.LIGHT_DIR);
 
+		System.out.println("Start the game loop.");
+
 		while (!Display.isCloseRequested()) {
-			DisplayManager.switchDisplayMode();
 			scene.getCamera().move();
-			scene.getAnimatedModel().update();
+			scene.getAnimatedPlayer().update();
 			engine.renderScene(scene);
 			sunRenderer.render(theSun, scene.getCamera());
 			lensFlare.render(scene.getCamera(), theSun.getWorldPosition(scene.getCamera().getPosition()));

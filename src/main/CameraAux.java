@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import scene.ICamera;
+import scene.Scene;
 import utils.DisplayManager;
 import utils.SmoothFloat;
 
@@ -17,7 +18,9 @@ import utils.SmoothFloat;
  * @author Karl
  *
  */
-public class Camera implements ICamera {
+public class CameraAux implements ICamera {
+
+	private Scene scene;
 
 	private static final float PITCH_SENSITIVITY = 0.3f;
 	private static final float YAW_SENSITIVITY = 0.3f;
@@ -35,11 +38,12 @@ public class Camera implements ICamera {
 	private Vector3f position = new Vector3f(0, 0, 0);
 
 	private float yaw = 0;
+	private float roll = 0;
 	private SmoothFloat pitch = new SmoothFloat(10, 10);
 	private SmoothFloat angleAroundPlayer = new SmoothFloat(0, 10);
 	private SmoothFloat distanceFromPlayer = new SmoothFloat(10, 5);
 
-	public Camera() {
+	public CameraAux() {
 		this.projectionMatrix = createProjectionMatrix();
 	}
 
@@ -193,5 +197,25 @@ public class Camera implements ICamera {
 			break;
 		}
 		updateViewMatrix();
+	}
+
+	@Override
+	public void setScene(Scene scene) {
+		this.scene = scene;
+	}
+
+	@Override
+	public double getPitch() {
+		return pitch.get();
+	}
+
+	@Override
+	public double getYaw() {
+		return yaw;
+	}
+
+	@Override
+	public double getRoll() {
+		return roll;
 	}
 }

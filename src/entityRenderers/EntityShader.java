@@ -11,8 +11,7 @@ import utils.MyFile;
 public class EntityShader extends ShaderProgram {
 
 	private static final MyFile VERTEX_SHADER = new MyFile("entityRenderers", "entityVertex.txt");
-	private static final MyFile FRAGMENT_SHADER = new MyFile("entityRenderers",
-			"entityFragment.txt");
+	private static final MyFile FRAGMENT_SHADER = new MyFile("entityRenderers", "entityFragment.txt");
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
 	protected UniformBoolean hasExtraMap = new UniformBoolean("hasExtraMap");
