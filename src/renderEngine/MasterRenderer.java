@@ -7,10 +7,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
 
-import entities.Player;
 import entityRenderers.EntityRenderer;
 import renderer.AnimatedModelRenderer;
-import scene.Entity;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;

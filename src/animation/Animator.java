@@ -65,12 +65,16 @@ public class Animator {
 	 * time of the animation, and then applies that pose to all the model's
 	 * joints by setting the joint transforms.
 	 */
-	public void update() {
+	public void update(float speed) {
 		if (currentAnimation == null) {
 			return;
 		}
+		if (speed == 0) {
+			this.animationTime = 0;
+			return;
+		}
 		increaseAnimationTime();
-		Map<String, Matrix4f> currentPose = calculateCurrentAnimationPose();
+		Map<String, Matrix4f> currentPose = calculateCurrentAnimationPose(speed);
 		applyPoseToJoints(currentPose, entity.getRootJoint(), new Matrix4f());
 	}
 
@@ -105,7 +109,7 @@ public class Animator {
 	 *         for all the joints. The transforms are indexed by the name ID of
 	 *         the joint that they should be applied to.
 	 */
-	private Map<String, Matrix4f> calculateCurrentAnimationPose() {
+	private Map<String, Matrix4f> calculateCurrentAnimationPose(float speed) {
 		KeyFrame[] frames = getPreviousAndNextFrames();
 		float progression = calculateProgression(frames[0], frames[1]);
 		return interpolatePoses(frames[0], frames[1], progression);

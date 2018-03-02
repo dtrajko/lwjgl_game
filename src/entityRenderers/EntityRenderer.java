@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector4f;
 
 import entities.Player;
 import openglObjects.Vao;
-import scene.Entity;
+import scene.SceneEntity;
 import scene.Skin;
 import scene.ICamera;
 import utils.OpenGlUtils;
@@ -21,9 +21,9 @@ public class EntityRenderer {
 		this.shader = new EntityShader();
 	}
 
-	public void render(List<Entity> entities, ICamera camera, Vector3f lightDir, Vector4f clipPlane) {
+	public void render(List<SceneEntity> entities, ICamera camera, Vector3f lightDir, Vector4f clipPlane) {
 		prepare(camera, lightDir, clipPlane);
-		for (Entity entity : entities) {
+		for (SceneEntity entity : entities) {
 			prepareSkin(entity.getSkin());
 			Vao model = entity.getModel().getVao();
 			model.bind(0, 1, 2);

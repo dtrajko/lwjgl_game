@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import openglObjects.Vao;
-import scene.Entity;
+import scene.SceneEntity;
 import textures.Texture;
 import scene.ICamera;
 import utils.OpenGlUtils;
@@ -19,9 +19,9 @@ public class ShinyRenderer {
 		this.shader = new ShinyShader();
 	}
 
-	public void render(List<Entity> shinyEntities, Texture enviromap, ICamera camera, Vector3f lightDir) {
+	public void render(List<SceneEntity> shinyEntities, Texture enviromap, ICamera camera, Vector3f lightDir) {
 		prepare(camera, lightDir, enviromap);
-		for (Entity entity : shinyEntities) {
+		for (SceneEntity entity : shinyEntities) {
 			entity.getSkin().getDiffuseTexture().bindToUnit(0);
 			Vao model = entity.getModel().getVao();
 			model.bind(0, 1, 2);

@@ -27,11 +27,11 @@ public class Camera implements ICamera {
 	private static final float NEAR_PLANE = 0.5f;
 	private static final float FAR_PLANE = 1000;
 
-	private static final float DISTANCE_FROM_PLAYER = 20;
+	private static final float DISTANCE_FROM_PLAYER = 4;
 	private static final float PITCH_THIRD_PERSON = 10;
 	private static final float PITCH_FIRST_PERSON = 10;
 
-	private static final float Y_OFFSET = 10;
+	private static final float Y_OFFSET = 2;
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
@@ -141,7 +141,7 @@ public class Camera implements ICamera {
 		float offsetZ = (float) (horizDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
-		position.y = verticDistance + Y_OFFSET - player.getPosition().y;
+		position.y = player.getPosition().y + verticDistance + Y_OFFSET;
 	}
 
 	/**

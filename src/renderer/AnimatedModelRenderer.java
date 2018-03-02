@@ -1,13 +1,10 @@
 package renderer;
 
-import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 import animatedModel.AnimatedModel;
 import entities.Entity;
-import entityRenderers.EntityShader;
 import scene.ICamera;
 import toolbox.Maths;
 import utils.OpenGlUtils;
@@ -24,14 +21,12 @@ import utils.OpenGlUtils;
 public class AnimatedModelRenderer {
 
 	private AnimatedModelShader shader;
-	// private EntityShader shader;
 
 	/**
 	 * Initializes the shader program used for rendering animated models.
 	 */
 	public AnimatedModelRenderer() {
 		this.shader = new AnimatedModelShader();
-		// this.shader = new EntityShader();
 	}
 
 	/**
@@ -48,11 +43,10 @@ public class AnimatedModelRenderer {
 	 *            - the direction of the light in the scene.
 	 */
 	public void render(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
-		prepare(camera, lightDir);
+		prepare(entity, camera, lightDir);
 		entity.getTexture().bindToUnit(0);
 		entity.getModel().bind(0, 1, 2, 3, 4);
 		shader.jointTransforms.loadMatrixArray(entity.getJointTransforms());
-		// prepareInstance(entity);
 		GL11.glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
 		entity.getModel().unbind(0, 1, 2, 3, 4);
 		finish();
@@ -75,19 +69,20 @@ public class AnimatedModelRenderer {
 	 * @param lightDir
 	 *            - the direction of the light in the scene.
 	 */
-	private void prepare(ICamera camera, Vector3f lightDir) {
+	private void prepare(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
 		shader.start();
 		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		shader.transformationMatrix.loadMatrix(getTransformationMatrix(entity));
 		shader.lightDirection.loadVec3(lightDir);
 		OpenGlUtils.antialias(true);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);
 	}
 
-	public void prepareInstance(Entity entity) {
+	public Matrix4f getTransformationMatrix(Entity entity) {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
 				entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
-			shader.loadTransformationMatrix(transformationMatrix);
+			return transformationMatrix;
 	}
 
 	/**

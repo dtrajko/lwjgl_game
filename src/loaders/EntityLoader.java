@@ -1,6 +1,6 @@
 package loaders;
 
-import scene.Entity;
+import scene.SceneEntity;
 import scene.Model;
 import scene.Skin;
 import utils.MyFile;
@@ -17,11 +17,11 @@ public class EntityLoader {
 		this.configsLoader = configsLoader;
 	}
 	
-	protected Entity loadEntity(MyFile entityFile){
+	protected SceneEntity loadEntity(MyFile entityFile){
 		Model model = modelLoader.loadModel(new MyFile(entityFile, LoaderSettings.MODEL_FILE));
 		Configs configs = configsLoader.loadConfigs(new MyFile(entityFile, LoaderSettings.CONFIGS_FILE));
 		Skin skin = loadSkin(entityFile, configs);
-		Entity entity = new Entity(model, skin);
+		SceneEntity entity = new SceneEntity(model, skin);
 		setEntityConfigs(entity, configs);
 		return entity;
 	}
@@ -38,7 +38,7 @@ public class EntityLoader {
 		return skin;
 	}
 	
-	private void setEntityConfigs(Entity entity, Configs configs){
+	private void setEntityConfigs(SceneEntity entity, Configs configs){
 		entity.setCastsShadow(configs.castsShadow());
 		entity.setHasReflection(configs.hasReflection());
 		entity.setSeenUnderWater(configs.hasRefraction());

@@ -16,14 +16,14 @@ uniform sampler2D depthMap;
 
 uniform float moveFactor;
 
-const float waveStrength = 0.01;
-const float shineDamper = 30.0;
-const float reflectivity = 0.9;
+const float waveStrength = 0.03;
+const float shineDamper = 10.0;
+const float reflectivity = 3.0;
 const vec3 waterColour = vec3(0.0, 0.3, 0.5);
 
-const vec2 center = vec2(-2.53, 3.42);
+const vec2 center = vec2(0, 0);
 
-const int blurSize = 4;
+const int blurSize = 10;
 const float blurSampleCount = (blurSize * 2.0) + 1.0;
 const float textureHeight = 360.0;
 const float texelSize = 1.0 / textureHeight;
@@ -69,7 +69,7 @@ void main(void) {
 	reflectColour /= blurSampleCount;
 	
 	vec4 refractColour = texture(refractionTexture, refractTexCoords);
-	refractColour = mix(refractColour, vec4(waterColour, 1.0), clamp(waterDepth/70.0, 0.0, 1.0));
+	refractColour = mix(refractColour, vec4(waterColour, 1.0), clamp(waterDepth/10.0, 0.0, 1.0));
 	
 	vec4 normalMapColour = texture(normalMap, distortedTexCoords);
 	vec3 normal = vec3(normalMapColour.r * 2.0 - 1.0, normalMapColour.b*3.0, normalMapColour.g * 2.0 - 1.0);
@@ -89,7 +89,7 @@ void main(void) {
 	out_Color = mix(out_Color, vec4(waterColour, 1.0), 0.2);
 	out_Color.a = clamp(waterDepth/0.5, 0.0, 1.0);
 	
-	float disFactor = smoothlyStep(15.0, 16.0, distance(center, pass_pos));
+	float disFactor = smoothlyStep(29.0, 30.0, distance(center, pass_pos));
 	out_Color.rgb = mix(out_Color.rgb, vec3(1.0), disFactor);
 	
 }

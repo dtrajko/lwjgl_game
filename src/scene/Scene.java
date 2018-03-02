@@ -22,12 +22,11 @@ import water.WaterTile;
  */
 public class Scene {
 
-	private List<Entity> standardEntities = new ArrayList<Entity>();
-	private List<Entity> reflectableEntities = new ArrayList<Entity>();
-	private List<Entity> underwaterEntities = new ArrayList<Entity>();
-	private List<Entity> importantEntities = new ArrayList<Entity>();
-	private List<Entity> shinyEntities = new ArrayList<Entity>();
-	private List<Entity> animatedEntities = new ArrayList<Entity>();
+	private List<SceneEntity> standardEntities = new ArrayList<SceneEntity>();
+	private List<SceneEntity> reflectableEntities = new ArrayList<SceneEntity>();
+	private List<SceneEntity> underwaterEntities = new ArrayList<SceneEntity>();
+	private List<SceneEntity> importantEntities = new ArrayList<SceneEntity>();
+	private List<SceneEntity> shinyEntities = new ArrayList<SceneEntity>();
 
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 
@@ -48,11 +47,9 @@ public class Scene {
 		camera.setScene(this);
 		this.sky = sky;
 		this.animatedPlayer = animatedPlayer;
-		System.out.println("animatedModel class: " + animatedPlayer.getClass());
-		environmentMap = Texture.newEmptyCubeMap(512);
-		waterTiles.add(new WaterTile(-18, 6, waterHeight));
-		waterTiles.add(new WaterTile(-10, 6, waterHeight));
-		waterTiles.add(new WaterTile(-2, 6, waterHeight));
+		environmentMap = Texture.newEmptyCubeMap(256);
+		waterTiles.add(new WaterTile(-16, 6, waterHeight));
+		waterTiles.add(new WaterTile(-6, 6, waterHeight));
 		waterTiles.add(new WaterTile(4, 6, waterHeight));
 	}
 
@@ -84,14 +81,14 @@ public class Scene {
 
 	public void delete() {
 		sky.delete();
-		for (Entity entity : standardEntities) {
+		for (SceneEntity entity : standardEntities) {
 			entity.delete();
 		}
 		animatedPlayer.delete();
 		environmentMap.delete();
 	}
 
-	public void addEntity(Entity entity) {
+	public void addEntity(SceneEntity entity) {
 		standardEntities.add(entity);
 		if(entity.isSeenUnderWater()){
 			underwaterEntities.add(entity);
@@ -102,12 +99,9 @@ public class Scene {
 		if(entity.isImportant()){
 			importantEntities.add(entity);
 		}
-		if(entity.isAnimated()) {
-			this.animatedEntities.add(entity);
-		}
 	}
 
-	public void addShiny(Entity entity){
+	public void addShiny(SceneEntity entity){
 		if(entity.isSeenUnderWater()){
 			underwaterEntities.add(entity);
 		}
@@ -117,15 +111,14 @@ public class Scene {
 		shinyEntities.add(entity);
 	}
 
-	public void addTerrain(Entity terrain) {
+	public void addTerrain(SceneEntity terrain) {
 		standardEntities.add(terrain);
 		importantEntities.add(terrain);
 		reflectableEntities.add(terrain);
 		underwaterEntities.add(terrain);
-		animatedEntities.add(terrain);
 	}
 
-	public List<Entity> getImportantEntities() {
+	public List<SceneEntity> getImportantEntities() {
 		return importantEntities;
 	}
 
@@ -133,24 +126,20 @@ public class Scene {
 		return sky;
 	}
 
-	public List<Entity> getReflectedEntities() {
+	public List<SceneEntity> getReflectedEntities() {
 		return reflectableEntities;
 	}
 
-	public List<Entity> getUnderwaterEntities() {
+	public List<SceneEntity> getUnderwaterEntities() {
 		return underwaterEntities;
 	}
 
-	public List<Entity> getAllEntities() {
+	public List<SceneEntity> getAllEntities() {
 		return standardEntities;
 	}
 
-	public List<Entity> getShinyEntities() {
+	public List<SceneEntity> getShinyEntities() {
 		return shinyEntities;
-	}
-
-	public List<Entity> getAnimatedEntities() {
-		return animatedEntities;
 	}
 
 	public float getWaterHeight(){

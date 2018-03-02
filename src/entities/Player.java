@@ -1,20 +1,18 @@
 package entities;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
 import openglObjects.Vao;
-import scene.Skin;
 import textures.Texture;
 import utils.DisplayManager;
 
 public class Player extends AnimatedModel {
 
 	private static final float VERTICAL_OFFSET = -5;
-	private static final float RUN_SPEED = 20;
+	private static final float RUN_SPEED = 10;
 	private static final float TURN_SPEED = 160;
 	private static final float GRAVITY = -20;
 	private static final float JUMP_POWER = 10;
@@ -31,10 +29,9 @@ public class Player extends AnimatedModel {
 		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);
 	}
 
-	@Override
 	public void update() {
 		move();
-		super.update();
+		super.update(currentSpeed);
 	}
 
 	public void move() {
@@ -60,7 +57,8 @@ public class Player extends AnimatedModel {
 		}
 		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() +
 			" | PosX= " + Math.round(this.getPosition().x) + " PoxY= " + Math.round(this.getPosition().y) + " PosZ=" + Math.round(this.getPosition().z) +
-			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()));
+			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()) +
+			" | Speed=" + currentSpeed);
 	}
 
 	public static float getHeight() {
@@ -100,18 +98,18 @@ public class Player extends AnimatedModel {
 
 		currentSpeed = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			currentSpeed = -RUN_SPEED;
+			currentSpeed = RUN_SPEED;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			currentSpeed = RUN_SPEED;
+			currentSpeed = -RUN_SPEED;
 		}
 
 		currentTurnSpeed = 0;
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			currentTurnSpeed = -TURN_SPEED;
+			currentTurnSpeed = TURN_SPEED;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			currentTurnSpeed = TURN_SPEED;
+			currentTurnSpeed = -TURN_SPEED;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -120,11 +118,6 @@ public class Player extends AnimatedModel {
 	}
 
 	public float getVerticalOffset() {
-		return this.VERTICAL_OFFSET;
-	}
-
-	public Skin getSkin() {
-		// TODO Auto-generated method stub
-		return null;
+		return Player.VERTICAL_OFFSET;
 	}
 }

@@ -11,7 +11,6 @@ public class WaterTile {
 		this.x = centerX;
 		this.z = centerZ;
 		this.height = height;
-
 	}
 
 	public float getHeight() {

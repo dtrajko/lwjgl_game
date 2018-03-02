@@ -31,7 +31,7 @@ void main(void){
 		brightness = mix(brightness, 1.0, isGlowing);
 	}
 	out_colour = diffuseColour * brightness;
-	float disFactor = smoothlyStep(15.0, 16.0, distance(center, pass_pos));
+	float disFactor = smoothlyStep(29.0, 30.0, distance(center, pass_pos));
 	out_colour.rgb = mix(out_colour.rgb, vec3(1.0), disFactor);
 	
 }

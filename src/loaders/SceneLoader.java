@@ -9,7 +9,7 @@ import entities.Player;
 import extra.Camera;
 import main.GeneralSettings;
 import main.WorldSettings;
-import scene.Entity;
+import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
 import scene.ICamera;
@@ -25,7 +25,7 @@ public class SceneLoader {
 		this.entityLoader = entityLoader;
 		this.skyLoader = skyLoader;
 	}
-	
+
 	public Scene loadScene(MyFile resFolder, MyFile sceneFile) {
 		MyFile sceneList = new MyFile(sceneFile, LoaderSettings.ENTITY_LIST_FILE);
 		BufferedReader reader = getReader(sceneList);
@@ -50,32 +50,32 @@ public class SceneLoader {
 		addTerrains(scene, terrainFiles);
 		return scene;
 	}
-	
+
 	public static Scene getScene() {
 		return scene;
 	}
 
 	private void addEntities(Scene scene, MyFile[] entityFiles){
 		for(MyFile file : entityFiles){
-			Entity entity = entityLoader.loadEntity(file);
+			SceneEntity entity = entityLoader.loadEntity(file);
 			scene.addEntity(entity);
 		}
 	}
-	
+
 	private void addShinyEntities(Scene scene, MyFile[] entityFiles){
 		for(MyFile file : entityFiles){
-			Entity entity = entityLoader.loadEntity(file);
+			SceneEntity entity = entityLoader.loadEntity(file);
 			scene.addShiny(entity);
 		}
 	}
-	
+
 	private void addTerrains(Scene scene, MyFile[] terrainFiles){
 		for(MyFile file : terrainFiles){
-			Entity entity = entityLoader.loadEntity(file);
+			SceneEntity entity = entityLoader.loadEntity(file);
 			scene.addTerrain(entity);
 		}
 	}
-	
+
 	private BufferedReader getReader(MyFile file) {
 		try {
 			return file.getReader();
@@ -86,7 +86,7 @@ public class SceneLoader {
 			return null;
 		}
 	}
-	
+
 	private void closeReader(BufferedReader reader){
 		try {
 			reader.close();

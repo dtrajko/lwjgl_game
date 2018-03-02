@@ -6,8 +6,12 @@ import org.lwjgl.util.vector.Vector3f;
 import animation.Animation;
 import animation.Animator;
 import entities.Entity;
+import loaders.AnimationLoader;
+import loaders.LoaderSettings;
+import main.GeneralSettings;
 import openglObjects.Vao;
 import textures.Texture;
+import utils.MyFile;
 
 /**
  * 
@@ -31,7 +35,7 @@ public class AnimatedModel extends Entity {
 	private final Joint rootJoint;
 	private final int jointCount;
 
-	private final Animator animator;
+	private Animator animator;
 
 	/**
 	 * Creates a new entity capable of animation. The inverse bind transform for
@@ -114,8 +118,8 @@ public class AnimatedModel extends Entity {
 	 * Updates the animator for this entity, basically updating the animated
 	 * pose of the entity. Must be called every frame.
 	 */
-	public void update() {
-		animator.update();
+	public void update(float speed) {
+		animator.update(speed);
 	}
 
 	/**
