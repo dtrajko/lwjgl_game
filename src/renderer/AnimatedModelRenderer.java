@@ -1,14 +1,13 @@
 package renderer;
 
 import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-
 import animatedModel.AnimatedModel;
 import entities.Entity;
+import entityRenderers.EntityShader;
 import scene.ICamera;
 import toolbox.Maths;
 import utils.OpenGlUtils;
@@ -25,12 +24,14 @@ import utils.OpenGlUtils;
 public class AnimatedModelRenderer {
 
 	private AnimatedModelShader shader;
+	// private EntityShader shader;
 
 	/**
 	 * Initializes the shader program used for rendering animated models.
 	 */
 	public AnimatedModelRenderer() {
 		this.shader = new AnimatedModelShader();
+		// this.shader = new EntityShader();
 	}
 
 	/**

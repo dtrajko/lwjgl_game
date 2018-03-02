@@ -1,7 +1,5 @@
 package scene;
 
-import org.lwjgl.util.vector.Vector3f;
-
 public class Entity {
 	
 	private final Model model;
@@ -11,7 +9,8 @@ public class Entity {
 	private boolean hasReflection = true;
 	private boolean seenUnderWater = false;
 	private boolean isImportant = false;
-	
+	private boolean isAnimated = false;
+
 	public Entity(Model model, Skin skin){
 		this.model = model;
 		this.skin = skin;
@@ -42,6 +41,10 @@ public class Entity {
 		return isImportant;
 	}
 
+	public boolean isAnimated() {
+		return isAnimated;
+	}
+
 	public boolean hasReflection() {
 		return hasReflection;
 	}
@@ -60,5 +63,9 @@ public class Entity {
 
 	public void setSeenUnderWater(boolean seenUnderWater) {
 		this.seenUnderWater = seenUnderWater;
+	}
+
+	public void setAnimated(boolean isAnimated) {
+		this.isAnimated = isAnimated;
 	}
 }

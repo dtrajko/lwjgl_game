@@ -1,11 +1,16 @@
 package renderEngine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
 
+import entities.Player;
 import entityRenderers.EntityRenderer;
 import renderer.AnimatedModelRenderer;
+import scene.Entity;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
@@ -77,15 +82,15 @@ public class MasterRenderer {
 		waterFbos.unbindCurrentFrameBuffer();
 		scene.getCamera().reflect(scene.getWaterHeight());
 	}
-	
+
 	private void renderWaterRefractionPass(Scene scene){
 		waterFbos.bindRefractionFrameBuffer();
 		prepare();
 		entityRenderer.render(scene.getUnderwaterEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,-1,0, 0));
 		waterFbos.unbindCurrentFrameBuffer();
 	}
-	
-	private void renderMainPass(Scene scene){
+
+	private void renderMainPass(Scene scene) {
 		prepare();
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());

@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import entities.Player;
 import openglObjects.Vao;
 import scene.Entity;
 import scene.Skin;
@@ -31,7 +32,7 @@ public class EntityRenderer {
 		}
 		finish();
 	}
-	
+
 	public void cleanUp(){
 		shader.cleanUp();
 	}
@@ -58,5 +59,4 @@ public class EntityRenderer {
 		shader.hasExtraMap.loadBoolean(skin.hasExtraMap());
 		OpenGlUtils.cullBackFaces(!skin.hasTransparency());
 	}
-
 }

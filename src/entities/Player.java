@@ -7,6 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
 import openglObjects.Vao;
+import scene.Skin;
 import textures.Texture;
 import utils.DisplayManager;
 
@@ -120,5 +121,10 @@ public class Player extends AnimatedModel {
 
 	public float getVerticalOffset() {
 		return this.VERTICAL_OFFSET;
+	}
+
+	public Skin getSkin() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

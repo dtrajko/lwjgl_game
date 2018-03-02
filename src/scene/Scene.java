@@ -27,6 +27,7 @@ public class Scene {
 	private List<Entity> underwaterEntities = new ArrayList<Entity>();
 	private List<Entity> importantEntities = new ArrayList<Entity>();
 	private List<Entity> shinyEntities = new ArrayList<Entity>();
+	private List<Entity> animatedEntities = new ArrayList<Entity>();
 
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 
@@ -101,6 +102,9 @@ public class Scene {
 		if(entity.isImportant()){
 			importantEntities.add(entity);
 		}
+		if(entity.isAnimated()) {
+			this.animatedEntities.add(entity);
+		}
 	}
 
 	public void addShiny(Entity entity){
@@ -118,6 +122,7 @@ public class Scene {
 		importantEntities.add(terrain);
 		reflectableEntities.add(terrain);
 		underwaterEntities.add(terrain);
+		animatedEntities.add(terrain);
 	}
 
 	public List<Entity> getImportantEntities() {
@@ -142,6 +147,10 @@ public class Scene {
 
 	public List<Entity> getShinyEntities() {
 		return shinyEntities;
+	}
+
+	public List<Entity> getAnimatedEntities() {
+		return animatedEntities;
 	}
 
 	public float getWaterHeight(){
