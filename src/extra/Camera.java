@@ -8,16 +8,24 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Player;
 import scene.ICamera;
 import scene.Scene;
-import utils.SmoothFloat;
 
+/**
+ * Represents the in-game camera. This class is in charge of keeping the
+ * projection-view-matrix updated. It allows the user to alter the pitch and yaw
+ * with the left mouse button.
+ * 
+ * @author Karl
+ */
 public class Camera implements ICamera {
+
+	private static final float PITCH_SENSITIVITY = 0.3f;
+	private static final float YAW_SENSITIVITY = 0.3f;
+	private static final float MAX_PITCH = 360;
+	private static final float ZOOM_COEF = 0.02f;
 
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.5f;
 	private static final float FAR_PLANE = 1000;
-
-	private static final float ZOOM_COEF = 0.1f;
-	private static final float PITCH_COEF = 0.15f;
 
 	private static final float DISTANCE_FROM_PLAYER = 20;
 	private static final float PITCH_THIRD_PERSON = 10;
@@ -70,7 +78,7 @@ public class Camera implements ICamera {
 		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
 	}
 
-	private static Matrix4f createProjectionMatrix(){
+	private static Matrix4f createProjectionMatrix() {
 		Matrix4f projectionMatrix = new Matrix4f();
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))));
@@ -133,13 +141,19 @@ public class Camera implements ICamera {
 		float offsetZ = (float) (horizDistance * Math.cos(Math.toRadians(theta)));
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
-		position.y = player.getPosition().y + verticDistance + Y_OFFSET;
+		position.y = verticDistance + Y_OFFSET - player.getPosition().y;
 	}
 
+	/**
+	 * @return The horizontal distance of the camera from the origin.
+	 */
 	private float calculateHorizontalDistance(){
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
 	}
 	
+	/**
+	 * @return The height of the camera from the aim point.
+	 */
 	private float calculateVerticalDistance(){
 		return (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
 	}
@@ -149,21 +163,37 @@ public class Camera implements ICamera {
 		distanceFromPlayer -= zoomLevel;
 	}
 
+	/**
+	 * Calculate the pitch and change the pitch if the user is moving the mouse
+	 * up or down with the LMB pressed.
+	 */
 	private void calculatePitch(){
 		if(Mouse.isButtonDown(1)){
-			float pitchChange = Mouse.getDY() * PITCH_COEF;
+			float pitchChange = Mouse.getDY() * PITCH_SENSITIVITY;
 			pitch -= pitchChange;
-			if(pitch < -90f){
-				pitch = -90f;
-			}else if(pitch > 90){
-				pitch = 90;
-			}
+			clampPitch();
 		}
 	}
 
+	/**
+	 * Ensures the camera's pitch isn't too high or too low.
+	 */
+	private void clampPitch() {
+		if (pitch < -MAX_PITCH){
+			pitch = -MAX_PITCH;
+		} else if(pitch > MAX_PITCH){
+			pitch = MAX_PITCH;
+		}
+	}
+
+	/**
+	 * Calculate the angle of the camera around the player (when looking down at
+	 * the camera from above). Basically the yaw. Changes the yaw when the user
+	 * moves the mouse horizontally with the LMB down.
+	 */
 	private void calculateAngleAroundPlayer(){
 		if (Mouse.isButtonDown(0)) {
-			float angleChange = Mouse.getDX() * 0.3f;
+			float angleChange = Mouse.getDX() * YAW_SENSITIVITY;
 			angleAroundPlayer -= angleChange;
 		} else if(Keyboard.isKeyDown(Keyboard.KEY_R)) {
 			angleAroundPlayer += 0.05f;

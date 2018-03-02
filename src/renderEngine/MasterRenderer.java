@@ -90,7 +90,7 @@ public class MasterRenderer {
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());
 		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
-		// waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 	}
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){

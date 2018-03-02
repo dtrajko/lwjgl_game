@@ -63,6 +63,9 @@ public class Entity {
 		this.rotX += dx;
 		this.rotY += dy;
 		this.rotZ += dz;
+		this.rotX = (this.rotX %= 360) < 0 ? 360 - this.rotX : this.rotX;
+		this.rotY = (this.rotY %= 360) < 0 ? 360 - this.rotY : this.rotY;
+		this.rotZ = (this.rotZ %= 360) < 0 ? 360 - this.rotZ : this.rotZ;
 	}
 
 	public Vector3f getPosition() {

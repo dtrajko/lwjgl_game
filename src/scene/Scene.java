@@ -49,10 +49,10 @@ public class Scene {
 		this.animatedPlayer = animatedPlayer;
 		System.out.println("animatedModel class: " + animatedPlayer.getClass());
 		environmentMap = Texture.newEmptyCubeMap(512);
-		waterTiles.add(new WaterTile(-20, 6, waterHeight));
+		waterTiles.add(new WaterTile(-18, 6, waterHeight));
 		waterTiles.add(new WaterTile(-10, 6, waterHeight));
-		waterTiles.add(new WaterTile(0, 6, waterHeight));
-		waterTiles.add(new WaterTile(10, 6, waterHeight));
+		waterTiles.add(new WaterTile(-2, 6, waterHeight));
+		waterTiles.add(new WaterTile(4, 6, waterHeight));
 	}
 
 	public Texture getEnvironmentMap(){

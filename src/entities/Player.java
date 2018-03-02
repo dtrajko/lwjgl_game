@@ -15,8 +15,8 @@ public class Player extends AnimatedModel {
 	private static final float VERTICAL_OFFSET = -5;
 	private static final float RUN_SPEED = 20;
 	private static final float TURN_SPEED = 160;
-	private static final float GRAVITY = -30;
-	private static final float JUMP_POWER = 30;
+	private static final float GRAVITY = -20;
+	private static final float JUMP_POWER = 10;
 	private static final float HEIGHT = 5.5f;
 
 	private float currentSpeed = 0;
@@ -44,14 +44,15 @@ public class Player extends AnimatedModel {
 		if (gravityEnabled == false) {
 			gravity = 0;
 		}
-		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		float rotY = currentTurnSpeed * DisplayManager.getFrameTimeSeconds();
+		super.increaseRotation(0, rotY, 0);
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
-		float terrainHeight = 0; // TODO
-		if (super.getPosition().y < terrainHeight) {
+		float terrainHeight = 0;
+		if (super.getPosition().y <= terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
