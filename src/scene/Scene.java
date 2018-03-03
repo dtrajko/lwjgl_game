@@ -8,8 +8,11 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Player;
 import extra.Camera;
 import skybox.Skybox;
+import terrains.Terrain;
 import textures.Texture;
+import utils.Light;
 import water.WaterTile;
+import water.WaterTileAux;
 
 /**
  * Represents all the stuff in the scene (just the camera, light, and model
@@ -35,15 +38,22 @@ public class Scene {
 	private Vector3f lightDirection = new Vector3f(0, -1, 0);
 
 	private Skybox sky;
+	private Terrain terrain;
+	private WaterTile water;
+	private WaterTileAux waterAux;
+	private Light light;
 
 	private Texture environmentMap;
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
-	public Scene(Player animatedPlayer, Skybox sky) {
+	public Scene(Player animatedPlayer, Skybox sky, Light light, Terrain terrain, WaterTileAux water) {
 		this.camera = new Camera();
 		camera.setScene(this);
 		this.sky = sky;
+		this.light = light;
+		this.terrain = terrain;
+		this.waterAux = water;
 		this.animatedPlayer = animatedPlayer;
 		environmentMap = Texture.newEmptyCubeMap(256);
 		waterTiles.add(new WaterTile(-16, 6, waterHeight));
@@ -60,6 +70,10 @@ public class Scene {
 	 */
 	public ICamera getCamera() {
 		return camera;
+	}
+	
+	public Light getLight() {
+		return light;
 	}
 
 	public Player getAnimatedPlayer() {
@@ -124,6 +138,10 @@ public class Scene {
 		return sky;
 	}
 
+	public Terrain getTerrain() {
+		return terrain;
+	}
+
 	public List<SceneEntity> getReflectedEntities() {
 		return reflectableEntities;
 	}
@@ -146,5 +164,9 @@ public class Scene {
 
 	public List<WaterTile> getWater() {
 		return waterTiles;
+	}
+
+	public WaterTileAux getWaterAux() {
+		return waterAux;
 	}
 }

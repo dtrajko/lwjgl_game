@@ -15,6 +15,8 @@ import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
 import renderer.AnimatedModelRenderer;
+import rendering.TerrainRenderer;
+import rendering.TerrainShader;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
@@ -22,6 +24,7 @@ import terrains.Terrain;
 import textures.Texture;
 import utils.DisplayManager;
 import utils.Light;
+import utils.MyFile;
 import utils.OpenGlUtils;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -35,6 +38,9 @@ import water.WaterRendererAux;
  *
  */
 public class RenderEngine {
+
+	private static final MyFile VERTEX_SHADER = new MyFile("rendering", "flatTerrainVertex.glsl");
+	private static final MyFile FRAGMENT_SHADER = new MyFile("rendering", "flatTerrainFragment.glsl");
 
 	private static final float REFRACT_OFFSET = 1f;
 	private static final float REFLECT_OFFSET = 0.1f;
@@ -66,7 +72,6 @@ public class RenderEngine {
 	 *            - the game scene.
 	 */
 	public void renderScene(Scene scene) {
-		DisplayManager.switchDisplayMode();
 		renderer.renderScene(scene);
 	}
 
@@ -98,6 +103,8 @@ public class RenderEngine {
 	 * Cleans up the renderers and closes the display.
 	 */
 	public void close() {
+		reflectionFbo.delete();
+		refractionFbo.delete();
 		renderer.cleanUp();
 		DisplayManager.closeDisplay();
 	}
@@ -116,6 +123,9 @@ public class RenderEngine {
 		SkyboxRenderer skyRenderer = new SkyboxRenderer();
 		WaterRenderer waterRenderer = new WaterRenderer(waterFbos);
 		MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, skyRenderer, waterRenderer, waterFbos);
+		// TerrainRenderer terrainRenderer = new TerrainRenderer(new TerrainShader(VERTEX_SHADER, FRAGMENT_SHADER), false);
+		// WaterRendererAux waterRenderer = new WaterRendererAux();
+		// MasterRenderer renderer = new MasterRenderer(animatedModelRenderer, entityRenderer, skyRenderer, terrainRenderer, waterRenderer, waterFbos);
 		return new RenderEngine(renderer);
 	}
 

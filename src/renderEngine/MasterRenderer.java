@@ -9,11 +9,14 @@ import org.lwjgl.util.vector.Vector4f;
 
 import entityRenderers.EntityRenderer;
 import renderer.AnimatedModelRenderer;
+import rendering.TerrainRenderer;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
+import utils.Light;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
+import water.WaterRendererAux;
 
 /**
  * This class is in charge of rendering everything in the scene to the screen.
@@ -27,7 +30,9 @@ public class MasterRenderer {
 	private SkyboxRenderer skyRenderer;
 	private AnimatedModelRenderer animModelRenderer;
 	private EntityRenderer entityRenderer;
+	private TerrainRenderer terrainRenderer;
 	private WaterRenderer waterRenderer;
+	private WaterRendererAux waterRendererAux;
 	private WaterFrameBuffers waterFbos;
 
 	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, SkyboxRenderer skyRenderer) {
@@ -44,10 +49,21 @@ public class MasterRenderer {
 		this.waterFbos = waterFbos;
 	}
 
+	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, EntityRenderer entityRenderer, SkyboxRenderer skyRenderer, 
+			TerrainRenderer terrainRenderer, WaterRendererAux waterRendererAux, WaterFrameBuffers waterFbos) {
+		this.animModelRenderer = animModelRenderer;
+		this.entityRenderer = entityRenderer;
+		this.skyRenderer = skyRenderer;
+		this.terrainRenderer = terrainRenderer;
+		this.waterRendererAux = waterRendererAux;
+		this.waterFbos = waterFbos;
+	}
+
 	protected void renderScene(Scene scene) {
 		prepare();
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		skyRenderer.render(scene.getSky(), scene.getCamera());
+		// terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 100000));
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterRefractionPass(scene);
 		renderWaterReflectionPass(scene);

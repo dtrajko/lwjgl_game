@@ -2,6 +2,7 @@ package main;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import generation.ColourGenerator;
 import generation.PerlinNoise;
@@ -44,14 +45,6 @@ public class MainApp {
 		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
 		engine.renderEnvironmentMap(scene.getEnvironmentMap(), scene, new Vector3f(0, 2, 0));
 
-		//init terrain
-		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
-		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
-		ColourGenerator colourGen = new ColourGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOUR_SPREAD);
-		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colourGen);
-		Terrain terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		WaterTileAux water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
-
 		MyFile flareFolder = new MyFile("res", "lensFlare");
 		//loading textures for lens flare
 		Texture texture1 = Texture.newTexture(new MyFile(flareFolder, "tex1.png")).normalMipMap().create();
@@ -81,10 +74,10 @@ public class MainApp {
 
 		DisplayManager.startFPS();
 		while (!Display.isCloseRequested()) {
+			DisplayManager.switchDisplayMode();
 			scene.getCamera().move();
 			scene.getAnimatedPlayer().update();
 			engine.renderScene(scene);
-			// engine.render(terrain, water, scene.getCamera(), light);
 			sunRenderer.render(theSun, scene.getCamera());
 			lensFlare.render(scene.getCamera(), theSun.getWorldPosition(scene.getCamera().getPosition()));
 			engine.update();
