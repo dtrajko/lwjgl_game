@@ -11,10 +11,13 @@ public interface ICamera {
 	public void move();
 	public Vector3f getPosition();
 	void reflect(float height);
+	void reflect();
 	public void switchToFace(int i);
 	public void setScene(Scene scene);
 	public double getPitch();
 	public double getYaw();
 	public double getRoll();
+	public float getNearPlane();
+	public float getFarPlane();
 
 }

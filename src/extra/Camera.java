@@ -21,13 +21,13 @@ public class Camera implements ICamera {
 	private static final float PITCH_SENSITIVITY = 0.3f;
 	private static final float YAW_SENSITIVITY = 0.3f;
 	private static final float MAX_PITCH = 360;
-	private static final float ZOOM_COEF = 0.02f;
+	private static final float ZOOM_COEF = 0.01f;
 
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.5f;
 	private static final float FAR_PLANE = 1000;
 
-	private static final float DISTANCE_FROM_PLAYER = 4;
+	private static final float DISTANCE_FROM_PLAYER = 4f;
 	private static final float PITCH_THIRD_PERSON = 10;
 	private static final float PITCH_FIRST_PERSON = 10;
 
@@ -49,6 +49,8 @@ public class Camera implements ICamera {
 
 	private Scene scene;
 	private Player player = null;
+
+	private boolean reflected = false;
 
 	private enum Perspective {
 		FIRST_PERSON,
@@ -249,6 +251,11 @@ public class Camera implements ICamera {
 	}
 
 	@Override
+	public void reflect(){
+		this.reflected = !reflected;
+	}
+
+	@Override
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
@@ -287,5 +294,15 @@ public class Camera implements ICamera {
 			break;
 		}
 		updateViewMatrix();
+	}
+
+	@Override
+	public float getNearPlane() {
+		return NEAR_PLANE;
+	}
+
+	@Override
+	public float getFarPlane() {
+		return FAR_PLANE;
 	}
 }

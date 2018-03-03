@@ -3,9 +3,9 @@ package environmentMapRenderer;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import utils.ICamera;
+import utils.ICameraAux;
 
-public class CubeMapCamera implements ICamera {
+public class CubeMapCamera implements ICameraAux {
 
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 200f;

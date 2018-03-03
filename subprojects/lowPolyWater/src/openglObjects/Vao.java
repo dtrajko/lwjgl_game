@@ -37,6 +37,10 @@ public class Vao {
 		GL30.glBindVertexArray(0);
 	}
 
+	public void allocateData(long sizeInBytes){
+		GL15.glBufferData(type, sizeInBytes, usage);
+	}
+
 	public void enableAttributes() {
 		for (Attribute attribute : attributes) {
 			attribute.enable(true);

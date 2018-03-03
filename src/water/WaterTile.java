@@ -1,9 +1,11 @@
 package water;
 
+import openglObjects.Vao;
+
 public class WaterTile {
 	
 	public static final float TILE_SIZE = 10;
-	
+
 	private float height;
 	private float x,z;
 	
@@ -24,7 +26,4 @@ public class WaterTile {
 	public float getZ() {
 		return z;
 	}
-
-
-
 }

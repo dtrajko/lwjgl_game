@@ -5,12 +5,10 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import animatedModel.AnimatedModel;
 import entities.Player;
 import extra.Camera;
 import skybox.Skybox;
 import textures.Texture;
-import utils.MyFile;
 import water.WaterTile;
 
 /**

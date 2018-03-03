@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import animatedModel.AnimatedModel;
 import entities.Entity;
 import scene.ICamera;
-import toolbox.Maths;
+import utils.Maths;
 import utils.OpenGlUtils;
 
 /**

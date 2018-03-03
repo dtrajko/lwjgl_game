@@ -3,8 +3,12 @@ package main;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
+import generation.ColourGenerator;
+import generation.PerlinNoise;
+import hybridTerrain.HybridTerrainGenerator;
 import lensFlare.FlareManager;
 import lensFlare.FlareTexture;
+import loaders.Configs;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
@@ -12,9 +16,15 @@ import renderEngine.RenderEngine;
 import scene.Scene;
 import sunRenderer.Sun;
 import sunRenderer.SunRenderer;
+import terrains.Terrain;
+import terrains.TerrainGenerator;
 import textures.Texture;
 import utils.DisplayManager;
+import utils.Light;
 import utils.MyFile;
+import water.WaterGenerator;
+import water.WaterTile;
+import water.WaterTileAux;
 
 public class MainApp {
 
@@ -33,6 +43,14 @@ public class MainApp {
 		
 		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
 		engine.renderEnvironmentMap(scene.getEnvironmentMap(), scene, new Vector3f(0, 2, 0));
+
+		//init terrain
+		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
+		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
+		ColourGenerator colourGen = new ColourGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOUR_SPREAD);
+		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colourGen);
+		Terrain terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
+		WaterTileAux water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 
 		MyFile flareFolder = new MyFile("res", "lensFlare");
 		//loading textures for lens flare
@@ -66,6 +84,7 @@ public class MainApp {
 			scene.getCamera().move();
 			scene.getAnimatedPlayer().update();
 			engine.renderScene(scene);
+			// engine.render(terrain, water, scene.getCamera(), light);
 			sunRenderer.render(theSun, scene.getCamera());
 			lensFlare.render(scene.getCamera(), theSun.getWorldPosition(scene.getCamera().getPosition()));
 			engine.update();

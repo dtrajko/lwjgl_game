@@ -1,5 +1,7 @@
 package openglObjects;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,12 +10,16 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import utils.DataUtils;
+
 public class Vao {
 	
 	private static final int BYTES_PER_FLOAT = 4;
 	private static final int BYTES_PER_INT = 4;
 	public final int id;
 	private List<Vbo> dataVbos = new ArrayList<Vbo>();
+	private List<Vbo> relatedVbos = new ArrayList<Vbo>();
+	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private Vbo dataVbo;
 	private Vbo indexVbo;
 	private int indexCount;
@@ -52,6 +58,13 @@ public class Vao {
 		this.indexCount = indices.length;
 	}
 
+	public Vbo createIndexBuffer(IntBuffer indices) {
+		this.indexVbo = Vbo.create(GL15.GL_ELEMENT_ARRAY_BUFFER, GL15.GL_STATIC_DRAW);
+		indexVbo.allocateData(indices.limit() * DataUtils.BYTES_IN_INT);
+		indexVbo.storeData(0, indices);
+		return indexVbo;
+	}
+
 	public void createAttribute(int attribute, float[] data, int attrSize){
 		Vbo dataVbo = Vbo.create(GL15.GL_ARRAY_BUFFER);
 		dataVbo.bind();
@@ -60,7 +73,36 @@ public class Vao {
 		dataVbo.unbind();
 		dataVbos.add(dataVbo);
 	}
-	
+
+	public Vbo initDataFeed(ByteBuffer data, int usage, Attribute... newAttributes) {
+		int bytesPerVertex = getVertexDataTotalBytes(newAttributes);
+		Vbo vbo = Vbo.create(GL15.GL_ARRAY_BUFFER, usage);
+		relatedVbos.add(vbo);
+		vbo.allocateData(data.limit());
+		vbo.storeData(0, data);
+		linkAttributes(bytesPerVertex, newAttributes);
+		vbo.unbind();
+		return vbo;
+	}
+
+	private void linkAttributes(int bytesPerVertex, Attribute... newAttributes) {
+		int offset = 0;
+		for (Attribute attribute : newAttributes) {
+			attribute.link(offset, bytesPerVertex);
+			offset += attribute.bytesPerVertex;
+			attribute.enable(true);
+			attributes.add(attribute);
+		}
+	}
+
+	private int getVertexDataTotalBytes(Attribute... newAttributes) {
+		int total = 0;
+		for (Attribute attribute : newAttributes) {
+			total += attribute.bytesPerVertex;
+		}
+		return total;
+	}
+
 	public void createIntAttribute(int attribute, int[] data, int attrSize){
 		Vbo dataVbo = Vbo.create(GL15.GL_ARRAY_BUFFER);
 		dataVbo.bind();

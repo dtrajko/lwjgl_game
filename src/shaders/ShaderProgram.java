@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -32,7 +33,25 @@ public class ShaderProgram {
 		GL20.glDeleteShader(vertexShaderID);
 		GL20.glDeleteShader(fragmentShaderID);
 	}
-	
+
+	public ShaderProgram(MyFile vertexFile, MyFile geometryFile, MyFile fragmentFile, String... inVariables) {
+		int vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
+		int geometryShaderID = loadShader(geometryFile, GL32.GL_GEOMETRY_SHADER);
+		int fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+		programID = GL20.glCreateProgram();
+		GL20.glAttachShader(programID, vertexShaderID);
+		GL20.glAttachShader(programID, geometryShaderID);
+		GL20.glAttachShader(programID, fragmentShaderID);
+		bindAttributes(inVariables);
+		GL20.glLinkProgram(programID);
+		GL20.glDetachShader(programID, vertexShaderID);
+		GL20.glDetachShader(programID, geometryShaderID);
+		GL20.glDetachShader(programID, fragmentShaderID);
+		GL20.glDeleteShader(vertexShaderID);
+		GL20.glDeleteShader(geometryShaderID);
+		GL20.glDeleteShader(fragmentShaderID);
+	}
+
 	protected void storeAllUniformLocations(Uniform... uniforms){
 		for(Uniform uniform : uniforms){
 			uniform.storeUniformLocation(programID);

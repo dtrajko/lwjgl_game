@@ -2,7 +2,7 @@ package collision;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import toolbox.Maths;
+import utils.Maths;
 
 public class AABB {
 

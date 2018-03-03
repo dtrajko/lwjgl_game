@@ -1,7 +1,12 @@
 package loaders;
 
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
+
+import utils.Colour;
+
 public class Configs {
-	
+
 	private boolean hasExtraMap = false;
 	private boolean hasTransparency = false;
 	private boolean hasReflection = false;
