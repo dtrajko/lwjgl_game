@@ -53,7 +53,7 @@ public class SceneLoader {
 		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
 		FlareManager lensFlare = FlareFactory.createLensFlare();
 		Texture sunTexture = Texture.newTexture(new MyFile(new MyFile("res", "lensFlare"), "sun.png")).normalMipMap().create();
-		Sun sun = new Sun(sunTexture, 40, light);
+		Sun sun = new Sun(sunTexture, 40, light, lensFlare);
 		sun.setDirection(WorldSettings.LIGHT_DIR);
 
 		// initialize terrain

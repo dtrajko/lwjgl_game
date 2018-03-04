@@ -8,6 +8,7 @@ public class FlareFactory {
 	public static FlareManager createLensFlare() {
 
 		MyFile flareFolder = new MyFile("res", "lensFlare");
+
 		//loading textures for lens flare
 		Texture texture1 = Texture.newTexture(new MyFile(flareFolder, "tex1.png")).normalMipMap().create();
 		Texture texture2 = Texture.newTexture(new MyFile(flareFolder, "tex2.png")).normalMipMap().create();
@@ -36,6 +37,7 @@ public class FlareFactory {
 			new FlareTexture(texture5, 0.6f),
 			new FlareTexture(texture4, 0.8f),
 			new FlareTexture(texture8, 1.2f));
+
 		return lensFlare;
 	}	
 }

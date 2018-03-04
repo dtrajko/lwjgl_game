@@ -8,7 +8,7 @@ import utils.Light;
 
 public class Sun {
 
-	private static final float SUN_DIS = 50; // fairly arbitrary - but make sure it doesn't go behind skybox
+	private static final float SUN_DIS = 100; // fairly arbitrary - but make sure it doesn't go behind skybox
 
 	private final Texture texture;
 	private float scale;

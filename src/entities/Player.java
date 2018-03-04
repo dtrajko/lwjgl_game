@@ -50,7 +50,7 @@ public class Player extends AnimatedModel {
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
-		float terrainHeight = 0; // terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
+		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
 		if (super.getPosition().y <= terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;

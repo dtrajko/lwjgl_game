@@ -50,7 +50,7 @@ public class HybridTerrainGenerator extends TerrainGenerator {
 		byte[] terrainData = createMeshData(heights, colours, vertexCount);
 		int[] indices = IndexGenerator.generateIndexBuffer(heights.length);
 		Vao vao = VaoLoader.createVao(terrainData, indices);
-		return new Terrain(vao, indices.length, renderer);
+		return new Terrain(vao, indices.length, renderer, heights);
 	}
 
 	private int calculateVertexCount(int vertexLength) {
