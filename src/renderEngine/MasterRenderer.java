@@ -1,8 +1,5 @@
 package renderEngine;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -14,15 +11,12 @@ import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
-import lensFlare.FlareManager;
 import renderer.AnimatedModelRenderer;
 import rendering.TerrainRenderer;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
 import sunRenderer.SunRenderer;
-import terrains.Terrain;
-import utils.Light;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
 import water.WaterRendererAux;

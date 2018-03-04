@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import entities.Entity;
 import entities.Player;
 import openglObjects.Vao;
 import scene.SceneEntity;

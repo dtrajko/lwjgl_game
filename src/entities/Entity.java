@@ -3,14 +3,19 @@ package entities;
 import org.lwjgl.util.vector.Vector3f;
 
 import collision.AABB;
+import models.TexturedModel;
+import scene.Skin;
 
 public class Entity {
 
+	private TexturedModel texModel;
 	private Vector3f position;
 	private float rotX, rotY, rotZ;
 	private float scale;
 	private AABB aabb;
-	
+
+	private Skin skin;
+
 	private boolean renderingEnabled = true;
 
 	public Entity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
@@ -35,6 +40,27 @@ public class Entity {
 		this.rotY = 0;
 		this.rotZ = 0;
 		this.scale = 1;
+	}
+
+	public Entity(TexturedModel texModel, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		this.texModel = texModel;
+		this.position = position;
+		this.rotX = rotX;
+		this.rotY = rotY;
+		this.rotZ = rotZ;
+		this.scale = scale;
+	}
+
+	public Skin getSkin() {
+		return skin;
+	}
+
+	public TexturedModel getTexModel() {
+		return texModel;
+	}
+
+	public void setTexModel(TexturedModel texModel) {
+		this.texModel = texModel;
 	}
 
 	public boolean isRenderingEnabled() {
@@ -107,6 +133,4 @@ public class Entity {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
-	
-	
 }

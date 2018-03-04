@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Entity;
 import entities.Player;
 import extra.Camera;
 import lensFlare.FlareManager;
@@ -30,6 +31,7 @@ public class Scene {
 	private List<SceneEntity> underwaterEntities = new ArrayList<SceneEntity>();
 	private List<SceneEntity> importantEntities = new ArrayList<SceneEntity>();
 	private List<SceneEntity> shinyEntities = new ArrayList<SceneEntity>();
+	private List<Entity> additionalEntities = new ArrayList<Entity>();
 
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 
@@ -41,7 +43,6 @@ public class Scene {
 
 	private Skybox sky;
 	private Terrain terrain;
-	private WaterTile water;
 	private WaterTileAux waterAux;
 	private Light light;
 	private Sun sun;
@@ -112,6 +113,11 @@ public class Scene {
 		environmentMap.delete();
 	}
 
+	public void addEntity(Entity entity) {
+		additionalEntities.add(entity);
+		System.out.println("Additional entity added" + entity.getClass());
+	}
+
 	public void addEntity(SceneEntity entity) {
 		standardEntities.add(entity);
 		if(entity.isSeenUnderWater()){
@@ -168,6 +174,10 @@ public class Scene {
 
 	public List<SceneEntity> getShinyEntities() {
 		return shinyEntities;
+	}
+
+	public List<Entity> getAdditionalEntities() {
+		return additionalEntities;
 	}
 
 	public float getWaterHeight(){
