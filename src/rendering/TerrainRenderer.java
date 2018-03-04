@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector4f;
 import scene.ICamera;
 import terrains.Terrain;
 import utils.Light;
+import utils.MyFile;
 
 /**
  * A simple renderer that renders terrains.
@@ -14,6 +15,9 @@ import utils.Light;
  *
  */
 public class TerrainRenderer {
+
+	private static final MyFile VERTEX_SHADER = new MyFile("rendering", "flatTerrainVertex.glsl");
+	private static final MyFile FRAGMENT_SHADER = new MyFile("rendering", "flatTerrainFragment.glsl");
 
 	private final TerrainShader shader;
 	private final boolean hasIndices;
@@ -25,8 +29,8 @@ public class TerrainRenderer {
 	 *            - Indicates whether the terrain will be rendered with an index
 	 *            buffer or not.
 	 */
-	public TerrainRenderer(TerrainShader shader, boolean usesIndices) {
-		this.shader = shader;
+	public TerrainRenderer(boolean usesIndices) {
+		this.shader = new TerrainShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		this.hasIndices = usesIndices;
 	}
 

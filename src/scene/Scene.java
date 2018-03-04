@@ -7,7 +7,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 import entities.Player;
 import extra.Camera;
+import lensFlare.FlareManager;
 import skybox.Skybox;
+import sunRenderer.Sun;
 import terrains.Terrain;
 import textures.Texture;
 import utils.Light;
@@ -42,18 +44,22 @@ public class Scene {
 	private WaterTile water;
 	private WaterTileAux waterAux;
 	private Light light;
+	private Sun sun;
+	private FlareManager lensFlare;
 
 	private Texture environmentMap;
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
-	public Scene(Player animatedPlayer, Skybox sky, Light light, Terrain terrain, WaterTileAux water) {
+	public Scene(Player animatedPlayer, Skybox sky, Terrain terrain, WaterTileAux water, Sun sun) {
 		this.camera = new Camera();
 		camera.setScene(this);
 		this.sky = sky;
-		this.light = light;
+		this.light = sun.getLight();
 		this.terrain = terrain;
 		this.waterAux = water;
+		this.sun = sun;
+		this.lensFlare = sun.getLensFlare();
 		this.animatedPlayer = animatedPlayer;
 		environmentMap = Texture.newEmptyCubeMap(256);
 		waterTiles.add(new WaterTile(-16, 6, waterHeight));
@@ -63,6 +69,11 @@ public class Scene {
 
 	public Texture getEnvironmentMap(){
 		return environmentMap;
+	}
+	
+	public void update() {
+		animatedPlayer.update(terrain);
+		camera.move();
 	}
 
 	/**
@@ -93,6 +104,7 @@ public class Scene {
 
 	public void delete() {
 		sky.delete();
+		sun.delete();
 		for (SceneEntity entity : standardEntities) {
 			entity.delete();
 		}
@@ -168,5 +180,13 @@ public class Scene {
 
 	public WaterTileAux getWaterAux() {
 		return waterAux;
+	}
+
+	public Sun getSun() {
+		return sun;
+	}
+
+	public FlareManager getLensFlare() {
+		return lensFlare;
 	}
 }

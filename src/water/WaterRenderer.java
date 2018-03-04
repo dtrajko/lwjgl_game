@@ -59,17 +59,12 @@ public class WaterRenderer {
 		shader.projectionMatrix.loadMatrix(camera.getProjectionMatrix());
 		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
 		shader.cameraPosition.loadVec3(camera.getPosition());
-
 		moveFactor += 0.0005f;
 		moveFactor %= 1;
 		shader.moveFactor.loadFloat(moveFactor);
-
 		shader.lightDirection.loadVec3(lightDir);
-
 		quad.bind(0);
-
 		bindTextures();
-
 		doRenderSettings();
 	}
 

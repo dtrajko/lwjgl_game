@@ -30,16 +30,13 @@ import vertexDataStoring.VaoLoader;
  */
 public class HybridTerrainGenerator extends TerrainGenerator {
 
-	private static final MyFile VERTEX_SHADER = new MyFile("rendering", "flatTerrainVertex.glsl");
-	private static final MyFile FRAGMENT_SHADER = new MyFile("rendering", "flatTerrainFragment.glsl");
-
 	private static final int VERTEX_SIZE_BYTES = 12 + 4 + 4;// position + normal + colour
 
 	private final TerrainRenderer renderer;
 
 	public HybridTerrainGenerator(PerlinNoise perlinNoise, ColourGenerator colourGen) {
 		super(perlinNoise, colourGen);
-		this.renderer = new TerrainRenderer(new TerrainShader(VERTEX_SHADER, FRAGMENT_SHADER), true);
+		this.renderer = new TerrainRenderer(true);
 	}
 
 	@Override

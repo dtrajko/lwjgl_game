@@ -6,6 +6,7 @@ import org.lwjgl.util.vector.Vector3f;
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
 import openglObjects.Vao;
+import terrains.Terrain;
 import textures.Texture;
 import utils.DisplayManager;
 
@@ -29,12 +30,12 @@ public class Player extends AnimatedModel {
 		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);
 	}
 
-	public void update() {
-		move();
+	public void update(Terrain terrain) {
+		move(terrain);
 		super.update(currentSpeed);
 	}
 
-	public void move() {
+	public void move(Terrain terrain) {
 		checkInputs();
 
 		// prevent shaking when standing on objects
@@ -49,7 +50,7 @@ public class Player extends AnimatedModel {
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
-		float terrainHeight = 0;
+		float terrainHeight = 0; // terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
 		if (super.getPosition().y <= terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;

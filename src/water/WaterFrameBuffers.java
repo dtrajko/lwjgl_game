@@ -39,13 +39,13 @@ public class WaterFrameBuffers {
 	}
 
 	public void bindReflectionFrameBuffer() {//call before rendering to this FBO
-		bindFrameBuffer(reflectionFrameBuffer,REFLECTION_WIDTH,REFLECTION_HEIGHT);
+		bindFrameBuffer(reflectionFrameBuffer, REFLECTION_WIDTH, REFLECTION_HEIGHT);
 	}
 	
 	public void bindRefractionFrameBuffer() {//call before rendering to this FBO
-		bindFrameBuffer(refractionFrameBuffer,REFRACTION_WIDTH,REFRACTION_HEIGHT);
+		bindFrameBuffer(refractionFrameBuffer, REFRACTION_WIDTH, REFRACTION_HEIGHT);
 	}
-	
+
 	public void unbindCurrentFrameBuffer() {//call after rendering to texture
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -128,5 +128,4 @@ public class WaterFrameBuffers {
 				GL30.GL_RENDERBUFFER, depthBuffer);
 		return depthBuffer;
 	}
-
 }

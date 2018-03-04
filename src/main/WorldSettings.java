@@ -7,7 +7,7 @@ import utils.Colour;
 
 public class WorldSettings {
 
-	public static final Vector3f LIGHT_DIR = new Vector3f(-0.55f, -0.25f, -0.1f);
+	public static final Vector3f LIGHT_DIR = new Vector3f(-0.55f, -0.15f, -0.1f);
 
 	public static final int FPS_CAP = 100;
 	public static final int WIDTH = 1280;

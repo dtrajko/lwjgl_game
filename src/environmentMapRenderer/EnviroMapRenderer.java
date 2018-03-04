@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
 
 import renderEngine.MasterRenderer;
-import scene.ICamera;
 import scene.Scene;
 import textures.Texture;
 

@@ -12,7 +12,7 @@ public class Terrain {
 	private final Vao vao;
 	private final int vertexCount;
 	private final TerrainRenderer renderer;
-	
+
 	public Terrain(Vao vao, int vertexCount, TerrainRenderer renderer){
 		this.vao = vao;
 		this.vertexCount = vertexCount;

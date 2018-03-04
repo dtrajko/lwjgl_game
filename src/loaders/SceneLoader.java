@@ -10,13 +10,19 @@ import extra.Camera;
 import generation.ColourGenerator;
 import generation.PerlinNoise;
 import hybridTerrain.HybridTerrainGenerator;
+import lensFlare.FlareFactory;
+import lensFlare.FlareManager;
+import lensFlare.FlareTexture;
 import main.GeneralSettings;
 import main.WorldSettings;
 import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
+import sunRenderer.Sun;
+import sunRenderer.SunRenderer;
 import terrains.Terrain;
 import terrains.TerrainGenerator;
+import textures.Texture;
 import scene.ICamera;
 import utils.Light;
 import utils.MyFile;
@@ -42,9 +48,15 @@ public class SceneLoader {
 		MyFile[] entityFiles = readEntityFiles(reader, sceneFile);
 		closeReader(reader);
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		
-		//init terrain
+
+		// initialize sun and lens flare and set sun direction
 		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
+		FlareManager lensFlare = FlareFactory.createLensFlare();
+		Texture sunTexture = Texture.newTexture(new MyFile(new MyFile("res", "lensFlare"), "sun.png")).normalMipMap().create();
+		Sun sun = new Sun(sunTexture, 40, light);
+		sun.setDirection(WorldSettings.LIGHT_DIR);
+
+		// initialize terrain
 		PerlinNoise noise = new PerlinNoise(WorldSettings.OCTAVES, WorldSettings.AMPLITUDE, WorldSettings.ROUGHNESS);
 		ColourGenerator colourGen = new ColourGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOUR_SPREAD);
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colourGen);
@@ -56,12 +68,13 @@ public class SceneLoader {
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
 		animatedPlayer.doAnimation(animation);
 		System.out.println("Scene loadScene.");
-		return createScene(animatedPlayer, terrainFiles, entityFiles, shinyFiles, sky, light, terrain, water);
+		return createScene(animatedPlayer, terrainFiles, entityFiles, shinyFiles, sky, sun, terrain, water);
 	}
 
-	private Scene createScene(Player animatedPlayer, MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, Skybox sky, Light light, Terrain terrain, WaterTileAux water){
-		scene = new Scene(animatedPlayer, sky, light, terrain, water);
-		scene.setLightDirection(light.getDirection());
+	private Scene createScene(Player animatedPlayer, MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, 
+			Skybox sky, Sun sun, Terrain terrain, WaterTileAux water){
+		scene = new Scene(animatedPlayer, sky, terrain, water, sun);
+		scene.setLightDirection(sun.getLight().getDirection());
 		addEntities(scene, entityFiles);
 		addShinyEntities(scene, shinyFiles);
 		addTerrains(scene, terrainFiles);

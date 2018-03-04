@@ -17,14 +17,18 @@ public class Light {
 
 	private Vector3f direction;
 	private Colour colour;
-	private Vector2f lightBias;// how much ambient light and how much diffuse
-								// light
+	private Vector2f lightBias;// how much ambient light and how much diffuse light
 
 	public Light(Vector3f direction, Colour colour, Vector2f lightBias) {
 		this.direction = direction;
 		this.direction.normalise();
 		this.colour = colour;
 		this.lightBias = lightBias;
+	}
+
+	public void setDirection(Vector3f dir) {
+		direction.set(dir);
+		direction.normalise();
 	}
 
 	public Vector3f getDirection() {

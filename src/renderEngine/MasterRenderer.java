@@ -3,16 +3,25 @@ package renderEngine;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector4f;
 
 import entityRenderers.EntityRenderer;
+import fbos.Attachment;
+import fbos.Fbo;
+import fbos.RenderBufferAttachment;
+import fbos.TextureAttachment;
+import lensFlare.FlareManager;
 import renderer.AnimatedModelRenderer;
 import rendering.TerrainRenderer;
 import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
+import sunRenderer.SunRenderer;
+import terrains.Terrain;
 import utils.Light;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -27,43 +36,51 @@ public class MasterRenderer {
 
 	private static final Vector4f NO_CLIP = new Vector4f(0, 0, 0, 1);
 
+	private static final float REFLECT_OFFSET = 0.1f;
+	private static final float REFRACT_OFFSET = 1f;
+
 	private SkyboxRenderer skyRenderer;
 	private AnimatedModelRenderer animModelRenderer;
 	private EntityRenderer entityRenderer;
 	private TerrainRenderer terrainRenderer;
 	private WaterRenderer waterRenderer;
-	private WaterRendererAux waterRendererAux;
 	private WaterFrameBuffers waterFbos;
+	private SunRenderer sunRenderer;
+	private WaterRendererAux waterRendererAux;
+	private final Fbo reflectionFbo;
+	private final Fbo refractionFbo;
 
-	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, SkyboxRenderer skyRenderer) {
-		this.skyRenderer = skyRenderer;
-		this.animModelRenderer = animModelRenderer;
+	protected MasterRenderer() {
+		this.waterFbos = new WaterFrameBuffers();
+		this.refractionFbo = createWaterFbo(Display.getWidth() / 2, Display.getHeight() / 2, true);
+		this.reflectionFbo = createWaterFbo(Display.getWidth(), Display.getHeight(), false);
+		this.terrainRenderer = new TerrainRenderer(true);
+		this.waterRenderer = new WaterRenderer(waterFbos);
+		this.waterRendererAux = new WaterRendererAux();
+		this.skyRenderer = new SkyboxRenderer();
+		this.sunRenderer = new SunRenderer();
+		this.entityRenderer = new EntityRenderer();
+		this.animModelRenderer = new AnimatedModelRenderer();
 	}
 
-	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, EntityRenderer entityRenderer, SkyboxRenderer skyRenderer, 
-			WaterRenderer waterRenderer, WaterFrameBuffers waterFbos) {
-		this.animModelRenderer = animModelRenderer;
-		this.entityRenderer = entityRenderer;
-		this.skyRenderer = skyRenderer;
-		this.waterRenderer = waterRenderer;
-		this.waterFbos = waterFbos;
-	}
-
-	protected MasterRenderer(AnimatedModelRenderer animModelRenderer, EntityRenderer entityRenderer, SkyboxRenderer skyRenderer, 
-			TerrainRenderer terrainRenderer, WaterRendererAux waterRendererAux, WaterFrameBuffers waterFbos) {
-		this.animModelRenderer = animModelRenderer;
-		this.entityRenderer = entityRenderer;
-		this.skyRenderer = skyRenderer;
-		this.terrainRenderer = terrainRenderer;
-		this.waterRendererAux = waterRendererAux;
-		this.waterFbos = waterFbos;
+	/**
+	 * Clean up when the game is closed.
+	 */
+	protected void cleanUp() {
+		this.animModelRenderer.cleanUp();
+		this.entityRenderer.cleanUp();
+		this.sunRenderer.cleanUp();
+		this.skyRenderer.cleanUp();
+		this.waterRendererAux.cleanUp();
+		this.waterRenderer.cleanUp();
+		this.terrainRenderer.cleanUp();
+		this.waterFbos.cleanUp();
+		this.refractionFbo.delete();
+		this.reflectionFbo.delete();
 	}
 
 	protected void renderScene(Scene scene) {
-		prepare();
-		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
-		skyRenderer.render(scene.getSky(), scene.getCamera());
-		// terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 100000));
+		renderMainPass(scene);
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		renderWaterRefractionPass(scene);
 		renderWaterReflectionPass(scene);
@@ -71,12 +88,66 @@ public class MasterRenderer {
 		renderMainPass(scene);
 	}
 
+	private void renderMainPass(Scene scene) {
+		prepare();
+		skyRenderer.render(scene.getSky(), scene.getCamera());
+		sunRenderer.render(scene.getSun(), scene.getCamera());
+		if (scene.getLensFlare() != null) {
+			scene.getLensFlare().render(scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));			
+		}
+		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
+		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+		waterRendererAux.render(scene.getWaterAux(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
+	}
+
 	/**
-	 * Clean up when the game is closed.
+	 * Sets up an FBO for one of the extra render passes. The FBO is initialized
+	 * with a texture colour attachment, and can be initialized with either a
+	 * render buffer or texture attachment for the depth buffer.
+	 * 
+	 * @param width
+	 *            - The width of the FBO in pixels.
+	 * @param height
+	 *            - The height of the FBO in pixels.
+	 * @param useTextureForDepth
+	 *            - Whether the depth buffer attachment should be a texture or a
+	 *            render buffer.
+	 * @return The completed FBO.
 	 */
-	protected void cleanUp() {
-		skyRenderer.cleanUp();
-		entityRenderer.cleanUp();
+	private static Fbo createWaterFbo(int width, int height, boolean useTextureForDepth) {
+		Attachment colourAttach = new TextureAttachment(GL11.GL_RGBA8);
+		Attachment depthAttach;
+		if (useTextureForDepth) {
+			depthAttach = new TextureAttachment(GL14.GL_DEPTH_COMPONENT24);
+		} else {
+			depthAttach = new RenderBufferAttachment(GL14.GL_DEPTH_COMPONENT24);
+		}
+		return Fbo.newFbo(width, height).addColourAttachment(0, colourAttach).addDepthAttachment(depthAttach).init();
+	}
+
+	private void renderWaterReflectionPass(Scene scene) {
+		waterFbos.bindReflectionFrameBuffer();
+		reflectionFbo.bindForRender(1);
+		prepare();
+		scene.getCamera().reflect(scene.getWaterHeight());
+		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFLECT_OFFSET));
+		entityRenderer.render(scene.getReflectedEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,1,0,0.1f));
+		skyRenderer.render(scene.getSky(), scene.getCamera());
+		waterFbos.unbindCurrentFrameBuffer();
+		reflectionFbo.unbindAfterRender();
+		scene.getCamera().reflect(scene.getWaterHeight());
+	}
+
+	private void renderWaterRefractionPass(Scene scene) {
+		waterFbos.bindRefractionFrameBuffer();
+		refractionFbo.bindForRender(1);
+		prepare();
+		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFRACT_OFFSET));
+		entityRenderer.render(scene.getUnderwaterEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,-1,0, 0));
+		waterFbos.unbindCurrentFrameBuffer();
+		refractionFbo.unbindAfterRender();
 	}
 
 	/**
@@ -85,31 +156,6 @@ public class MasterRenderer {
 	private void prepare() {
 		GL11.glClearColor(1, 1, 1, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-	}
-
-	private void renderWaterReflectionPass(Scene scene){
-		waterFbos.bindReflectionFrameBuffer();
-		prepare();
-		scene.getCamera().reflect(scene.getWaterHeight());
-		entityRenderer.render(scene.getReflectedEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,1,0,0.1f));
-		skyRenderer.render(scene.getSky(), scene.getCamera());
-		waterFbos.unbindCurrentFrameBuffer();
-		scene.getCamera().reflect(scene.getWaterHeight());
-	}
-
-	private void renderWaterRefractionPass(Scene scene){
-		waterFbos.bindRefractionFrameBuffer();
-		prepare();
-		entityRenderer.render(scene.getUnderwaterEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,-1,0, 0));
-		waterFbos.unbindCurrentFrameBuffer();
-	}
-
-	private void renderMainPass(Scene scene) {
-		prepare();
-		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
-		skyRenderer.render(scene.getSky(), scene.getCamera());
-		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
-		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 	}
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){
