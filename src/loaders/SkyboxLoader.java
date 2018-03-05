@@ -13,9 +13,9 @@ public class SkyboxLoader {
 	}
 
 	private MyFile[] getSkyboxTexFiles(MyFile skyboxFolder) {
-		MyFile[] files = new MyFile[LoaderSettings.SKYBOX_TEX_FILES.length];
+		MyFile[] files = new MyFile[LoaderSettings.SKYBOX_TEX_FILES_II.length];
 		for (int i = 0; i < files.length; i++) {
-			files[i] = new MyFile(skyboxFolder, LoaderSettings.SKYBOX_TEX_FILES[i]);
+			files[i] = new MyFile(skyboxFolder, LoaderSettings.SKYBOX_TEX_FILES_II[i]);
 		}
 		return files;
 	}

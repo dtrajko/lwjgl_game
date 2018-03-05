@@ -26,7 +26,7 @@ public class WorldSettings {
 
 	public static Vector3f LIGHT_POS = new Vector3f(0.3f, -1f, 0.5f);
 	public static Colour LIGHT_COL = new Colour(1f, 1f, 1f);
-	public static Vector2f LIGHT_BIAS = new Vector2f(0.3f, 0.8f);
+	public static Vector2f LIGHT_BIAS = new Vector2f(0.6f, 0.8f);
 
 	public static final int WORLD_SIZE = 200;
 	public static final int SEED = 10164313;

@@ -25,12 +25,15 @@ public class Player extends AnimatedModel {
 	
 	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
+	
+	private Terrain terrain = null;
 
 	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);
 	}
 
 	public void update(Terrain terrain) {
+		this.terrain = terrain;
 		move(terrain);
 		super.update(currentSpeed);
 	}
@@ -68,6 +71,10 @@ public class Player extends AnimatedModel {
 
 	public static float getGravity() {
 		return GRAVITY;
+	}
+	
+	public Terrain getTerrain() {
+		return this.terrain;
 	}
 
 	public void increasePosition(float dx, float dy, float dz) {

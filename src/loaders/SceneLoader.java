@@ -58,7 +58,10 @@ public class SceneLoader {
 		MyFile[] shinyFiles = readEntityFiles(reader, sceneFile);
 		MyFile[] entityFiles = readEntityFiles(reader, sceneFile);
 		closeReader(reader);
-		Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
+		// Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
+		MyFile myFile = new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II);
+		System.out.println("MyFile = " + myFile);
+		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
 
 		// initialize sun and lens flare and set sun direction
 		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
@@ -77,18 +80,21 @@ public class SceneLoader {
 		Loader loader = new Loader();
 		List<Entity> treeEntities = new ArrayList<Entity>();
 		int treesLoaded = 0;
-		while (treesLoaded < 100) {
+		while (treesLoaded < 50) {
 			Random rand = new Random();
-			int terrainX = rand.nextInt(200);
-			int terrainZ = rand.nextInt(200);
+			int terrainX = rand.nextInt(WorldSettings.WORLD_SIZE);
+			int terrainZ = rand.nextInt(WorldSettings.WORLD_SIZE);
 			float terrainY = terrain.getHeightOfTerrain(terrainX, terrainZ);
-			if (terrainY < WorldSettings.WATER_HEIGHT + 2) {
+			if (terrainY < WorldSettings.WATER_HEIGHT + 5 ||
+				terrainX < 20 || terrainX > WorldSettings.WORLD_SIZE - 20 ||
+				terrainZ < 20 || terrainZ > WorldSettings.WORLD_SIZE - 20) {
 				continue;
 			}
-			ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("tree.obj"));
+			terrainY -= 0.5f; // to prevent objects levitating above the terrain
+			ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
 			RawModel treeRawModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
-			TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("tree")));
-			Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 1f);
+			TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("pine")));
+			Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 0.5f);
 			treeEntities.add(tree);
 			treesLoaded++;
 		}

@@ -13,10 +13,9 @@ public class Entity {
 	private float rotX, rotY, rotZ;
 	private float scale;
 	private AABB aabb;
-
 	private Skin skin;
-
 	private boolean renderingEnabled = true;
+	private int textureIndex = 0;
 
 	public Entity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		this.position = position;
@@ -92,6 +91,16 @@ public class Entity {
 		this.rotX = (this.rotX %= 360) < 0 ? 360 - this.rotX : this.rotX;
 		this.rotY = (this.rotY %= 360) < 0 ? 360 - this.rotY : this.rotY;
 		this.rotZ = (this.rotZ %= 360) < 0 ? 360 - this.rotZ : this.rotZ;
+	}
+
+	public float getTextureXOffset() {
+		int column = textureIndex % texModel.getTexture().getNumberOfRows();
+		return (float) column / (float) texModel.getTexture().getNumberOfRows();
+	}
+
+	public float getTextureYOffset() {
+		int row = textureIndex / texModel.getTexture().getNumberOfRows();
+		return (float) row / (float) texModel.getTexture().getNumberOfRows();
 	}
 
 	public Vector3f getPosition() {

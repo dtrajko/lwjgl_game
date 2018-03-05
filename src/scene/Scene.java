@@ -115,7 +115,6 @@ public class Scene {
 
 	public void addEntity(Entity entity) {
 		additionalEntities.add(entity);
-		System.out.println("Additional entity added" + entity.getClass());
 	}
 
 	public void addEntity(SceneEntity entity) {

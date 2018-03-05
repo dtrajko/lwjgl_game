@@ -89,7 +89,7 @@ public class MasterRenderer {
 		if (scene.getLensFlare() != null) {
 			scene.getLensFlare().render(scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));			
 		}
-		entityRenderer.render(scene.getAllEntities(), scene.getCamera(), scene.getLightDirection(), NO_CLIP);
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
 		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
 		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 		waterRendererAux.render(scene.getWaterAux(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
@@ -127,7 +127,7 @@ public class MasterRenderer {
 		prepare();
 		scene.getCamera().reflect(scene.getWaterHeight());
 		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFLECT_OFFSET));
-		entityRenderer.render(scene.getReflectedEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,1,0,0.1f));
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), new Vector4f(0,1,0,0.1f));
 		skyRenderer.render(scene.getSky(), scene.getCamera());
 		waterFbos.unbindCurrentFrameBuffer();
 		reflectionFbo.unbindAfterRender();
@@ -139,7 +139,7 @@ public class MasterRenderer {
 		refractionFbo.bindForRender(1);
 		prepare();
 		scene.getTerrain().render(scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, -scene.getWaterHeight() + REFRACT_OFFSET));
-		entityRenderer.render(scene.getUnderwaterEntities(), scene.getCamera(), scene.getLightDirection(), new Vector4f(0,-1,0, 0));
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), new Vector4f(0,-1,0, 0));
 		waterFbos.unbindCurrentFrameBuffer();
 		refractionFbo.unbindAfterRender();
 	}
@@ -154,7 +154,16 @@ public class MasterRenderer {
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){
 		prepare();
-		entityRenderer.render(scene.getImportantEntities(), cubeMapCamera, scene.getLightDirection(), NO_CLIP);
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
 		skyRenderer.render(scene.getSky(), cubeMapCamera);
+	}
+
+	public static void enableCulling() {
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glCullFace(GL11.GL_BACK);
+	}
+
+	public static void disableCulling() {
+		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 }

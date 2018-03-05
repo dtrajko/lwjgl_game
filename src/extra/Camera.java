@@ -28,8 +28,8 @@ public class Camera implements ICamera {
 	private static final float FAR_PLANE = 1000;
 
 	private static final float DISTANCE_FROM_PLAYER = 4f;
-	private static final float PITCH_THIRD_PERSON = 10;
-	private static final float PITCH_FIRST_PERSON = 10;
+	private static final float PITCH_THIRD_PERSON = 20;
+	private static final float PITCH_FIRST_PERSON = 15;
 
 	private static final float Y_OFFSET = 2;
 
@@ -58,6 +58,8 @@ public class Camera implements ICamera {
 	}
 
 	private Perspective currentPerspective = Perspective.THIRD_PERSON;
+
+	private boolean terrainCollisionEnabled = true;
 
 	public Camera() {
 		this.projectionMatrix = createProjectionMatrix();
@@ -144,6 +146,12 @@ public class Camera implements ICamera {
 		position.x = player.getPosition().x - offsetX;
 		position.z = player.getPosition().z - offsetZ;
 		position.y = player.getPosition().y + verticDistance + Y_OFFSET;
+
+		if (terrainCollisionEnabled && player.getTerrain() != null && 
+			player.getTerrain().getHeightOfTerrain(position.x, position.z) > position.y) {
+			position.y = player.getTerrain().getHeightOfTerrain(position.x, position.z) + 5;
+			pitch += 1f;
+		}
 	}
 
 	/**

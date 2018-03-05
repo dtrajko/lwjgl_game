@@ -43,6 +43,9 @@ public class AnimatedModelRenderer {
 	 *            - the direction of the light in the scene.
 	 */
 	public void render(AnimatedModel entity, ICamera camera, Vector3f lightDir) {
+		if (!entity.isRenderingEnabled()) {
+			return;
+		}
 		prepare(entity, camera, lightDir);
 		entity.getTexture().bindToUnit(0);
 		entity.getModel().bind(0, 1, 2, 3, 4);
