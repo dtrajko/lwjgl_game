@@ -1,11 +1,9 @@
 package particles;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
+import shaders.ShaderProgramAux;
 
-import shaders.ShaderProgram;
-
-public class ParticleShader extends ShaderProgram {
+public class ParticleShader extends ShaderProgramAux {
 
 	private static final String VERTEX_FILE = "particles/particleVShader.txt";
 	private static final String FRAGMENT_FILE = "particles/particleFShader.txt";

@@ -57,6 +57,11 @@ public class SceneLoader {
 		MyFile[] terrainFiles = readEntityFiles(reader, sceneFile);
 		MyFile[] shinyFiles = readEntityFiles(reader, sceneFile);
 		MyFile[] entityFiles = readEntityFiles(reader, sceneFile);
+		// disable all terrains and entities for the lensFlare project
+		terrainFiles = new MyFile[0];
+		shinyFiles = new MyFile[0];
+		entityFiles = new MyFile[0];
+
 		closeReader(reader);
 		// Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
 		MyFile myFile = new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II);
@@ -91,12 +96,19 @@ public class SceneLoader {
 				continue;
 			}
 			terrainY -= 0.5f; // to prevent objects levitating above the terrain
-			ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
-			RawModel treeRawModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
-			TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("pine")));
-			Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 0.5f);
-			treeEntities.add(tree);
-			treesLoaded++;
+			
+			try {
+				ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
+				RawModel treeRawModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
+				TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("pine")));
+				Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 0.5f);
+				treeEntities.add(tree);
+				treesLoaded++;				
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				System.err.println("Failed to load an entity.");
+				System.exit(-1);
+			}
 		}
 
 		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),

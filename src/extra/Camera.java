@@ -59,7 +59,7 @@ public class Camera implements ICamera {
 
 	private Perspective currentPerspective = Perspective.THIRD_PERSON;
 
-	private boolean terrainCollisionEnabled = true;
+	private boolean terrainCollisionEnabled = false;
 
 	public Camera() {
 		this.projectionMatrix = createProjectionMatrix();

@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import renderEngine.DisplayManager;
+import utils.DisplayManager;
 
 public class ParticleSystemComplex {
 

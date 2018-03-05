@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import entities.Entity;
 import models.RawModel;
@@ -104,6 +105,11 @@ public class EntityRenderer {
 		shader.start();
 		staticShader.start();
 		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+
+		// it doesn't really make a difference
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(100, 20, 100), 0, 0, 0, 5);
+		shader.loadTransformationMatrix(transformationMatrix);
+
 		shader.lightDirection.loadVec3(sun.getLight().getDirection());
 		shader.plane.loadVec4(clipPlane);
 		List<Light> lights = new ArrayList<Light>();

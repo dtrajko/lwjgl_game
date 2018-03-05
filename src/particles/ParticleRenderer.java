@@ -12,11 +12,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-
-import entities.Camera;
+import loaders.Loader;
 import models.RawModel;
-import renderEngine.Loader;
-import toolbox.Maths;
+import scene.ICamera;
+import utils.Maths;
 
 public class ParticleRenderer {
 
@@ -50,7 +49,7 @@ public class ParticleRenderer {
 		shader.stop();
 	}
 
-	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera){
+	protected void render(Map<ParticleTexture, List<Particle>> particles, ICamera camera){
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		prepare();
 		for (ParticleTexture texture: particles.keySet()) {

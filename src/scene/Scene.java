@@ -63,9 +63,9 @@ public class Scene {
 		this.lensFlare = sun.getLensFlare();
 		this.animatedPlayer = animatedPlayer;
 		environmentMap = Texture.newEmptyCubeMap(256);
-		waterTiles.add(new WaterTile(-16, 6, waterHeight));
-		waterTiles.add(new WaterTile(-6, 6, waterHeight));
-		waterTiles.add(new WaterTile(4, 6, waterHeight));
+		// waterTiles.add(new WaterTile(-16, 6, waterHeight));
+		// waterTiles.add(new WaterTile(-6, 6, waterHeight));
+		// waterTiles.add(new WaterTile(4, 6, waterHeight));
 	}
 
 	public Texture getEnvironmentMap(){
