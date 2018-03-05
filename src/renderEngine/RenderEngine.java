@@ -28,6 +28,10 @@ public class RenderEngine {
 		this.renderer = renderer;
 	}
 
+	public MasterRenderer getRenderer() {
+		return renderer;
+	}
+
 	/**
 	 * Updates the display.
 	 */

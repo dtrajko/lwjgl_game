@@ -25,6 +25,8 @@ import models.RawModel;
 import models.TexturedModel;
 import objConverter.ModelData;
 import objConverter.OBJFileLoader;
+import particles.ParticleSystemComplex;
+import particles.ParticleTexture;
 import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
@@ -45,6 +47,7 @@ public class SceneLoader {
 	private EntityLoader entityLoader;
 	private SkyboxLoader skyLoader;
 	private static Scene scene;
+	private Loader loader;
 
 	public SceneLoader(EntityLoader entityLoader, SkyboxLoader skyLoader) {
 		this.entityLoader = entityLoader;
@@ -80,7 +83,8 @@ public class SceneLoader {
 		Terrain terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
 		WaterTileAux water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 
-		Loader loader = new Loader();
+		loader = new Loader();
+
 		List<Entity> treeEntities = new ArrayList<Entity>();
 		int treesLoaded = 0;
 		while (treesLoaded < 50) {
@@ -94,27 +98,45 @@ public class SceneLoader {
 				continue;
 			}
 			terrainY -= 0.5f; // to prevent objects levitating above the terrain
-			
-			try {
-				ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
-				RawModel treeRawModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
-				TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("pine")));
-				Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 0.5f);
-				treeEntities.add(tree);
-				treesLoaded++;				
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				System.err.println("Failed to load an entity.");
-				System.exit(-1);
-			}
+
+			ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
+			RawModel treeRawModel = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
+			TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(loader.loadTexture("pine")));
+			Entity tree = new Entity(treeModel, new Vector3f(terrainX, terrainY, terrainZ), 0, 0, 0, 0.5f);
+			treeEntities.add(tree);
+			treesLoaded++;				
 		}
+
+		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
+
+		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"), 4, true);
+		ParticleTexture particleTextureFire = new ParticleTexture(loader.loadTexture("fire"), 8, true);
+		ParticleTexture particleTextureSmoke = new ParticleTexture(loader.loadTexture("smoke"), 8, false);
+
+		ParticleSystemComplex particleSystem = new ParticleSystemComplex(particleTexture,
+			/* pps */ 50f, /* speed */ 0.5f, /* gravity */ -0.05f, /* life */ 50f, /* scale */ 0.5f);
+		particleSystem.setLifeError(0.1f).setSpeedError(0.25f).setScaleError(0.5f).randomizeRotation();
+		particleSystems.add(particleSystem);
+
+		ParticleSystemComplex particleSystemFire = new ParticleSystemComplex(particleTextureFire,
+			100f, 1f, -0.01f, 2f, 4f);
+		particleSystemFire.setLifeError(0.1f).setSpeedError(0.25f).setScaleError(0.5f).randomizeRotation();
+		particleSystems.add(particleSystemFire);
+
+		ParticleSystemComplex particleSystemSmoke = new ParticleSystemComplex(particleTextureSmoke,
+			100f, 1f, -0.05f, 20f, 2f);
+		particleSystemSmoke.setLifeError(0.1f).setSpeedError(0.5f).setScaleError(0.3f).randomizeRotation().setDirection(new Vector3f(-0.5f, -0.5f, -0.5f), 5f);
+		// particleSystems.add(particleSystemSmoke);
 
 		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
 				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
 		animatedPlayer.doAnimation(animation);
 		System.out.println("Scene loadScene.");
-		return createScene(animatedPlayer, terrainFiles, entityFiles, shinyFiles, sky, sun, terrain, water, treeEntities);
+
+		Scene scene = createScene(animatedPlayer, terrainFiles, entityFiles, shinyFiles, sky, sun, terrain, water, treeEntities);
+		scene.addParticleSystems(particleSystems);
+		return scene;
 	}
 
 	private Scene createScene(Player animatedPlayer, MyFile[] terrainFiles, MyFile[] entityFiles, MyFile[] shinyFiles, 
@@ -136,6 +158,10 @@ public class SceneLoader {
 
 	public static Scene getScene() {
 		return scene;
+	}
+
+	public Loader getLoader() {
+		return loader;
 	}
 
 	private void addEntities(Scene scene, MyFile[] entityFiles){

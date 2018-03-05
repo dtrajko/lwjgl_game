@@ -9,6 +9,7 @@ import entities.Entity;
 import entities.Player;
 import extra.Camera;
 import lensFlare.FlareManager;
+import particles.ParticleSystemComplex;
 import skybox.Skybox;
 import sunRenderer.Sun;
 import terrains.Terrain;
@@ -52,6 +53,8 @@ public class Scene {
 
 	private float waterHeight = -0.1f; // should set elsewhere
 
+	private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
+
 	public Scene(Player animatedPlayer, Skybox sky, Terrain terrain, WaterTileAux water, Sun sun) {
 		this.camera = new Camera();
 		camera.setScene(this);
@@ -68,6 +71,14 @@ public class Scene {
 		// waterTiles.add(new WaterTile(4, 6, waterHeight));
 	}
 
+	public void addParticleSystems(List<ParticleSystemComplex> particleSystems) {
+		this.particleSystems = particleSystems;
+	}
+
+	public List<ParticleSystemComplex> getParticleSystems() {
+		return particleSystems;
+	}
+
 	public Texture getEnvironmentMap(){
 		return environmentMap;
 	}
@@ -75,6 +86,12 @@ public class Scene {
 	public void update() {
 		animatedPlayer.update(terrain);
 		camera.move();
+
+		float fireX = 110;
+		float fireZ = 110;
+		// particleSystem.generateParticles(new Vector3f(160, 40, 160));
+		particleSystems.get(1).generateParticles(new Vector3f(fireX, terrain.getHeightOfTerrain(fireX, fireZ), fireZ));
+		// particleSystems.get(2).generateParticles(new Vector3f(fireX, terrain.getHeightOfTerrain(fireX, fireZ) + 2, fireZ));
 	}
 
 	/**

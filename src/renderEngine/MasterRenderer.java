@@ -4,6 +4,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
 import entityRenderers.EntityRenderer;
@@ -11,6 +12,7 @@ import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
+import particles.ParticleMaster;
 import renderer.AnimatedModelRenderer;
 import rendering.TerrainRenderer;
 import scene.ICamera;
@@ -94,6 +96,9 @@ public class MasterRenderer {
 		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 		waterRendererAux.render(scene.getWaterAux(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
+
+		ParticleMaster.update(scene.getCamera());
+		ParticleMaster.renderParticles(scene.getCamera());
 	}
 
 	/**

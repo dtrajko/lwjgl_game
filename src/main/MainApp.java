@@ -4,6 +4,7 @@ import org.lwjgl.opengl.Display;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
+import particles.ParticleMaster;
 import renderEngine.RenderEngine;
 import scene.Scene;
 import utils.DisplayManager;
@@ -24,6 +25,7 @@ public class MainApp {
 		RenderEngine engine = RenderEngine.init();
 		SceneLoader loader = SceneLoaderFactory.createSceneLoader();
 		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
+		ParticleMaster.init(loader.getLoader(), scene.getCamera().getProjectionMatrix());
 
 		DisplayManager.startFPS();
 

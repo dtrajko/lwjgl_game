@@ -1,10 +1,12 @@
 package entities;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
+import loaders.SceneLoader;
 import openglObjects.Vao;
 import terrains.Terrain;
 import textures.Texture;
@@ -122,6 +124,15 @@ public class Player extends AnimatedModel {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
+		}
+
+		if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
+			SceneLoader.getScene().getParticleSystems().get(0).generateParticles(new Vector3f(
+				this.getPosition().getX(),
+				this.getPosition().getY() + 0.1f,
+				this.getPosition().getZ()
+			));
+			System.out.println("Generating particles");
 		}
 	}
 

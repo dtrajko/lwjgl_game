@@ -39,32 +39,36 @@ public class ParticleSystemComplex {
 		this.directionDeviation = (float) (deviation * Math.PI);
 	}
 
-	public void randomizeRotation() {
+	public ParticleSystemComplex randomizeRotation() {
 		randomRotation = true;
+		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public void setSpeedError(float error) {
+	public ParticleSystemComplex setSpeedError(float error) {
 		this.speedError = error * averageSpeed;
+		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public void setLifeError(float error) {
+	public ParticleSystemComplex setLifeError(float error) {
 		this.lifeError = error * averageLifeLength;
+		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public void setScaleError(float error) {
+	public ParticleSystemComplex setScaleError(float error) {
 		this.scaleError = error * averageScale;
+		return this;
 	}
 
 	public void generateParticles(Vector3f systemCenter) {
