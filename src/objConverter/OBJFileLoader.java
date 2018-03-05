@@ -16,8 +16,8 @@ public class OBJFileLoader {
 		BufferedReader reader = null;
 		try {
 			reader = objFile.getReader();
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Couldn't find model file: " + objFile);
 			System.exit(-1);
 		}
@@ -27,8 +27,7 @@ public class OBJFileLoader {
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
 		try {
-			while (true) {
-				line = reader.readLine();
+			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
@@ -62,7 +61,9 @@ public class OBJFileLoader {
 			}
 			reader.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.err.println("Couldn't read model file: " + objFile);
+			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 		removeUnusedVertices(vertices);

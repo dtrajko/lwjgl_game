@@ -64,8 +64,6 @@ public class SceneLoader {
 
 		closeReader(reader);
 		// Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
-		MyFile myFile = new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II);
-		System.out.println("MyFile = " + myFile);
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
 
 		// initialize sun and lens flare and set sun direction
