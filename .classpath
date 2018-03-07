@@ -11,5 +11,7 @@
 	<classpathentry kind="lib" path="lib/jars/lwjgl.jar"/>
 	<classpathentry kind="lib" path="lib/jars/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/jars/PNGDecoder.jar"/>
+	<classpathentry kind="lib" path="lib/jars/jinput-2.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/jars/jutils-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

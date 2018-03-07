@@ -1,6 +1,10 @@
 package main;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
+
+import input.GamepadManager;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
@@ -26,6 +30,7 @@ public class MainApp {
 		SceneLoader loader = SceneLoaderFactory.createSceneLoader();
 		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
 		ParticleMaster.init(loader.getLoader(), scene.getCamera().getProjectionMatrix());
+		GamepadManager.init();
 
 		DisplayManager.startFPS();
 

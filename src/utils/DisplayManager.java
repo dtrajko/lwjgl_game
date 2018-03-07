@@ -97,14 +97,9 @@ public class DisplayManager {
 		return delta;
 	}
 
-	public static void switchDisplayMode() {
+	public static void updateDisplayMode() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			if (fullscreenMode) {
-				DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
-			} else {
-				DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
-			}
-			fullscreenMode = !fullscreenMode;
+			toggleFullScreen();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			if (fullscreenMode) {
@@ -112,6 +107,15 @@ public class DisplayManager {
 			}
 			fullscreenMode = !fullscreenMode;
 		}
+	}
+
+	public static void toggleFullScreen() {
+		if (fullscreenMode) {
+			DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
+		} else {
+			DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
+		}
+		fullscreenMode = !fullscreenMode;
 	}
 
 	/**

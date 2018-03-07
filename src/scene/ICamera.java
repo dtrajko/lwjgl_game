@@ -14,10 +14,10 @@ public interface ICamera {
 	void reflect();
 	public void switchToFace(int i);
 	public void setScene(Scene scene);
-	public double getPitch();
+	public void setPitch(float pitch);
+	public float getPitch();
 	public double getYaw();
 	public double getRoll();
 	public float getNearPlane();
 	public float getFarPlane();
-
 }

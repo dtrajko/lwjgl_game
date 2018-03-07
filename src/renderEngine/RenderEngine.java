@@ -37,7 +37,7 @@ public class RenderEngine {
 	 * Updates the display.
 	 */
 	public void update() {
-		DisplayManager.switchDisplayMode();
+		DisplayManager.updateDisplayMode();
 		DisplayManager.updateDisplay();
 	}
 

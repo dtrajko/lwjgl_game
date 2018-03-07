@@ -1,13 +1,17 @@
 package entities;
 
+import org.lwjgl.input.Controller;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
+import extra.Camera;
+import input.GamepadManager;
 import loaders.SceneLoader;
 import openglObjects.Vao;
+import scene.ICamera;
 import terrains.Terrain;
 import textures.Texture;
 import utils.DisplayManager;
@@ -39,7 +43,7 @@ public class Player extends AnimatedModel {
 	public void update(Terrain terrain) {
 		this.terrain = terrain;
 		move(terrain);
-		super.update(currentSpeed);
+		super.update(getCurrentSpeed());
 	}
 
 	public void move(Terrain terrain) {
@@ -52,7 +56,7 @@ public class Player extends AnimatedModel {
 		}
 		float rotY = currentTurnSpeed * DisplayManager.getFrameTimeSeconds();
 		super.increaseRotation(0, rotY, 0);
-		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
+		float distance = getCurrentSpeed() * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
@@ -66,7 +70,7 @@ public class Player extends AnimatedModel {
 		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() +
 			" | PosX= " + Math.round(this.getPosition().x) + " PoxY= " + Math.round(this.getPosition().y) + " PosZ=" + Math.round(this.getPosition().z) +
 			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()) +
-			" | Speed=" + currentSpeed);
+			" | Speed=" + getCurrentSpeed());
 	}
 
 	public static float getHeight() {
@@ -79,6 +83,34 @@ public class Player extends AnimatedModel {
 	
 	public Terrain getTerrain() {
 		return this.terrain;
+	}
+
+	public float getVerticalOffset() {
+		return Player.VERTICAL_OFFSET;
+	}
+
+	public float getRunSpeed() {
+		return Player.RUN_SPEED;
+	}
+
+	public float getCurrentSpeed() {
+		return currentSpeed;
+	}
+
+	public void setCurrentSpeed(float currentSpeed) {
+		this.currentSpeed = currentSpeed;
+	}
+
+	public float getTurnSpeed() {
+		return Player.TURN_SPEED;
+	}
+
+	public float getCurrentTurnSpeed() {
+		return this.currentTurnSpeed;
+	}
+
+	public void setCurrentTurnSpeed(float currentTurnSpeed) {
+		this.currentTurnSpeed = currentTurnSpeed;
 	}
 
 	public void increasePosition(float dx, float dy, float dz) {
@@ -108,12 +140,12 @@ public class Player extends AnimatedModel {
 
 	public void checkInputs() {
 
-		currentSpeed = 0;
+		setCurrentSpeed(0);
 		if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-			currentSpeed = RUN_SPEED;
+			setCurrentSpeed(RUN_SPEED);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			currentSpeed = -RUN_SPEED;
+			setCurrentSpeed(-RUN_SPEED);
 		}
 
 		currentTurnSpeed = 0;
@@ -128,6 +160,8 @@ public class Player extends AnimatedModel {
 			jump();
 		}
 
+		GamepadManager.handleInput();
+
 		if (generateParticles && Mouse.isButtonDown(2)) { // 2 for mouse wheel button
 			SceneLoader.getScene().getParticleSystems().get(0).generateParticles(new Vector3f(
 				this.getPosition().getX(),
@@ -136,9 +170,5 @@ public class Player extends AnimatedModel {
 			));
 			System.out.println("Generating particles");
 		}
-	}
-
-	public float getVerticalOffset() {
-		return Player.VERTICAL_OFFSET;
 	}
 }

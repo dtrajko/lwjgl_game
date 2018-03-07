@@ -97,7 +97,7 @@ public class Scene {
 	public ICamera getCamera() {
 		return camera;
 	}
-	
+
 	public Light getLight() {
 		return light;
 	}

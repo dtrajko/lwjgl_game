@@ -125,8 +125,22 @@ public class Camera implements ICamera {
 	}
 
 	@Override
-	public double getPitch() {
+	public float getPitch() {
 		return pitch;
+	}
+
+	@Override
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+
+	
+	public float getAngleAroundPlayer() {
+		return angleAroundPlayer;
+	}
+
+	public void setAngleAroundPlayer(float angleAroundPlayer) {
+		this.angleAroundPlayer = angleAroundPlayer;
 	}
 
 	@Override
@@ -211,21 +225,25 @@ public class Camera implements ICamera {
 		}
 	}
 
+	public void togglePerspective() {
+		if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
+			this.currentPerspective = Camera.Perspective.FIRST_PERSON;
+			this.distanceFromPlayer = 0;
+			this.pitch = Camera.PITCH_FIRST_PERSON;
+			this.player.setRenderingEnabled(false);
+		} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
+			this.currentPerspective = Camera.Perspective.THIRD_PERSON;
+			this.distanceFromPlayer = Camera.DISTANCE_FROM_PLAYER;
+			this.pitch = Camera.PITCH_THIRD_PERSON;
+			this.player.setRenderingEnabled(true);
+		}
+	}
+
 	public void checkInputs() {
 
 		// camera perspective
 		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-			if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
-				this.currentPerspective = Camera.Perspective.FIRST_PERSON;
-				this.distanceFromPlayer = 0;
-				this.pitch = Camera.PITCH_FIRST_PERSON;
-				this.player.setRenderingEnabled(false);
-			} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
-				this.currentPerspective = Camera.Perspective.THIRD_PERSON;
-				this.distanceFromPlayer = Camera.DISTANCE_FROM_PLAYER;
-				this.pitch = Camera.PITCH_THIRD_PERSON;
-				this.player.setRenderingEnabled(true);
-			}
+			togglePerspective();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
 			System.out.println("Player position: " 
