@@ -87,11 +87,8 @@ public class Scene {
 		animatedPlayer.update(terrain);
 		camera.move();
 
-		float fireX = 110;
-		float fireZ = 110;
-		// particleSystem.generateParticles(new Vector3f(160, 40, 160));
-		particleSystems.get(1).generateParticles(new Vector3f(fireX, terrain.getHeightOfTerrain(fireX, fireZ), fireZ));
-		// particleSystems.get(2).generateParticles(new Vector3f(fireX, terrain.getHeightOfTerrain(fireX, fireZ) + 2, fireZ));
+		// particleSystems.get(1).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110), 110));
+		// particleSystems.get(2).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110) + 2, 110));
 	}
 
 	/**

@@ -7,13 +7,13 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
+import animatedModelRenderer.AnimatedModelRenderer;
 import entityRenderers.EntityRenderer;
 import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
 import particles.ParticleMaster;
-import renderer.AnimatedModelRenderer;
 import rendering.TerrainRenderer;
 import scene.ICamera;
 import scene.Scene;

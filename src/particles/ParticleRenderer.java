@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
-import loaders.Loader;
+import loaders.RawModelLoader;
 import models.RawModel;
 import scene.ICamera;
 import utils.Maths;
@@ -29,11 +29,11 @@ public class ParticleRenderer {
 	private RawModel quad;
 	private ParticleShader shader;
 	
-	private Loader loader;
+	private RawModelLoader loader;
 	private int vbo;
 	private int pointer = 0;
 
-	protected ParticleRenderer(Loader loader, Matrix4f projectionMatrix){
+	protected ParticleRenderer(RawModelLoader loader, Matrix4f projectionMatrix){
 		this.loader = loader;
 		this.vbo = loader.createEmptyVbo(INSTANCE_DATA_LENGTH * MAX_INSTANCES);
 		this.quad = loader.loadToVAO(this.VERTICES, 2);

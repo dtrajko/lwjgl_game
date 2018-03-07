@@ -29,6 +29,8 @@ public class Player extends AnimatedModel {
 	private boolean gravityEnabled = true;
 	
 	private Terrain terrain = null;
+	
+	private boolean generateParticles = false;
 
 	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);
@@ -107,18 +109,18 @@ public class Player extends AnimatedModel {
 	public void checkInputs() {
 
 		currentSpeed = 0;
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
 			currentSpeed = RUN_SPEED;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
 			currentSpeed = -RUN_SPEED;
 		}
 
 		currentTurnSpeed = 0;
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
 			currentTurnSpeed = TURN_SPEED;
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
 			currentTurnSpeed = -TURN_SPEED;
 		}
 
@@ -126,7 +128,7 @@ public class Player extends AnimatedModel {
 			jump();
 		}
 
-		if (Mouse.isButtonDown(2)) { // 2 for mouse wheel button
+		if (generateParticles && Mouse.isButtonDown(2)) { // 2 for mouse wheel button
 			SceneLoader.getScene().getParticleSystems().get(0).generateParticles(new Vector3f(
 				this.getPosition().getX(),
 				this.getPosition().getY() + 0.1f,

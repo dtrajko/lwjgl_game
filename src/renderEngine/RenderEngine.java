@@ -1,9 +1,10 @@
 package renderEngine;
 
 import org.lwjgl.util.vector.Vector3f;
+
+import animatedModelRenderer.AnimatedModelRenderer;
 import entityRenderers.EntityRenderer;
 import environmentMapRenderer.EnviroMapRenderer;
-import renderer.AnimatedModelRenderer;
 import rendering.TerrainRenderer;
 import scene.Scene;
 import skybox.SkyboxRenderer;

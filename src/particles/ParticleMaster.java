@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.lwjgl.util.vector.Matrix4f;
 
-import loaders.Loader;
+import loaders.RawModelLoader;
 import scene.ICamera;
 
 public class ParticleMaster {
@@ -16,7 +16,7 @@ public class ParticleMaster {
 	private static Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
 	private static ParticleRenderer renderer;
 	
-	public static void init(Loader loader, Matrix4f projectionMatrix) {
+	public static void init(RawModelLoader loader, Matrix4f projectionMatrix) {
 		renderer = new ParticleRenderer(loader, projectionMatrix);
 	}
 

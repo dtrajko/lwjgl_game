@@ -1,6 +1,5 @@
 package loaders;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +28,7 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import models.RawModel;
 import textures.TextureData;
 
-public class Loader {
+public class RawModelLoader {
 
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();

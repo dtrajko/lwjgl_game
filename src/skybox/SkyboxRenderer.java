@@ -1,6 +1,7 @@
 package skybox;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 
 import openglObjects.Vao;
 import scene.ICamera;
@@ -54,7 +55,7 @@ public class SkyboxRenderer {
 	private void prepare(Skybox skybox, ICamera camera){
 		shader.start();
 		GL11.glDepthMask(false);
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
+		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix().translate(new Vector3f(0f, -50f, 0f)));
 		skybox.getTexture().bindToUnit(0);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);
