@@ -130,6 +130,9 @@ public class Loader {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Failed to load a texture '" + fileName + ".png" + "'");
 		}
 		int textureID = texture.getTextureID();
 		// System.out.println("textureID: " + textureID);

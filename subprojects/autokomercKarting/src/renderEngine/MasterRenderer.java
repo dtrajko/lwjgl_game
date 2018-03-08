@@ -31,9 +31,9 @@ public class MasterRenderer {
 	public static final float NEAR_PLANE = 1.0f;
 	public static final float FAR_PLANE = 3000;
 
-	public static final float RED = 0.5444f;
-	public static final float GREEN = 0.62f;
-	public static final float BLUE = 0.69f;
+	public static final float RED = 1f;
+	public static final float GREEN = 1f;
+	public static final float BLUE = 1f;
 
 	private Matrix4f projectionMatrix;
 
@@ -66,16 +66,13 @@ public class MasterRenderer {
 		return projectionMatrix;
 	}
 
-	public void renderScene(List<Entity> entities, List<Entity> normalEntities, List<Terrain> terrains, 
+	public void renderScene(List<Entity> entities, List<Terrain> terrains, 
 			List<Light> lights, Camera camera, Vector4f clipPlane) {
 		for (Terrain terrain : terrains) {
 			this.processTerrain(terrain);
 		}
 		for (Entity entity : entities) {
 			this.processEntity(entity);
-		}
-		for (Entity normalEntity : normalEntities) {
-			this.processNormalMapEntity(normalEntity);
 		}
 		render(lights, camera, clipPlane);
 	}
@@ -85,7 +82,7 @@ public class MasterRenderer {
 		prepare();
 
 		shader.start();
-		shader.loadClipPlane(clipPlane);
+		// shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
@@ -95,13 +92,13 @@ public class MasterRenderer {
 		normalMapRenderer.render(normalMapEntities, clipPlane, lights, camera);
 
 		terrainShader.start();
-		terrainShader.loadClipPlane(clipPlane);
+		// terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadSkyColour(RED, GREEN, BLUE);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());
 		terrainShader.stop();
-		
+
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
 
 		terrains.clear();
@@ -154,9 +151,9 @@ public class MasterRenderer {
 		GL11.glClearColor(RED, GREEN, BLUE, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		GL13.glActiveTexture(GL13.GL_TEXTURE5);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getShadowMapTexture());
+		// GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getShadowMapTexture());
 	}
 
 	private void createProjectionMatrix() {

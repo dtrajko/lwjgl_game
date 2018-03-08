@@ -10,6 +10,7 @@ import animatedModel.Joint;
 import extra.Camera;
 import input.GamepadManager;
 import loaders.SceneLoader;
+import main.WorldSettings;
 import openglObjects.Vao;
 import scene.ICamera;
 import terrains.Terrain;
@@ -61,12 +62,21 @@ public class Player extends AnimatedModel {
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
+
+		// terrain collision detection
 		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
 		if (super.getPosition().y <= terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
+
+		// prevent player going above the water level
+		if (super.getPosition().y > WorldSettings.WATER_HEIGHT) {
+			// dx = -dx;
+			// dz = -dz;
+		}
+
 		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() +
 			" | PosX= " + Math.round(this.getPosition().x) + " PoxY= " + Math.round(this.getPosition().y) + " PosZ=" + Math.round(this.getPosition().z) +
 			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()) +

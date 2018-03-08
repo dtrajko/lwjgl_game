@@ -3,8 +3,6 @@ package terrains;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -13,18 +11,15 @@ import org.lwjgl.util.vector.Vector3f;
 
 import models.RawModel;
 import renderEngine.Loader;
-import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
 import toolbox.Maths;
 
 public class Terrain {
 
-	private static final float SIZE = 800;
-	private static final float MAX_HEIGHT = 40;
+	private static final float SIZE = 512;
+	private static final float MAX_HEIGHT = 20;
 	private static final float MAX_PIXEL_COLOUR = 256 * 256 * 256;
-	private static final int VERTEX_COUNT = 256;
-	private static final int SEED = new Random().nextInt(1000000000);
 	
 	private float x;
 	private float z;
@@ -36,31 +31,27 @@ public class Terrain {
 	
 	private float[][] heights;
 	
-	private HeightsGenerator generator;
-	
-	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack, 
+	public Terrain(float gridX, float gridZ, Loader loader, TerrainTexturePack texturePack, 
 			TerrainTexture blendMap, String heightMap) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.heightMap = heightMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
-		generator = new HeightsGenerator();
-		// generator = new HeightsGenerator(gridX, gridZ, VERTEX_COUNT, SEED);
 		this.model = generateTerrain(loader, this.heightMap);
 	}
 
 	private RawModel generateTerrain(Loader loader, String heightMap){
-		
+
 		BufferedImage image = null;
 		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(heightMap + ".png");
-			image = ImageIO.read(is);
+			image = ImageIO.read(new File("resources/" + heightMap + ".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.err.println("Failed to load height map '" + heightMap + ".png'");
 		}
-		
-		int vertex_count = 128;
+
+		int vertex_count = image.getHeight();
 		heights = new float[vertex_count][vertex_count];
 		int count = vertex_count * vertex_count;
 		float[] vertices = new float[count * 3];
@@ -71,11 +62,11 @@ public class Terrain {
 		for (int i=0; i < vertex_count; i++){
 			for(int j = 0; j < vertex_count; j++){
 				vertices[vertexPointer * 3] = (float) j / ((float) vertex_count - 1) * SIZE;
-				float height = this.getHeight(j, i, generator);
+				float height = this.getHeight(j, i, image);
 				heights[j][i] = height;
 				vertices[vertexPointer * 3 + 1] = height;
 				vertices[vertexPointer * 3 + 2] = (float) i / ((float) vertex_count - 1) * SIZE;
-				Vector3f normal = this.calculateNormal(j, i, generator);
+				Vector3f normal = this.calculateNormal(j, i, image);
 				normals[vertexPointer * 3] = normal.x;
 				normals[vertexPointer * 3 + 1] = normal.y;
 				normals[vertexPointer * 3 + 2] = normal.z;
@@ -107,16 +98,6 @@ public class Terrain {
 		float heightR = getHeight(x + 1, z, image);
 		float heightD = getHeight(x, z - 1, image);
 		float heightU = getHeight(x, z + 1, image);
-		Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
-		normal.normalise();
-		return normal;
-	}
-
-	private Vector3f calculateNormal(int x, int z, HeightsGenerator generator) {
-		float heightL = getHeight(x - 1, z, generator);
-		float heightR = getHeight(x + 1, z, generator);
-		float heightD = getHeight(x, z - 1, generator);
-		float heightU = getHeight(x, z + 1, generator);
 		Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
 		normal.normalise();
 		return normal;
@@ -172,13 +153,9 @@ public class Terrain {
 			return 0;
 		}
 		float height = image.getRGB(x, z);
-		height += this.MAX_PIXEL_COLOUR / 2f;
-		height /= this.MAX_PIXEL_COLOUR / 2f;
-		height *= this.MAX_HEIGHT;
+		height += MAX_PIXEL_COLOUR / 2f;
+		height /= MAX_PIXEL_COLOUR / 2f;
+		height *= MAX_HEIGHT;
 		return height;
-	}
-
-	private float getHeight(int x, int z, HeightsGenerator generator) {
-		return generator.generateHeight(x, z);
 	}
 }

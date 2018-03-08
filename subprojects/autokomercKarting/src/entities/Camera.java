@@ -19,35 +19,35 @@ public class Camera implements ICamera {
 	private static final float ZOOM_COEF = 0.1f;
 	private static final float PITCH_COEF = 0.15f;
 	
-	private static final float DISTANCE_FROM_PLAYER = 60;
-	private static final float PITCH_THIRD_PERSON = 20;
-	private static final float PITCH_FIRST_PERSON = 15;
+	private static final float DISTANCE_FROM_PLAYER = 4;
+	private static final float PITCH_THIRD_PERSON = 0;
+	private static final float PITCH_FIRST_PERSON = -5;
 
 
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
 	
-	private Vector3f position = new Vector3f(0, 30, 30);
+	private Vector3f position = new Vector3f(0, 0, 0);
 
-	private float pitch = PITCH_THIRD_PERSON;
+	private float pitch = PITCH_FIRST_PERSON;
 	private float yaw = 0;
 	private float roll;
 
 	private float angleAroundPlayer = 0;
-	private float distanceFromPlayer = 60;
+	private float distanceFromPlayer = 0;
 
 
 
 	private Terrain terrain = null;
 	private Player player;
 
-	private enum Perspective {
+	public enum Perspective {
 		FIRST_PERSON,
 		THIRD_PERSON,
 	}
 	
-	private Perspective currentPerspective = Perspective.THIRD_PERSON;
+	private Perspective currentPerspective = Perspective.FIRST_PERSON;
 
 	public Camera(Player player) {
 		this.player = player;
@@ -57,6 +57,10 @@ public class Camera implements ICamera {
 		this.player = player;
 		this.terrain = terrain;
 		this.projectionMatrix = createProjectionMatrix();
+	}
+
+	public void setPerspective(Perspective newPerspective) {
+		currentPerspective = newPerspective;
 	}
 
 	private void updateViewMatrix() {
@@ -171,12 +175,12 @@ public class Camera implements ICamera {
 			if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
 				this.currentPerspective = Camera.Perspective.FIRST_PERSON;
 				this.distanceFromPlayer = 0;
-				this.pitch = this.PITCH_FIRST_PERSON;
+				this.pitch = PITCH_FIRST_PERSON;
 				this.player.setRenderingEnabled(false);
 			} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
 				this.currentPerspective = Camera.Perspective.THIRD_PERSON;
-				this.distanceFromPlayer = this.DISTANCE_FROM_PLAYER;
-				this.pitch = this.PITCH_THIRD_PERSON;
+				this.distanceFromPlayer = DISTANCE_FROM_PLAYER;
+				this.pitch = PITCH_THIRD_PERSON;
 				this.player.setRenderingEnabled(true);
 			}
 		}

@@ -29,7 +29,7 @@ public class GamepadManager {
 
 		for (int i = 0; i < Controllers.getControllerCount(); i++) {
 			gamepad = Controllers.getController(i);
-			// System.out.println("GamepadManager controller name: " + gamepad.getName());
+			System.out.println("GamepadManager controller name: " + gamepad.getName());
 			for (int b = 0; b < gamepad.getButtonCount(); b++) {
 				// System.out.println("Button " + b + ": " + gamepad.getButtonName(b));
 			}

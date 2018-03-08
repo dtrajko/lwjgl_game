@@ -15,6 +15,8 @@ public class SkyboxRenderer {
 
 	private static final float SIZE = 1000f;
 	
+	private boolean nightAndDayCycleEnabled = false;
+
 	private static final float[] VERTICES = {
 		-SIZE,  SIZE, -SIZE,
 		-SIZE, -SIZE, -SIZE,
@@ -132,6 +134,10 @@ public class SkyboxRenderer {
 		time += DisplayManager.getFrameTimeSeconds() * 100;
 		time %= 24000;
 		float blendFactor;
+
+		if (!nightAndDayCycleEnabled) {
+			time = 10000; // always daytime
+		}
 
 		if (time >= 0 && time < 5000) {
 			texture1 = nightTexture;

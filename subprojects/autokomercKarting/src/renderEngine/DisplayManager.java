@@ -12,8 +12,8 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class DisplayManager {
 
-	private static final int WIDTH = 1280; // 640
-	private static final int HEIGHT = 720; // 480
+	private static final int WIDTH = 1280; // 1920, 1280, 640
+	private static final int HEIGHT = 720; // 1080, 720, 480
 	private static final int WIDTH_FHD = 1920;
 	private static final int HEIGHT_FHD = 1080;
 	private static final int FPS_CAP = 120;
@@ -46,22 +46,19 @@ public class DisplayManager {
 		return displayFps;
 	}
 
-	public static void createDisplay(){
-		
-		ContextAttribs attribs = new ContextAttribs(3, 3)
-		.withForwardCompatible(true)
-		.withProfileCore(true);
-
+	public static void createDisplay() {
 		try {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			// DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
-			Display.create(new PixelFormat().withDepthBits(24), attribs); // .withSamples(8) - use multisampling
+			ContextAttribs attribs = new ContextAttribs(3, 3).withProfileCore(true).withForwardCompatible(true);
+			Display.create(new PixelFormat().withDepthBits(24).withSamples(4), attribs);
 			Display.setTitle(title);
+			Display.setInitialBackground(1, 1, 1);
 			GL11.glEnable(GL13.GL_MULTISAMPLE);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
+			System.err.println("Couldn't create display!");
+			System.exit(-1);
 		}
-		
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
 		lastFrameTime = getCurrentTime();
 	}
@@ -74,27 +71,25 @@ public class DisplayManager {
 		lastFrameTime = currentFrameTime;
 	}
 
-	public static void switchDisplayMode() {
+	public static void updateDisplayMode() {
 		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			if (fullscreenMode) {
-				DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
-			} else {
-				DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
-			}
-			fullscreenMode = !fullscreenMode;
-			if (!Game.isRunning()) {
-				Game.toggleIsRunning();
-			}
+			toggleFullScreen();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			if (fullscreenMode) {
 				DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
 			}
 			fullscreenMode = !fullscreenMode;
-			if (!Game.isRunning()) {
-				Game.toggleIsRunning();
-			}
 		}
+	}
+
+	public static void toggleFullScreen() {
+		if (fullscreenMode) {
+			DisplayManager.setDisplayMode(WIDTH, HEIGHT, false);
+		} else {
+			DisplayManager.setDisplayMode(WIDTH_FHD, HEIGHT_FHD, true);
+		}
+		fullscreenMode = !fullscreenMode;
 	}
 
 	public static float getFrameTimeSeconds() {
@@ -163,6 +158,7 @@ public class DisplayManager {
 				return;
 			}
 
+			GL11.glViewport(0, 0, width, height);
 			Display.setDisplayMode(targetDisplayMode);
 			Display.setFullscreen(fullscreen);
 
