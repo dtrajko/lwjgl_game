@@ -41,6 +41,10 @@ public class Terrain {
 		this.model = generateTerrain(loader, this.heightMap);
 	}
 
+	public static float getSize() {
+		return SIZE;
+	}
+
 	private RawModel generateTerrain(Loader loader, String heightMap){
 
 		BufferedImage image = null;

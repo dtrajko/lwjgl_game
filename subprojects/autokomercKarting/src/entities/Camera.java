@@ -14,16 +14,14 @@ public class Camera implements ICamera {
 
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 300;
+	private static final float FAR_PLANE = 1000;
 
 	private static final float ZOOM_COEF = 0.1f;
 	private static final float PITCH_COEF = 0.15f;
 	
 	private static final float DISTANCE_FROM_PLAYER = 4;
 	private static final float PITCH_THIRD_PERSON = 0;
-	private static final float PITCH_FIRST_PERSON = -5;
-
-
+	private static final float PITCH_FIRST_PERSON = -2;
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix = new Matrix4f();
@@ -37,8 +35,6 @@ public class Camera implements ICamera {
 	private float angleAroundPlayer = 0;
 	private float distanceFromPlayer = 0;
 
-
-
 	private Terrain terrain = null;
 	private Player player;
 
@@ -46,8 +42,8 @@ public class Camera implements ICamera {
 		FIRST_PERSON,
 		THIRD_PERSON,
 	}
-	
-	private Perspective currentPerspective = Perspective.FIRST_PERSON;
+
+	private Perspective currentPerspective = Perspective.THIRD_PERSON;
 
 	public Camera(Player player) {
 		this.player = player;
@@ -90,8 +86,6 @@ public class Camera implements ICamera {
 
 	public void move() {
 
-
-
 		this.checkInputs();
 		this.calculateZoom();
 		this.calculatePitch();
@@ -115,6 +109,19 @@ public class Camera implements ICamera {
 
 	public float getPitch() {
 		return pitch;
+	}
+
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+
+	
+	public float getAngleAroundPlayer() {
+		return angleAroundPlayer;
+	}
+
+	public void setAngleAroundPlayer(float angleAroundPlayer) {
+		this.angleAroundPlayer = angleAroundPlayer;
 	}
 
 	public float getYaw() {
@@ -172,23 +179,27 @@ public class Camera implements ICamera {
 
 		// camera perspective
 		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
-			if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
-				this.currentPerspective = Camera.Perspective.FIRST_PERSON;
-				this.distanceFromPlayer = 0;
-				this.pitch = PITCH_FIRST_PERSON;
-				this.player.setRenderingEnabled(false);
-			} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
-				this.currentPerspective = Camera.Perspective.THIRD_PERSON;
-				this.distanceFromPlayer = DISTANCE_FROM_PLAYER;
-				this.pitch = PITCH_THIRD_PERSON;
-				this.player.setRenderingEnabled(true);
-			}
+			togglePerspective();
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
 			// move left sidewise
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			// move right sidewise
+		}
+	}
+
+	public void togglePerspective() {
+		if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
+			this.currentPerspective = Camera.Perspective.FIRST_PERSON;
+			this.distanceFromPlayer = 0;
+			this.pitch = Camera.PITCH_FIRST_PERSON;
+			this.player.setRenderingEnabled(false);
+		} else if (this.currentPerspective == Camera.Perspective.FIRST_PERSON) {
+			this.currentPerspective = Camera.Perspective.THIRD_PERSON;
+			this.distanceFromPlayer = Camera.DISTANCE_FROM_PLAYER;
+			this.pitch = Camera.PITCH_THIRD_PERSON;
+			this.player.setRenderingEnabled(true);
 		}
 	}
 

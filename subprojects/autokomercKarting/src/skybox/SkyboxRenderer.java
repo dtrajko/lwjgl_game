@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import entities.Camera;
 import models.RawModel;
@@ -109,10 +110,11 @@ public class SkyboxRenderer {
 		shader = new SkyboxShader();
 		shader.start();
 		shader.connectTextureUnits();
+		projectionMatrix.translate(new Vector3f(0, -100, 0)); // adjust the position of the skybox
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
 	}
-	
+
 	public void render(Camera camera, float r, float g, float b) {
 		shader.start();
 		shader.loadViewMatrix(camera);
@@ -125,7 +127,7 @@ public class SkyboxRenderer {
 		GL30.glBindVertexArray(0);
 		shader.stop();
 	}
-	
+
 	private void bindTextures() {
 
 		int texture1;

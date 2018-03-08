@@ -13,6 +13,7 @@ import entities.Camera;
 import entities.Entity;
 import entities.Light;
 import entities.Player;
+import input.GamepadManager;
 import input.InputHelper;
 import models.RawModel;
 import models.TexturedModel;
@@ -54,7 +55,7 @@ public class MainGameLoop {
 		/**************** END TERRAIN TEXTURE STUFF ****************/
 
 		// terrains
-		Terrain terrain = new Terrain(-1, -1, loader, texturePack, blendMap, "race/race_track_heightmap");
+		Terrain terrain = new Terrain(-1f, -1f, loader, texturePack, blendMap, "race/race_track_heightmap");
 
 		// player
 		RawModel steveModelRaw = OBJFileLoader.loadOBJ("steve", loader);
@@ -63,9 +64,11 @@ public class MainGameLoop {
 
 		// camera
 		Camera camera = new Camera(player, terrain);
-		camera.setPerspective(Camera.Perspective.FIRST_PERSON);
+		camera.togglePerspective(); // switch to first person perspective
 
 		MasterRenderer renderer = new MasterRenderer(loader, camera);
+
+		GamepadManager.init();
 
 		// lights
 		Light sun_light = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
@@ -94,7 +97,7 @@ public class MainGameLoop {
 
 			if (Game.isRunning()) {
 
-				player.move(terrain);
+				player.move(terrain, camera);
 				camera.move();
 
 				GL11.glDisable(GL30.GL_CLIP_DISTANCE0);

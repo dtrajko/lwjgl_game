@@ -4,6 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
 import collision.AABB;
+import input.GamepadManager;
 import models.TexturedModel;
 import renderEngine.DisplayManager;
 import terrains.Terrain;
@@ -11,10 +12,10 @@ import terrains.Terrain;
 public class Player extends Entity {
 
 	private static final float VERTICAL_OFFSET = -5;
-	private static final float RUN_SPEED = 30;
+	private static final float RUN_SPEED = 40;
 	private static final float TURN_SPEED = 60;
 	private static final float GRAVITY = -30;
-	private static final float JUMP_POWER = 30;
+	private static final float JUMP_POWER = 0;
 	private static final float TERRAIN_HEIGHT = 0;
 	private static final float HEIGHT = 5.5f;
 
@@ -30,9 +31,13 @@ public class Player extends Entity {
 		super.setAABB(new AABB(super.getPosition(), super.getPosition()));
 	}
 
-	public void move(Terrain terrain) {
+	public void move(Terrain terrain, Camera camera) {
 
-		checkInputs(terrain);
+		checkInputs(terrain, camera);
+
+		if (super.getPosition().y > TERRAIN_HEIGHT + 1f) {
+			currentSpeed /= 10f;
+		}
 
 		// prevent shaking when standing on objects
 		float gravity = GRAVITY;
@@ -60,6 +65,34 @@ public class Player extends Entity {
 
 	public static float getGravity() {
 		return GRAVITY;
+	}
+
+	public float getVerticalOffset() {
+		return VERTICAL_OFFSET;
+	}
+
+	public float getRunSpeed() {
+		return RUN_SPEED;
+	}
+
+	public float getCurrentSpeed() {
+		return currentSpeed;
+	}
+
+	public void setCurrentSpeed(float currentSpeed) {
+		this.currentSpeed = currentSpeed;
+	}
+
+	public float getTurnSpeed() {
+		return TURN_SPEED;
+	}
+
+	public float getCurrentTurnSpeed() {
+		return this.currentTurnSpeed;
+	}
+
+	public void setCurrentTurnSpeed(float currentTurnSpeed) {
+		this.currentTurnSpeed = currentTurnSpeed;
 	}
 
 	public void increasePosition(float dx, float dy, float dz) {
@@ -90,20 +123,12 @@ public class Player extends Entity {
 		return this.isInAir;
 	}
 
-	public void checkInputs(Terrain terrain) {
+	public void checkInputs(Terrain terrain, Camera camera) {
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			if (super.getPosition().y < TERRAIN_HEIGHT + 1f) {
-				currentSpeed = RUN_SPEED;
-			} else {
-				currentSpeed = RUN_SPEED / 10f;
-			}
+			currentSpeed = RUN_SPEED;
 		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			if (super.getPosition().y < TERRAIN_HEIGHT + 1f) {
-				currentSpeed = -RUN_SPEED;
-			} else {
-				currentSpeed = -RUN_SPEED / 10f;
-			}
+			currentSpeed = -RUN_SPEED;
 		} else {
 			currentSpeed = 0;
 		}
@@ -119,6 +144,9 @@ public class Player extends Entity {
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
 		}
+
+		GamepadManager.handleInput(this, camera);
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
 			System.out.println("Player location: "
 				+ " X = " + super.getPosition().x
@@ -126,9 +154,5 @@ public class Player extends Entity {
 				+ " Z = " + super.getPosition().z
 			);
 		}
-	}
-	
-	public float getVerticalOffset() {
-		return this.VERTICAL_OFFSET;
 	}
 }
