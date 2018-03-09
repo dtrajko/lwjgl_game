@@ -1,18 +1,15 @@
 package entities;
 
-import org.lwjgl.input.Controller;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
-import extra.Camera;
 import input.GamepadManager;
 import loaders.SceneLoader;
 import main.WorldSettings;
 import openglObjects.Vao;
-import scene.ICamera;
 import terrains.Terrain;
 import textures.Texture;
 import utils.DisplayManager;
