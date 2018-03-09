@@ -1,5 +1,6 @@
 package main;
 
+import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
 import input.GamepadManager;
 import interfaces.ITerrainRenderer;
@@ -36,9 +37,14 @@ public class MainApp {
 		DisplayManager.startFPS();
 
 		while (!Display.isCloseRequested()) {
+			
+			if (!Controllers.isCreated()) {
+				GamepadManager.init();
+			}
+	
 			scene.update();
-			engine.renderScene(scene);
 			engine.update();
+			engine.renderScene(scene);
 		}
 
 		scene.delete();
