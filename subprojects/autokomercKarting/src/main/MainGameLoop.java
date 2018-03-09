@@ -44,10 +44,10 @@ public class MainGameLoop {
 
 		/**************** BEGIN TERRAIN TEXTURE STUFF ****************/
 
-		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("race/background"));
-		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("race/red"));
-		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("race/green"));
-		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("race/blue"));
+		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("race/black_background"));
+		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("race/red_curb"));
+		TerrainTexture gTexture = new TerrainTexture(loader.loadTexture("race/blue_asfalt"));
+		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("race/blue_asfalt"));
 
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("race/race_track_blend_map"));
@@ -60,7 +60,7 @@ public class MainGameLoop {
 		// player
 		RawModel steveModelRaw = OBJFileLoader.loadOBJ("steve", loader);
 		TexturedModel steveModel = new TexturedModel(steveModelRaw, new ModelTexture(loader.loadTexture("steve")));
-		Player player = new Player(steveModel, new Vector3f(-285, terrain.getHeightOfTerrain(-285, -70) + 2, -70), 0, 180, 0, 1f);
+		Player player = new Player(steveModel, new Vector3f(-285, terrain.getHeightOfTerrain(-285, -70) + 2, -70), 0, 180, 0, 0.5f);
 
 		// camera
 		Camera camera = new Camera(player, terrain);
@@ -71,7 +71,7 @@ public class MainGameLoop {
 		GamepadManager.init();
 
 		// lights
-		Light sun_light = new Light(new Vector3f(15000, 10000, 15000), new Vector3f(1f, 1f, 1f)); // world light (sun)
+		Light sun_light = new Light(new Vector3f(-1500, 1000, -1500), new Vector3f(1f, 1f, 1f)); // world light (sun)
 		lights.add(sun_light);
 
 		terrains.add(terrain);

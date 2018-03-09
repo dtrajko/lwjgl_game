@@ -13,7 +13,7 @@ public class Player extends Entity {
 
 	private static final float VERTICAL_OFFSET = -5;
 	private static final float RUN_SPEED = 40;
-	private static final float TURN_SPEED = 60;
+	private static final float TURN_SPEED = 70;
 	private static final float GRAVITY = -30;
 	private static final float JUMP_POWER = 0;
 	private static final float TERRAIN_HEIGHT = 0;
