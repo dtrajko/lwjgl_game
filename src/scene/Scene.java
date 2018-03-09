@@ -8,6 +8,8 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Entity;
 import entities.Player;
 import extra.Camera;
+import interfaces.ICamera;
+import interfaces.ITerrain;
 import lensFlare.FlareManager;
 import particles.ParticleSystemComplex;
 import skybox.Skybox;
@@ -16,7 +18,7 @@ import terrains.Terrain;
 import textures.Texture;
 import utils.Light;
 import water.WaterTile;
-import water.WaterTileAux;
+import water.WaterTileVao;
 
 /**
  * Represents all the stuff in the scene (just the camera, light, and model
@@ -35,6 +37,7 @@ public class Scene {
 	private List<Entity> additionalEntities = new ArrayList<Entity>();
 
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
+	private List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
 
 	private final ICamera camera;
 
@@ -43,8 +46,7 @@ public class Scene {
 	private Vector3f lightDirection = new Vector3f(0, -1, 0);
 
 	private Skybox sky;
-	private Terrain terrain;
-	private WaterTileAux waterAux;
+	private ITerrain terrain;
 	private Light light;
 	private Sun sun;
 	private FlareManager lensFlare;
@@ -55,20 +57,20 @@ public class Scene {
 
 	private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
-	public Scene(Player animatedPlayer, Skybox sky, Terrain terrain, WaterTileAux water, Sun sun) {
+	public Scene(Player animatedPlayer, Skybox sky, ITerrain terrain, List<WaterTileVao> waters, Sun sun) {
 		this.camera = new Camera();
 		camera.setScene(this);
 		this.sky = sky;
 		this.light = sun.getLight();
 		this.terrain = terrain;
-		this.waterAux = water;
+		this.waters = waters;
 		this.sun = sun;
 		this.lensFlare = sun.getLensFlare();
 		this.animatedPlayer = animatedPlayer;
 		environmentMap = Texture.newEmptyCubeMap(256);
-		// waterTiles.add(new WaterTile(-16, 6, waterHeight));
-		// waterTiles.add(new WaterTile(-6, 6, waterHeight));
-		// waterTiles.add(new WaterTile(4, 6, waterHeight));
+
+		// adjust camera settings for the race track project
+		camera.togglePerspective();
 	}
 
 	public void addParticleSystems(List<ParticleSystemComplex> particleSystems) {
@@ -169,7 +171,7 @@ public class Scene {
 		return sky;
 	}
 
-	public Terrain getTerrain() {
+	public ITerrain getTerrain() {
 		return terrain;
 	}
 
@@ -201,8 +203,8 @@ public class Scene {
 		return waterTiles;
 	}
 
-	public WaterTileAux getWaterAux() {
-		return waterAux;
+	public List<WaterTileVao> getWatersVao() {
+		return waters;
 	}
 
 	public Sun getSun() {

@@ -7,18 +7,15 @@ import java.util.List;
 import java.util.Random;
 
 import org.lwjgl.util.vector.Vector3f;
-
-import animatedModel.AnimatedModel;
 import animation.Animation;
 import entities.Entity;
 import entities.Player;
-import extra.Camera;
 import generation.ColourGenerator;
 import generation.PerlinNoise;
 import hybridTerrain.HybridTerrainGenerator;
+import interfaces.ITerrain;
 import lensFlare.FlareFactory;
 import lensFlare.FlareManager;
-import lensFlare.FlareTexture;
 import main.GeneralSettings;
 import main.WorldSettings;
 import models.RawModel;
@@ -31,16 +28,17 @@ import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
 import sunRenderer.Sun;
-import sunRenderer.SunRenderer;
+import terrains.HeightMapTerrain;
 import terrains.Terrain;
 import terrains.TerrainGenerator;
 import textures.ModelTexture;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 import textures.Texture;
-import scene.ICamera;
 import utils.Light;
 import utils.MyFile;
 import water.WaterGenerator;
-import water.WaterTileAux;
+import water.WaterTileVao;
 
 public class SceneLoader {
 
@@ -73,26 +71,71 @@ public class SceneLoader {
 		ColourGenerator colourGen = new ColourGenerator(WorldSettings.TERRAIN_COLS, WorldSettings.COLOUR_SPREAD);
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colourGen);
 		Terrain terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
-		WaterTileAux water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+
+		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
+		WaterTileVao water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
+		waters.add(water);
 
 		List<Entity> additionalEntities = new ArrayList<Entity>();
 		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
-		
+
 		additionalEntities = createAdditionalEntities(additionalEntities, terrain);
 		// particleSystems = createParticleSystems(particleSystems);
 
 		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
-				new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE));
+			new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE), new Vector3f(100f, 0f, 100f), new Vector3f(0, 0, 0), 0.12f);
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
 		animatedPlayer.doAnimation(animation);
 		System.out.println("Scene loadScene.");
 
-		Scene scene = createScene(animatedPlayer, sky, sun, terrain, water, additionalEntities);
+		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
 		scene.addParticleSystems(particleSystems);
 		return scene;
 	}
 
-	private List<Entity> createAdditionalEntities(List<Entity> additionalEntities, Terrain terrain) {
+	public Scene loadSceneRaceTrack(MyFile resFolder) {
+
+		rawModelLoader = new RawModelLoader();
+
+		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
+
+		// initialize sun and lens flare and set sun direction
+		Light light = new Light(WorldSettings.LIGHT_DIR, WorldSettings.LIGHT_COL, WorldSettings.LIGHT_BIAS);
+		FlareManager lensFlare = FlareFactory.createLensFlare();
+		Texture sunTexture = Texture.newTexture(new MyFile(new MyFile("res", "lensFlare"), "sun.png")).normalMipMap().create();
+		Sun sun = new Sun(sunTexture, 40, light, lensFlare);
+		sun.setDirection(WorldSettings.LIGHT_DIR);
+
+		TerrainTexture backgroundTexture = new TerrainTexture(rawModelLoader.loadTexture("race/black_background"));
+		TerrainTexture rTexture = new TerrainTexture(rawModelLoader.loadTexture("race/red_curb"));
+		TerrainTexture gTexture = new TerrainTexture(rawModelLoader.loadTexture("race/blue_asfalt"));
+		TerrainTexture bTexture = new TerrainTexture(rawModelLoader.loadTexture("race/blue_asfalt"));
+		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
+		TerrainTexture blendMap = new TerrainTexture(rawModelLoader.loadTexture("race/race_track_blend_map"));
+		HeightMapTerrain terrain = new HeightMapTerrain(0f, 0f, rawModelLoader, texturePack, blendMap, "race/race_track_heightmap");
+
+		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
+
+		List<Entity> additionalEntities = new ArrayList<Entity>();
+		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
+		
+		// additionalEntities = createAdditionalEntities(additionalEntities, terrain);
+		// particleSystems = createParticleSystems(particleSystems);
+
+		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
+			new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE), new Vector3f(114, 0, 206), new Vector3f(0, 180, 0), 0.2f);
+		animatedPlayer.setProperties();
+		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
+		animatedPlayer.doAnimation(animation);
+		System.out.println("Scene loadScene.");
+
+		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
+		scene.addParticleSystems(particleSystems);
+
+		return scene;
+	}
+
+	private List<Entity> createAdditionalEntities(List<Entity> additionalEntities, ITerrain terrain) {
 		int treesLoaded = 0;
 		while (treesLoaded < 50) {
 			Random rand = new Random();
@@ -125,8 +168,8 @@ public class SceneLoader {
 		return particleSystems;
 	}
 
-	private Scene createScene(Player animatedPlayer, Skybox sky, Sun sun, Terrain terrain, WaterTileAux water, List<Entity> additionalEntities){
-		scene = new Scene(animatedPlayer, sky, terrain, water, sun);
+	private Scene createScene(Player animatedPlayer, Skybox sky, Sun sun, ITerrain terrain, List<WaterTileVao> waters, List<Entity> additionalEntities){
+		scene = new Scene(animatedPlayer, sky, terrain, waters, sun);
 		scene.setLightDirection(sun.getLight().getDirection());
 		addEntities(scene, additionalEntities);
 		return scene;

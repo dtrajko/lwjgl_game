@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.lwjgl.util.vector.Matrix4f;
 
+import interfaces.ICamera;
 import loaders.RawModelLoader;
-import scene.ICamera;
 
 public class ParticleMaster {
 

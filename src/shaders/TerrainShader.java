@@ -3,20 +3,18 @@ package shaders;
 import java.util.List;
 
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import interfaces.ICamera;
-import utils.Light;
 import utils.Maths;
 
-public class StaticShader extends ShaderProgramAux {
+public class TerrainShader extends ShaderProgramAux {
 
 	private static final int MAX_LIGHTS = 5;
 
-	private static final String VERTEX_FILE = "shaders/vertexShader.txt";
-	private static final String FRAGMENT_FILE = "shaders/fragmentShader.txt";
+	private static final String VERTEX_FILE = "shaders/terrainVertexShader.txt";
+	private static final String FRAGMENT_FILE = "shaders/terrainFragmentShader.txt";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
@@ -26,21 +24,18 @@ public class StaticShader extends ShaderProgramAux {
 	private int location_attenuation[];
 	private int location_shineDamper;
 	private int location_reflectivity;
-	private int location_useFakeLighting;
 	private int location_skyColour;
-	// these two are used for texture atlases
-	private int location_numberOfRows;
-	private int location_offset;
+	private int location_backgroundTexture;
+	private int location_rTexture;
+	private int location_gTexture;
+	private int location_bTexture;
+	private int location_blendMap;
 	private int location_plane;
-	private int location_modelTexture;
 	private int location_toShadowMapSpace;
 	private int location_shadowMap;
-	private int location_specularMap;
-	private int location_usesSpecularMap;
 
-	public StaticShader() {
+	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
-		
 	}
 
 	@Override
@@ -55,17 +50,16 @@ public class StaticShader extends ShaderProgramAux {
 	@Override
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
-		location_specularMap = super.getUniformLocation("specularMap");
-		location_usesSpecularMap = super.getUniformLocation("usesSpecularMap");
-		location_modelTexture = super.getUniformLocation("modelTexture");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
-		location_useFakeLighting = super.getUniformLocation("useFakeLighting");
 		location_skyColour = super.getUniformLocation("skyColour");
-		location_numberOfRows = super.getUniformLocation("numberOfRows");
-		location_offset = super.getUniformLocation("offset");
+		location_backgroundTexture = super.getUniformLocation("backgroundTexture");
+		location_rTexture = super.getUniformLocation("rTexture");
+		location_gTexture = super.getUniformLocation("gTexture");
+		location_bTexture = super.getUniformLocation("bTexture");
+		location_blendMap = super.getUniformLocation("blendMap");
 		location_plane = super.getUniformLocation("plane");
 		location_toShadowMapSpace = super.getUniformLocation("toShadowMapSpace");
 		location_shadowMap = super.getUniformLocation("shadowMap");
@@ -82,37 +76,24 @@ public class StaticShader extends ShaderProgramAux {
 	}
 
 	public void connectTextureUnits() {
+		super.loadInt(location_backgroundTexture, 0);
+		super.loadInt(location_rTexture, 1);
+		super.loadInt(location_gTexture, 2);
+		super.loadInt(location_bTexture, 3);
+		super.loadInt(location_blendMap, 4);
 		super.loadInt(location_shadowMap, 5);
-		super.loadInt(location_modelTexture, 0);
-		super.loadInt(location_specularMap, 1);
-	}
-
-	public void loadUseSpecularMap(boolean useMap) {
-		super.loadBoolean(location_usesSpecularMap, useMap);
-	}
-
-	public void loadClipPlane(Vector4f plane) {
-		super.load4DVector(location_plane, plane);
-	}
-
-	public void loadNumberOfRows(int numberOfRows) {
-		super.loadFloat(location_numberOfRows, numberOfRows);
 	}
 
 	public void loadToShadowSpaceMatrix(Matrix4f matrix) {
 		super.loadMatrix(location_toShadowMapSpace, matrix);
 	}
 
-	public void loadOffset(float x, float y) {
-		super.load2DVector(location_offset, new Vector2f(x, y));
+	public void loadClipPlane(Vector4f plane) {
+		super.load4DVector(location_plane, plane);
 	}
 
 	public void loadSkyColour(float r, float g, float b) {
 		super.loadVector(location_skyColour, new Vector3f(r, g, b));
-	}
-
-	public void loadFakeLightingVariable(boolean useFakeLighting) {
-		super.loadBoolean(location_useFakeLighting, useFakeLighting);
 	}
 
 	public void loadShineVariables(float damper, float reflectivity) {
@@ -124,16 +105,16 @@ public class StaticShader extends ShaderProgramAux {
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
-	public void loadLights(List<Light> lights) {
+	public void loadLights(List<utils.Light> lights) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
-				super.loadVector(location_lightPosition[i], lights.get(i).getDirection());				
-				super.loadVector(location_lightColour[i], lights.get(i).getColour().getVector());
-				super.loadVector(location_attenuation[i], new Vector3f(lights.get(i).getLightBias().getX(), lights.get(i).getLightBias().getY(), 1.0f));
+				super.loadVector(location_lightPosition[i], lights.get(i).getPosition());
+				super.loadVector(location_lightColour[i], lights.get(i).getColorVector());
+				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
 			} else {
-				super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));				
-				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+				super.loadVector(location_lightPosition[i], new Vector3f(1, 1, 1));				
+				super.loadVector(location_lightColour[i], new Vector3f(1, 1, 1));
+				super.loadVector(location_attenuation[i], new Vector3f(1, 1, 1));
 			}
 		}
 	}

@@ -7,9 +7,9 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import interfaces.ICamera;
 import openglObjects.Vao;
 import textures.Texture;
-import scene.ICamera;
 import utils.MyFile;
 import utils.OpenGlUtils;
 

@@ -3,7 +3,8 @@ package utils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import scene.ICamera;
+
+import interfaces.ICamera;
 
 public class Maths {
 

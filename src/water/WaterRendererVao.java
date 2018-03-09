@@ -3,7 +3,7 @@ package water;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import scene.ICamera;
+import interfaces.ICamera;
 import utils.Light;
 import utils.OpenGlUtils;
 import water.WaterTile;
@@ -17,19 +17,19 @@ import water.WaterTile;
  * @author Karl
  *
  */
-public class WaterRendererAux {
+public class WaterRendererVao {
 
 	private static final float WAVE_SPEED = 0.002f;
 
-	private final WaterShaderAux shader;
+	private final WaterShaderVao shader;
 
 	private float time = 0;
 
 	/**
 	 * Initialises the shader program that will be used to render the water.
 	 */
-	public WaterRendererAux() {
-		this.shader = new WaterShaderAux();
+	public WaterRendererVao() {
+		this.shader = new WaterShaderVao();
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class WaterRendererAux {
 	 *            - An image of the depth buffer for the scene. This is used to
 	 *            apply depth effects to the water.
 	 */
-	public void render(WaterTileAux water, ICamera camera, Light light, int reflectionTexture, int refractionTexture,
+	public void render(WaterTileVao water, ICamera camera, Light light, int reflectionTexture, int refractionTexture,
 			int depthTexture) {
 		prepare(water, camera, light);
 		bindTextures(reflectionTexture, refractionTexture, depthTexture);
@@ -83,7 +83,7 @@ public class WaterRendererAux {
 	 * @param light
 	 *            - The scene's light.
 	 */
-	private void prepare(WaterTileAux water, ICamera camera, Light light) {
+	private void prepare(WaterTileVao water, ICamera camera, Light light) {
 		water.getVao().bind();
 		OpenGlUtils.enableAlphaBlending();
 		prepareShader(water, camera, light);
@@ -101,9 +101,9 @@ public class WaterRendererAux {
 	 *            - Image of the depth buffer of the current scene.
 	 */
 	private void bindTextures(int reflectionTexture, int refractionTexture, int depthTexture) {
-		bindTextureToUnit(reflectionTexture, WaterShaderAux.REFLECT_TEX_UNIT);
-		bindTextureToUnit(refractionTexture, WaterShaderAux.REFRACT_TEX_UNIT);
-		bindTextureToUnit(depthTexture, WaterShaderAux.DEPTH_TEX_UNIT);
+		bindTextureToUnit(reflectionTexture, WaterShaderVao.REFLECT_TEX_UNIT);
+		bindTextureToUnit(refractionTexture, WaterShaderVao.REFRACT_TEX_UNIT);
+		bindTextureToUnit(depthTexture, WaterShaderVao.DEPTH_TEX_UNIT);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class WaterRendererAux {
 	 * @param water
 	 *            - The water that was being rendered.
 	 */
-	private void finish(WaterTileAux water) {
+	private void finish(WaterTileVao water) {
 		water.getVao().unbind();
 		shader.stop();
 		OpenGlUtils.disableBlending();
@@ -145,7 +145,7 @@ public class WaterRendererAux {
 	 * @param light
 	 *            - The light in the scene.
 	 */
-	private void prepareShader(WaterTileAux water, ICamera camera, Light light) {
+	private void prepareShader(WaterTileVao water, ICamera camera, Light light) {
 		shader.start();
 		updateTime();
 		loadCameraVariables(camera);

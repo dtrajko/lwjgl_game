@@ -2,14 +2,18 @@ package terrains;
 
 import org.lwjgl.util.vector.Vector4f;
 
+import interfaces.ICamera;
+import interfaces.ITerrain;
 import main.WorldSettings;
+import models.RawModel;
 import openglObjects.Vao;
 import rendering.TerrainRenderer;
-import scene.ICamera;
+import textures.TerrainTexture;
+import textures.TerrainTexturePack;
 import utils.Light;
 
-public class Terrain {
-	
+public class Terrain implements ITerrain {
+
 	private final Vao vao;
 	private final int vertexCount;
 	private final TerrainRenderer renderer;
@@ -23,14 +27,14 @@ public class Terrain {
 		this.heights = heights;
 	}
 	
-	public int getVertexCount(){
+	public int getVertexCount() {
 		return vertexCount;
 	}
 	
-	public Vao getVao(){
+	public Vao getVao() {
 		return vao;
 	}
-	
+
 	public void render(ICamera camera, Light light, Vector4f clipPlane){
 		renderer.render(this, camera, light, clipPlane);
 	}
@@ -53,5 +57,35 @@ public class Terrain {
 			worldY = WATER_HEIGHT;
 		}
 		return worldY;
+	}
+
+	@Override
+	public RawModel getModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TerrainTexturePack getTexturePack() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TerrainTexture getBlendMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public float getX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getZ() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

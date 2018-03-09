@@ -1,15 +1,15 @@
 package main;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
-
 import input.GamepadManager;
+import interfaces.ITerrainRenderer;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
 import particles.ParticleMaster;
+import renderEngine.HeightMapTerrainRenderer;
 import renderEngine.RenderEngine;
+import rendering.TerrainRenderer;
 import scene.Scene;
 import utils.DisplayManager;
 import utils.MyFile;
@@ -28,7 +28,8 @@ public class MainApp {
 
 		RenderEngine engine = RenderEngine.init();
 		SceneLoader loader = SceneLoaderFactory.createSceneLoader();
-		Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
+		Scene scene = loader.loadSceneRaceTrack(new MyFile(LoaderSettings.RES_FOLDER));
+		// Scene scene = loader.loadScene(new MyFile(LoaderSettings.RES_FOLDER), new MyFile(LoaderSettings.RES_FOLDER, "Socuwan Scene"));
 		ParticleMaster.init(loader.getLoader(), scene.getCamera().getProjectionMatrix());
 		GamepadManager.init();
 

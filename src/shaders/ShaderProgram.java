@@ -79,6 +79,7 @@ public class ShaderProgram {
 	}
 	
 	private int loadShader(MyFile file, int type) {
+		// System.out.println("Load shader '" + file + "', type '" + type + "'");
 		StringBuilder shaderSource = new StringBuilder();
 		try {
 			BufferedReader reader = file.getReader();

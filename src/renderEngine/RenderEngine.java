@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 import animatedModelRenderer.AnimatedModelRenderer;
 import entityRenderers.EntityRenderer;
 import environmentMapRenderer.EnviroMapRenderer;
+import interfaces.ITerrainRenderer;
 import rendering.TerrainRenderer;
 import scene.Scene;
 import skybox.SkyboxRenderer;
@@ -13,7 +14,7 @@ import textures.Texture;
 import utils.DisplayManager;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
-import water.WaterRendererAux;
+import water.WaterRendererVao;
 
 /**
  * This class represents the entire render engine.

@@ -11,7 +11,7 @@ import utils.ICamera;
 import utils.SmoothFloat;
 
 public class Camera implements ICamera{
-	
+
 	private static final float FOV = 60;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 300;
@@ -44,8 +44,8 @@ public class Camera implements ICamera{
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
 		calculateCameraPosition(horizontalDistance, verticalDistance);
-		this.yaw =360- angleAroundPlayer.get();
-		yaw%=360;
+		this.yaw = 360 - angleAroundPlayer.get();
+		yaw %= 360;
 		updateViewMatrix();
 	}
 

@@ -38,11 +38,11 @@ public class WaterGenerator {
 	 *            - The height of the water mesh in the world.
 	 * @return The newly constructed water mesh.
 	 */
-	public static WaterTileAux generate(int gridCount, float height) {
+	public static WaterTileVao generate(int gridCount, float height) {
 		int totalVertexCount = gridCount * gridCount * VERTICES_PER_SQUARE;
 		byte[] waterMeshData = createMeshData(gridCount, totalVertexCount);
 		Vao vao = VaoLoader.createWaterVao(waterMeshData);
-		return new WaterTileAux(vao, totalVertexCount, height);
+		return new WaterTileVao(vao, totalVertexCount, height);
 	}
 
 	/**

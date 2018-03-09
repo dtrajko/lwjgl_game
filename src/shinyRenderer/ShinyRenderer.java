@@ -5,10 +5,10 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
+import interfaces.ICamera;
 import openglObjects.Vao;
 import scene.SceneEntity;
 import textures.Texture;
-import scene.ICamera;
 import utils.OpenGlUtils;
 
 public class ShinyRenderer {

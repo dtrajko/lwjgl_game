@@ -4,7 +4,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import entities.Player;
-import scene.ICamera;
+import interfaces.ICamera;
 import utils.DisplayManager;
 
 public class Particle {

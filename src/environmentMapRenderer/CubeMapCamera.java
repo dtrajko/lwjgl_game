@@ -3,9 +3,10 @@ package environmentMapRenderer;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import utils.ICameraAux;
+import interfaces.ICamera;
+import scene.Scene;
 
-public class CubeMapCamera implements ICameraAux {
+public class CubeMapCamera implements ICamera {
 
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 200f;
@@ -104,4 +105,63 @@ public class CubeMapCamera implements ICameraAux {
 		Matrix4f.mul(projectionMatrix, viewMatrix, projectionViewMatrix);
 	}
 
+	@Override
+	public void move() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reflect() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setScene(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPitch(float pitch) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public float getPitch() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getYaw() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getRoll() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getNearPlane() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getFarPlane() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void togglePerspective() {
+		// TODO Auto-generated method stub
+		
+	}
 }

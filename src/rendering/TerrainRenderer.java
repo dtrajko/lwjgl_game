@@ -3,7 +3,10 @@ package rendering;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector4f;
 
-import scene.ICamera;
+import interfaces.ICamera;
+import interfaces.ITerrain;
+import interfaces.ITerrainRenderer;
+import terrains.HeightMapTerrain;
 import terrains.Terrain;
 import utils.Light;
 import utils.MyFile;
@@ -14,7 +17,7 @@ import utils.MyFile;
  * @author Karl
  *
  */
-public class TerrainRenderer {
+public class TerrainRenderer implements ITerrainRenderer {
 
 	private static final MyFile VERTEX_SHADER = new MyFile("rendering", "flatTerrainVertex.glsl");
 	private static final MyFile FRAGMENT_SHADER = new MyFile("rendering", "flatTerrainFragment.glsl");
@@ -50,7 +53,8 @@ public class TerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	public void render(Terrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
+	@Override
+	public void render(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
 		prepare(terrain, camera, light, clipPlane);
 		if (hasIndices) {
 			GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
@@ -81,7 +85,7 @@ public class TerrainRenderer {
 	 *            the terrain. The clipping planes cut off anything in the scene
 	 *            that is rendered outside of the plane.
 	 */
-	private void prepare(Terrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
+	private void prepare(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
 		terrain.getVao().bind();
 		shader.start();
 		shader.plane.loadVec4(clipPlane);
@@ -97,9 +101,8 @@ public class TerrainRenderer {
 	 * 
 	 * @param terrain
 	 */
-	private void finish(Terrain terrain) {
+	private void finish(ITerrain terrain) {
 		terrain.getVao().unbind();
 		shader.stop();
 	}
-
 }

@@ -12,9 +12,10 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+
+import interfaces.ICamera;
 import loaders.RawModelLoader;
 import models.RawModel;
-import scene.ICamera;
 import utils.Maths;
 
 public class ParticleRenderer {

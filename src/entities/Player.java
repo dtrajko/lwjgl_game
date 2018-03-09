@@ -7,6 +7,7 @@ import org.lwjgl.util.vector.Vector3f;
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
 import input.GamepadManager;
+import interfaces.ITerrain;
 import loaders.SceneLoader;
 import main.WorldSettings;
 import openglObjects.Vao;
@@ -16,12 +17,13 @@ import utils.DisplayManager;
 
 public class Player extends AnimatedModel {
 
-	private static final float VERTICAL_OFFSET = -5;
-	private static final float RUN_SPEED = 10;
-	private static final float TURN_SPEED = 160;
-	private static final float GRAVITY = -20;
-	private static final float JUMP_POWER = 10;
-	private static final float HEIGHT = 5.5f;
+	private static float VERTICAL_OFFSET = -5;
+	private static float RUN_SPEED = 10;
+	private static float TURN_SPEED = 160;
+	private static float GRAVITY = -20;
+	private static float JUMP_POWER = 10;
+	private static float TERRAIN_HEIGHT = 0;
+	private static float HEIGHT = 5.5f;
 
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
@@ -30,22 +32,36 @@ public class Player extends AnimatedModel {
 	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
 	
-	private Terrain terrain = null;
+	private ITerrain terrain = null;
 	
 	private boolean generateParticles = false;
 
-	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super(model, texture, rootJoint, jointCount, position, rotX, rotY, rotZ, scale);
+	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, Vector3f rotation, float scale) {
+		super(model, texture, rootJoint, jointCount, position, rotation.getX(), rotation.getY(), rotation.getZ(), scale);
 	}
 
-	public void update(Terrain terrain) {
+	public void setProperties() {
+		VERTICAL_OFFSET = -5;
+		RUN_SPEED = 10;
+		TURN_SPEED = 55;
+		GRAVITY = -30;
+		JUMP_POWER = 0;
+		TERRAIN_HEIGHT = 0;
+		HEIGHT = 5.5f;
+	}
+
+	public void update(ITerrain terrain) {
 		this.terrain = terrain;
 		move(terrain);
 		super.update(getCurrentSpeed());
 	}
 
-	public void move(Terrain terrain) {
+	public void move(ITerrain terrain) {
 		checkInputs();
+
+		if (super.getPosition().y > TERRAIN_HEIGHT + 0.5f) {
+			currentSpeed /= 10f;
+		}
 
 		// prevent shaking when standing on objects
 		float gravity = GRAVITY;
@@ -74,10 +90,14 @@ public class Player extends AnimatedModel {
 			// dz = -dz;
 		}
 
-		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() +
-			" | PosX= " + Math.round(this.getPosition().x) + " PoxY= " + Math.round(this.getPosition().y) + " PosZ=" + Math.round(this.getPosition().z) +
-			" | RotX= " + Math.round(this.getRotX()) + " RotY=" + Math.round(this.getRotY()) + " RotZ=" + Math.round(this.getRotZ()) +
-			" | Speed=" + getCurrentSpeed());
+		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() + " | " +
+				" PosX= " + Math.round(this.getPosition().x * 10d) / 10d + 
+				" PoxY= " + Math.round(this.getPosition().y * 10d) / 10d +
+				" PosZ=" + Math.round(this.getPosition().z * 10d) / 10d + " | " +
+				" RotX= " + Math.round(this.getRotX() * 10d) / 10d +
+				" RotY=" + Math.round(this.getRotY() * 10d) / 10d +
+				" RotZ=" + Math.round(this.getRotZ() * 10d) / 10d + " | " +
+				" Speed=" + getCurrentSpeed());
 	}
 
 	public static float getHeight() {
@@ -88,7 +108,7 @@ public class Player extends AnimatedModel {
 		return GRAVITY;
 	}
 	
-	public Terrain getTerrain() {
+	public ITerrain getTerrain() {
 		return this.terrain;
 	}
 

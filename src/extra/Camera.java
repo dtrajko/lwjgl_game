@@ -6,7 +6,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import entities.Player;
-import scene.ICamera;
+import interfaces.ICamera;
 import scene.Scene;
 
 /**
@@ -28,8 +28,8 @@ public class Camera implements ICamera {
 	private static final float FAR_PLANE = 1000;
 
 	private static final float DISTANCE_FROM_PLAYER = 4f;
-	private static final float PITCH_THIRD_PERSON = -10;
-	private static final float PITCH_FIRST_PERSON = -10;
+	private static final float PITCH_THIRD_PERSON = 10;
+	private static final float PITCH_FIRST_PERSON = 10;
 
 	private static final float Y_OFFSET = 2;
 
@@ -226,6 +226,11 @@ public class Camera implements ICamera {
 	}
 
 	public void togglePerspective() {
+
+		if (this.player == null) {
+			this.player = scene.getAnimatedPlayer();
+		}
+
 		if (this.currentPerspective == Camera.Perspective.THIRD_PERSON) {
 			this.currentPerspective = Camera.Perspective.FIRST_PERSON;
 			this.distanceFromPlayer = 0;

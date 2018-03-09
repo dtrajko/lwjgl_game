@@ -35,13 +35,13 @@ public class AnimatedModelLoader {
 		return new AnimatedModel(model, texture, headJoint, skeletonData.jointCount, new Vector3f(), 0f, 0f, 0f, 1f);
 	}
 
-	public static Player loadPlayer(MyFile modelFile, MyFile textureFile) {
+	public static Player loadPlayer(MyFile modelFile, MyFile textureFile, Vector3f position, Vector3f rotation, float scale) {
 		AnimatedModelData entityData = ColladaLoader.loadColladaModel(modelFile, GeneralSettings.MAX_WEIGHTS);
 		Vao model = createVao(entityData.getMeshData());
 		Texture texture = loadTexture(textureFile);
 		SkeletonData skeletonData = entityData.getJointsData();
 		Joint headJoint = createJoints(skeletonData.headJoint);
-		return new Player(model, texture, headJoint, skeletonData.jointCount, new Vector3f(100, 0, 100), 0f, 0f, 0f, 0.12f);
+		return new Player(model, texture, headJoint, skeletonData.jointCount, position, rotation, scale);
 	}
 
 	/**

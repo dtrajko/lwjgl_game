@@ -13,15 +13,16 @@ import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
+import interfaces.ICamera;
+import interfaces.ITerrainRenderer;
 import particles.ParticleMaster;
-import rendering.TerrainRenderer;
-import scene.ICamera;
 import scene.Scene;
 import skybox.SkyboxRenderer;
 import sunRenderer.SunRenderer;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
-import water.WaterRendererAux;
+import water.WaterRendererVao;
+import water.WaterTileVao;
 
 /**
  * This class is in charge of rendering everything in the scene to the screen.
@@ -38,11 +39,11 @@ public class MasterRenderer {
 	private SkyboxRenderer skyRenderer;
 	private AnimatedModelRenderer animModelRenderer;
 	private EntityRenderer entityRenderer;
-	private TerrainRenderer terrainRenderer;
+	private ITerrainRenderer terrainRenderer;
 	private WaterRenderer waterRenderer;
 	private WaterFrameBuffers waterFbos;
 	private SunRenderer sunRenderer;
-	private WaterRendererAux waterRendererAux;
+	private WaterRendererVao waterRendererVao;
 	private final Fbo reflectionFbo;
 	private final Fbo refractionFbo;
 
@@ -50,9 +51,10 @@ public class MasterRenderer {
 		this.waterFbos = new WaterFrameBuffers();
 		this.refractionFbo = createWaterFbo(Display.getWidth() / 2, Display.getHeight() / 2, true);
 		this.reflectionFbo = createWaterFbo(Display.getWidth(), Display.getHeight(), false);
-		this.terrainRenderer = new TerrainRenderer(true);
+		this.terrainRenderer = new HeightMapTerrainRenderer();
+		// terrainRenderer = new TerrainRenderer(true);
 		this.waterRenderer = new WaterRenderer(waterFbos);
-		this.waterRendererAux = new WaterRendererAux();
+		this.waterRendererVao = new WaterRendererVao();
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
 		this.entityRenderer = new EntityRenderer();
@@ -67,7 +69,7 @@ public class MasterRenderer {
 		this.entityRenderer.cleanUp();
 		this.sunRenderer.cleanUp();
 		this.skyRenderer.cleanUp();
-		this.waterRendererAux.cleanUp();
+		this.waterRendererVao.cleanUp();
 		this.waterRenderer.cleanUp();
 		this.terrainRenderer.cleanUp();
 		this.waterFbos.cleanUp();
@@ -94,7 +96,9 @@ public class MasterRenderer {
 		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
 		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
 		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
-		waterRendererAux.render(scene.getWaterAux(), scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+		for (WaterTileVao water : scene.getWatersVao()) {
+			waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+		}
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 
 		ParticleMaster.update(scene.getCamera());

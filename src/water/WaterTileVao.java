@@ -10,13 +10,13 @@ import openglObjects.Vao;
  * @author Karl
  *
  */
-public class WaterTileAux {
+public class WaterTileVao {
 
 	private final Vao vao;
 	private final int vertexCount;
 	private final float height;
 
-	protected WaterTileAux(Vao vao, int vertexCount, float height) {
+	protected WaterTileVao(Vao vao, int vertexCount, float height) {
 		this.vao = vao;
 		this.height = height;
 		this.vertexCount = vertexCount;

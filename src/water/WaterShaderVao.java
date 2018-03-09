@@ -14,7 +14,7 @@ import utils.MyFile;
  * @author Karl
  *
  */
-public class WaterShaderAux extends ShaderProgram {
+public class WaterShaderVao extends ShaderProgram {
 
 	protected static final int REFLECT_TEX_UNIT = 0;
 	protected static final int REFRACT_TEX_UNIT = 1;
@@ -36,7 +36,7 @@ public class WaterShaderAux extends ShaderProgram {
 	protected UniformSampler refractionTexture = new UniformSampler("refractionTexture");
 	protected UniformSampler depthTexture = new UniformSampler("depthTexture");
 
-	public WaterShaderAux() {
+	public WaterShaderVao() {
 		super(VERTEX_SHADER, FRAGMENT_SHADER);
 		super.storeAllUniformLocations(projectionViewMatrix, height, reflectionTexture, refractionTexture, depthTexture,
 				cameraPos, nearFarPlanes, waveTime, lightDirection, lightColour, lightBias);
