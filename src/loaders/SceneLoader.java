@@ -24,6 +24,7 @@ import objConverter.ModelData;
 import objConverter.OBJFileLoader;
 import particles.ParticleSystemComplex;
 import particles.ParticleTexture;
+import racetrack.Racetrack;
 import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
@@ -131,6 +132,9 @@ public class SceneLoader {
 
 		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
 		scene.addParticleSystems(particleSystems);
+		
+		Racetrack racetrack = new Racetrack(scene.getAnimatedPlayer());
+		scene.setRacetrack(racetrack);
 
 		return scene;
 	}

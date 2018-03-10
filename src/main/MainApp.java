@@ -3,14 +3,12 @@ package main;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
 import input.GamepadManager;
-import interfaces.ITerrainRenderer;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
 import particles.ParticleMaster;
-import renderEngine.HeightMapTerrainRenderer;
+import racetrack.Racetrack;
 import renderEngine.RenderEngine;
-import rendering.TerrainRenderer;
 import scene.Scene;
 import utils.DisplayManager;
 import utils.MyFile;
@@ -41,7 +39,7 @@ public class MainApp {
 			if (!Controllers.isCreated()) {
 				GamepadManager.init();
 			}
-	
+
 			scene.update();
 			engine.update();
 			engine.renderScene(scene);

@@ -12,6 +12,7 @@ import interfaces.ICamera;
 import interfaces.ITerrain;
 import lensFlare.FlareManager;
 import particles.ParticleSystemComplex;
+import racetrack.Racetrack;
 import skybox.Skybox;
 import sunRenderer.Sun;
 import terrains.Terrain;
@@ -57,6 +58,8 @@ public class Scene {
 
 	private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
+	private Racetrack racetrack = null;
+
 	public Scene(Player animatedPlayer, Skybox sky, ITerrain terrain, List<WaterTileVao> waters, Sun sun) {
 		this.camera = new Camera();
 		camera.setScene(this);
@@ -88,6 +91,9 @@ public class Scene {
 	public void update() {
 		animatedPlayer.update(terrain);
 		camera.move();
+		if (racetrack != null) {
+			racetrack.update();
+		}
 
 		// particleSystems.get(1).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110), 110));
 		// particleSystems.get(2).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110) + 2, 110));
@@ -213,5 +219,13 @@ public class Scene {
 
 	public FlareManager getLensFlare() {
 		return lensFlare;
+	}
+
+	public void setRacetrack(Racetrack racetrack) {
+		this.racetrack = racetrack;
+	}
+
+	public Racetrack getRacetrack() {
+		return this.racetrack;
 	}
 }

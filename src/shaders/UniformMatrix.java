@@ -19,7 +19,4 @@ public class UniformMatrix extends Uniform{
 		matrixBuffer.flip();
 		GL20.glUniformMatrix4(super.getLocation(), false, matrixBuffer);
 	}
-	
-	
-
 }

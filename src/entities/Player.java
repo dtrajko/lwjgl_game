@@ -89,15 +89,6 @@ public class Player extends AnimatedModel {
 			// dx = -dx;
 			// dz = -dz;
 		}
-
-		DisplayManager.setTitle(DisplayManager.getTitle() + " | FPS=" + DisplayManager.getFPS() + " | " +
-				" PosX= " + Math.round(this.getPosition().x * 10d) / 10d + 
-				" PoxY= " + Math.round(this.getPosition().y * 10d) / 10d +
-				" PosZ=" + Math.round(this.getPosition().z * 10d) / 10d + " | " +
-				" RotX= " + Math.round(this.getRotX() * 10d) / 10d +
-				" RotY=" + Math.round(this.getRotY() * 10d) / 10d +
-				" RotZ=" + Math.round(this.getRotZ() * 10d) / 10d + " | " +
-				" Speed=" + getCurrentSpeed());
 	}
 
 	public static float getHeight() {

@@ -2,19 +2,10 @@ package renderEngine;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import animatedModelRenderer.AnimatedModelRenderer;
-import entityRenderers.EntityRenderer;
 import environmentMapRenderer.EnviroMapRenderer;
-import interfaces.ITerrainRenderer;
-import rendering.TerrainRenderer;
 import scene.Scene;
-import skybox.SkyboxRenderer;
-import sunRenderer.SunRenderer;
 import textures.Texture;
 import utils.DisplayManager;
-import water.WaterFrameBuffers;
-import water.WaterRenderer;
-import water.WaterRendererVao;
 
 /**
  * This class represents the entire render engine.

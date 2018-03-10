@@ -10,6 +10,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.PixelFormat;
 
+import entities.Player;
+import loaders.SceneLoader;
+import racetrack.LapStopwatch;
+
 public class DisplayManager {
 
 	private static final String TITLE = "Java / LWJGL 3D world";
@@ -44,11 +48,31 @@ public class DisplayManager {
 	public static void updateFPS() {
 	    if (getCurrentTime() - lastFPS > 1000) {
 	    	displayFps = currentFps;
-	    	Display.setTitle(title + " | FPS: " + displayFps);
+	    	setCustomTitle();
 	    	currentFps = 0; //reset the FPS counter
 	        lastFPS += 1000; //add one second
 	    }
 	    currentFps++;
+	}
+
+	private static void setCustomTitle() {
+
+		Player player = SceneLoader.getScene().getAnimatedPlayer();
+		LapStopwatch stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
+
+		DisplayManager.setTitle(DisplayManager.getTitle() + " | " +
+			"FPS=" + DisplayManager.getFPS() + " | " +
+			"PosX= " + Math.round(player.getPosition().x * 10d) / 10d + " | " +
+			"PoxY= " + Math.round(player.getPosition().y * 10d) / 10d + " | " +
+			"PosZ=" + Math.round(player.getPosition().z * 10d) / 10d + " | " +
+			// "RotX= " + Math.round(player.getRotX() * 10d) / 10d + " | " +
+			"RotY=" + Math.round(player.getRotY() * 10d) / 10d + " | " +
+			// "RotZ=" + Math.round(player.getRotZ() * 10d) / 10d + " | " +
+			"Speed=" + Math.round(player.getCurrentSpeed() * 10d) / 10d + " | " +
+			"Lap: " + stopwatch.getLapCount() + " | " +
+			"Lap time: " + stopwatch.getLapTime() + " | " +
+			"Best lap: " + stopwatch.getBestLap()
+		);
 	}
 
 	public static int getFPS() {
@@ -85,7 +109,7 @@ public class DisplayManager {
 		return delta;
 	}
 
-	private static long getCurrentTime() {
+	public static long getCurrentTime() {
 		return Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
