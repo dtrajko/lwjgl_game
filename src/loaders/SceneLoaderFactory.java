@@ -11,11 +11,11 @@ public class SceneLoaderFactory {
 		 * it this way as an exercise for myself :P
 		 */
 		ModelLoader modelLoader = new ModelLoader();
+		RawModelLoader rawModelLoader = new RawModelLoader();
 		SkinLoader skinLoader = new SkinLoader();
 		ConfigsLoader configsLoader = new ConfigsLoader();
 		EntityLoader entityLoader = new EntityLoader(modelLoader, skinLoader, configsLoader);
 		SkyboxLoader skyLoader = new SkyboxLoader();
-		return new SceneLoader(entityLoader, skyLoader);
+		return new SceneLoader(entityLoader, skyLoader, rawModelLoader);
 	}
-
 }

@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Entity;
 import entities.Player;
 import extra.Camera;
+import guis.GuiTexture;
 import interfaces.ICamera;
 import interfaces.ITerrain;
 import lensFlare.FlareManager;
@@ -39,6 +40,7 @@ public class Scene {
 
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
+	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	private final ICamera camera;
 
@@ -227,5 +229,9 @@ public class Scene {
 
 	public Racetrack getRacetrack() {
 		return this.racetrack;
+	}
+
+	public List<GuiTexture> getGuiElements() {
+		return this.guis;
 	}
 }

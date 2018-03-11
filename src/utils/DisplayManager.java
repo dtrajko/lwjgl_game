@@ -9,7 +9,6 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.PixelFormat;
-
 import entities.Player;
 import loaders.SceneLoader;
 import racetrack.LapStopwatch;

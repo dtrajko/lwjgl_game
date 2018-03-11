@@ -12,6 +12,8 @@ import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
+import fontRendering.TextMaster;
+import guis.GuiRenderer;
 import interfaces.ICamera;
 import interfaces.ITerrainRenderer;
 import particles.ParticleMaster;
@@ -43,6 +45,7 @@ public class MasterRenderer {
 	private WaterFrameBuffers waterFbos;
 	private SunRenderer sunRenderer;
 	private WaterRendererVao waterRendererVao;
+	private GuiRenderer guiRenderer;
 	private final Fbo reflectionFbo;
 	private final Fbo refractionFbo;
 
@@ -56,6 +59,7 @@ public class MasterRenderer {
 		this.waterRendererVao = new WaterRendererVao();
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
+		this.guiRenderer = new GuiRenderer();
 		this.entityRenderer = new EntityRenderer();
 		this.animModelRenderer = new AnimatedModelRenderer();
 	}
@@ -71,17 +75,20 @@ public class MasterRenderer {
 		this.waterRendererVao.cleanUp();
 		this.waterRenderer.cleanUp();
 		this.terrainRenderer.cleanUp();
+		this.guiRenderer.cleanUp();
 		this.waterFbos.cleanUp();
 		this.refractionFbo.delete();
 		this.reflectionFbo.delete();
+		TextMaster.cleanUp();
 	}
 
-	protected void renderScene(Scene scene) {
-		renderMainPass(scene);
-		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-		renderWaterRefractionPass(scene);
-		renderWaterReflectionPass(scene);
-		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+	protected void renderScene(Scene scene, boolean waterRenderingEnabled) {
+		if (waterRenderingEnabled) {
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			renderWaterReflectionPass(scene);
+			renderWaterRefractionPass(scene);
+			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);	
+		}
 		renderMainPass(scene);
 	}
 
@@ -99,9 +106,20 @@ public class MasterRenderer {
 			waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
 		}
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
+		guiRenderer.render(scene.getGuiElements());
 
 		ParticleMaster.update(scene.getCamera());
 		ParticleMaster.renderParticles(scene.getCamera());
+	}
+
+	/**
+	 * Prepare to render the current frame by clearing the framebuffer.
+	 */
+	private void prepare() {
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		GL11.glClearColor(1, 1, 1, 1);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 	}
 
 	/**
@@ -150,14 +168,6 @@ public class MasterRenderer {
 		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), new Vector4f(0,-1,0, 0));
 		waterFbos.unbindCurrentFrameBuffer();
 		refractionFbo.unbindAfterRender();
-	}
-
-	/**
-	 * Prepare to render the current frame by clearing the framebuffer.
-	 */
-	private void prepare() {
-		GL11.glClearColor(1, 1, 1, 1);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){

@@ -6,12 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import animation.Animation;
 import entities.Entity;
 import entities.Player;
+import factories.FontFactory;
+import fontMeshCreator.FontType;
+import fontMeshCreator.GUIText;
+import fontRendering.TextMaster;
 import generation.ColourGenerator;
 import generation.PerlinNoise;
+import guis.GuiTexture;
 import hybridTerrain.HybridTerrainGenerator;
 import interfaces.ITerrain;
 import lensFlare.FlareFactory;
@@ -48,14 +54,17 @@ public class SceneLoader {
 	private static Scene scene;
 	private RawModelLoader rawModelLoader;
 
-	public SceneLoader(EntityLoader entityLoader, SkyboxLoader skyLoader) {
+	public SceneLoader(EntityLoader entityLoader, SkyboxLoader skyLoader, RawModelLoader rawModelLoader) {
 		this.entityLoader = entityLoader;
 		this.skyLoader = skyLoader;
+		this.rawModelLoader = rawModelLoader;
 	}
 
 	public Scene loadScene(MyFile resFolder, MyFile sceneFile) {
 
-		rawModelLoader = new RawModelLoader();
+		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
+		List<Entity> additionalEntities = new ArrayList<Entity>();
+		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
 		// Skybox sky = skyLoader.loadSkyBox(new MyFile(sceneFile, LoaderSettings.SKYBOX_FOLDER));
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
@@ -73,12 +82,8 @@ public class SceneLoader {
 		TerrainGenerator terrainGenerator = new HybridTerrainGenerator(noise, colourGen);
 		Terrain terrain = terrainGenerator.generateTerrain(WorldSettings.WORLD_SIZE);
 
-		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
 		WaterTileVao water = WaterGenerator.generate(WorldSettings.WORLD_SIZE, WorldSettings.WATER_HEIGHT);
 		waters.add(water);
-
-		List<Entity> additionalEntities = new ArrayList<Entity>();
-		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 
 		additionalEntities = createAdditionalEntities(additionalEntities, terrain);
 		// particleSystems = createParticleSystems(particleSystems);
@@ -96,7 +101,12 @@ public class SceneLoader {
 
 	public Scene loadSceneRaceTrack(MyFile resFolder) {
 
-		rawModelLoader = new RawModelLoader();
+		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
+		List<Entity> additionalEntities = new ArrayList<Entity>();
+		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
+		List<GuiTexture> guis = new ArrayList<GuiTexture>();
+
+		TextMaster.init(this.rawModelLoader);
 
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
 
@@ -109,17 +119,12 @@ public class SceneLoader {
 
 		TerrainTexture backgroundTexture = new TerrainTexture(rawModelLoader.loadTexture("race/black_background"));
 		TerrainTexture rTexture = new TerrainTexture(rawModelLoader.loadTexture("race/red_curb"));
-		TerrainTexture gTexture = new TerrainTexture(rawModelLoader.loadTexture("race/blue_asfalt"));
+		TerrainTexture gTexture = new TerrainTexture(rawModelLoader.loadTexture("race/green_start"));
 		TerrainTexture bTexture = new TerrainTexture(rawModelLoader.loadTexture("race/blue_asfalt"));
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(rawModelLoader.loadTexture("race/race_track_blend_map"));
 		HeightMapTerrain terrain = new HeightMapTerrain(0f, 0f, rawModelLoader, texturePack, blendMap, "race/race_track_heightmap");
 
-		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
-
-		List<Entity> additionalEntities = new ArrayList<Entity>();
-		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
-		
 		// additionalEntities = createAdditionalEntities(additionalEntities, terrain);
 		// particleSystems = createParticleSystems(particleSystems);
 
@@ -128,7 +133,6 @@ public class SceneLoader {
 		animatedPlayer.setProperties();
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
 		animatedPlayer.doAnimation(animation);
-		System.out.println("Scene loadScene.");
 
 		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
 		scene.addParticleSystems(particleSystems);

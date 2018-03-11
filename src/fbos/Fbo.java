@@ -30,6 +30,10 @@ public class Fbo {
 		this.depthAttachment = depthAttachment;
 	}
 
+	public int getId() {
+		return fboId;
+	}
+
 	/**
 	 * Copy the contents of a colour attachment of this FBO to the screen.
 	 * 

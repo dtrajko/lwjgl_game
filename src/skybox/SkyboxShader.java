@@ -6,8 +6,8 @@ import utils.MyFile;
 
 public class SkyboxShader extends ShaderProgram {
 
-	private static final MyFile VERTEX_SHADER = new MyFile("skybox", "skyboxVertex.txt");
-	private static final MyFile FRAGMENT_SHADER = new MyFile("skybox", "skyboxFragment.txt");
+	private static final MyFile VERTEX_SHADER = new MyFile("skybox", "skyboxVertex.glsl");
+	private static final MyFile FRAGMENT_SHADER = new MyFile("skybox", "skyboxFragment.glsl");
 
 	protected UniformMatrix projectionViewMatrix = new UniformMatrix("projectionViewMatrix");
 

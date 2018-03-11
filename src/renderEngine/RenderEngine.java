@@ -39,8 +39,8 @@ public class RenderEngine {
 	 * @param scene
 	 *            - the game scene.
 	 */
-	public void renderScene(Scene scene) {
-		renderer.renderScene(scene);
+	public void renderScene(Scene scene, boolean waterRenderingEnabled) {
+		renderer.renderScene(scene, waterRenderingEnabled);
 	}
 
 	/**
