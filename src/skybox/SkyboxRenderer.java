@@ -1,18 +1,23 @@
 package skybox;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import interfaces.ICamera;
 import openglObjects.Vao;
+import utils.DisplayManager;
 import utils.OpenGlUtils;
 
 public class SkyboxRenderer {
 
 	private static final float SIZE = 200;
+	private static final float ROTATE_SPEED = 1f;
 
 	private SkyboxShader shader;
 	private Vao box;
+	
+	private float rotation = 0;
 
 	public SkyboxRenderer() {
 		this.shader = new SkyboxShader();
@@ -55,7 +60,12 @@ public class SkyboxRenderer {
 	private void prepare(Skybox skybox, ICamera camera){
 		shader.start();
 		GL11.glDepthMask(false);
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix().translate(new Vector3f(0f, -50f, 0f)));
+		
+		Matrix4f projectionViewMatrix = camera.getProjectionViewMatrix();
+		projectionViewMatrix.translate(new Vector3f(0f, -50f, 0f));
+		rotation += ROTATE_SPEED * DisplayManager.getFrameTimeSeconds();
+		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0), projectionViewMatrix, projectionViewMatrix);
+		shader.projectionViewMatrix.loadMatrix(projectionViewMatrix);
 		skybox.getTexture().bindToUnit(0);
 		OpenGlUtils.disableBlending();
 		OpenGlUtils.enableDepthTesting(true);

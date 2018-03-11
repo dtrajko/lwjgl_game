@@ -70,10 +70,10 @@ public class GamepadManager {
 		}
 		if (gamePadEnabled) {
 			if (gamepad.getAxisValue(4) < -0.2) {
-				player.setCurrentSpeed(player.getRunSpeed() * -gamepad.getAxisValue(4) * 1.5f);
+				player.setCurrentSpeed(player.getRunSpeed() * -gamepad.getAxisValue(4));
 			}
 			if (gamepad.getAxisValue(4) > 0.2) {
-				player.setCurrentSpeed(-player.getRunSpeed() * gamepad.getAxisValue(4) * 1.5f);
+				player.setCurrentSpeed(-player.getRunSpeed() * gamepad.getAxisValue(4));
 			}
 			if (gamepad.getAxisValue(1) < -0.5) {
 				player.setCurrentTurnSpeed(player.getTurnSpeed());

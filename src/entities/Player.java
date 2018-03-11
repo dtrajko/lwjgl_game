@@ -41,8 +41,9 @@ public class Player extends AnimatedModel {
 	}
 
 	public void setProperties() {
+		// setings for the autokomerc karting game
 		VERTICAL_OFFSET = -5;
-		RUN_SPEED = 10;
+		RUN_SPEED = 15;
 		TURN_SPEED = 55;
 		GRAVITY = -30;
 		JUMP_POWER = 0;

@@ -60,7 +60,7 @@ public class DisplayManager {
 		Player player = SceneLoader.getScene().getAnimatedPlayer();
 		LapStopwatch stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
 
-		DisplayManager.setTitle(DisplayManager.getTitle() + " | " +
+		setTitle(TITLE + " | " +
 			"FPS=" + DisplayManager.getFPS() + " | " +
 			"PosX= " + Math.round(player.getPosition().x * 10d) / 10d + " | " +
 			"PoxY= " + Math.round(player.getPosition().y * 10d) / 10d + " | " +
