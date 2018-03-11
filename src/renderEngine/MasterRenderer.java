@@ -107,8 +107,7 @@ public class MasterRenderer {
 		}
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		guiRenderer.render(scene.getGuiElements());
-
-		ParticleMaster.update(scene.getCamera());
+		TextMaster.render();
 		ParticleMaster.renderParticles(scene.getCamera());
 	}
 

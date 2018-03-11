@@ -41,13 +41,6 @@ public class MainApp {
 		GamepadManager.init();
 		DisplayManager.startFPS();
 
-		LapStopwatch stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
-		FontType font = FontFactory.getFont("candara");
-		GUIText guiText = new GUIText("", 2.5f, font, new Vector2f(0.38f, 0.9f), 1f, false);
-		guiText.setColour(1.0f, 1.0f, 0.9f);
-		int lapTime = 0;
-		int previousLapTime = -1;
-
 		while (!Display.isCloseRequested()) {
 			
 			if (!Controllers.isCreated()) {
@@ -57,15 +50,6 @@ public class MainApp {
 			scene.update();
 			engine.update();
 			engine.renderScene(scene, waterRenderingEnabled);
-
-			lapTime = stopwatch.getCurrentLapTime();
-			if (lapTime != previousLapTime) {
-				String textInfoString = "Lap: " + stopwatch.getLapCount() + "    Lap time: " + stopwatch.getLapTime() + "    Best lap: " + stopwatch.getBestLap();
-				guiText.setTextString(textInfoString);
-				TextMaster.loadText(guiText);
-				previousLapTime = lapTime;
-			}
-			TextMaster.render();
 		}
 
 		scene.delete();

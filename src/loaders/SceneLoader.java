@@ -140,6 +140,11 @@ public class SceneLoader {
 		Racetrack racetrack = new Racetrack(scene.getAnimatedPlayer());
 		scene.setRacetrack(racetrack);
 
+		FontType font = FontFactory.getFont("candara");
+		GUIText guiText = new GUIText("", 2.5f, font, new Vector2f(0.38f, 0.9f), 1f, false);
+		guiText.setColour(1.0f, 1.0f, 0.9f);
+		TextMaster.setGuiText(0, guiText);
+
 		return scene;
 	}
 

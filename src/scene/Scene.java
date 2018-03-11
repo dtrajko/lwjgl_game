@@ -8,10 +8,12 @@ import org.lwjgl.util.vector.Vector3f;
 import entities.Entity;
 import entities.Player;
 import extra.Camera;
+import fontRendering.TextMaster;
 import guis.GuiTexture;
 import interfaces.ICamera;
 import interfaces.ITerrain;
 import lensFlare.FlareManager;
+import particles.ParticleMaster;
 import particles.ParticleSystemComplex;
 import racetrack.Racetrack;
 import skybox.Skybox;
@@ -96,7 +98,8 @@ public class Scene {
 		if (racetrack != null) {
 			racetrack.update();
 		}
-
+		TextMaster.update();
+		ParticleMaster.update(camera);	
 		// particleSystems.get(1).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110), 110));
 		// particleSystems.get(2).generateParticles(new Vector3f(110, terrain.getHeightOfTerrain(110, 110) + 2, 110));
 	}
