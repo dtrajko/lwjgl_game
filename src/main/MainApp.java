@@ -2,18 +2,11 @@ package main;
 
 import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
-
-import factories.FontFactory;
-import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
-import fontRendering.TextMaster;
 import input.GamepadManager;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
 import loaders.SceneLoaderFactory;
 import particles.ParticleMaster;
-import racetrack.LapStopwatch;
 import renderEngine.RenderEngine;
 import scene.Scene;
 import utils.DisplayManager;
