@@ -25,7 +25,6 @@ public class LapStopwatch {
 		lapStartTimestamp = Math.round(DisplayManager.getCurrentTime());
 		currentLapTime = 0;
 		lapCount++;
-		System.out.println("LapStopwatch reset | currentLapTime: " + currentLapTime + " | bestLapTime: " + bestLapTime + " | Lap count: " + lapCount);
 	}
 
 	public void update(boolean running) {
