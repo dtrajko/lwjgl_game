@@ -29,6 +29,9 @@ public class TextMaster {
 		renderer = new FontRenderer();
 		loader = rawModelLoader;
 		guiTexts = new ArrayList<GUIText>();
+		if (stopwatch == null) {
+			stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
+		}
 	}
 
 	public static void render() {
@@ -79,9 +82,6 @@ public class TextMaster {
 	}
 
 	public static void updateLapInfo() {
-		if (stopwatch == null) {
-			stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
-		}
 		String textInfoString = 
 			"Lap: " + stopwatch.getLapCount() + "    " + 
 			"Lap time: " + stopwatch.getLapTime() + "    " +

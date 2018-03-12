@@ -105,8 +105,6 @@ public class SceneLoader {
 		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
-		TextMaster.init(this.rawModelLoader);
-
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
 
 		// initialize sun and lens flare and set sun direction
@@ -135,9 +133,11 @@ public class SceneLoader {
 
 		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
 		scene.addParticleSystems(particleSystems);
-		
+
 		Racetrack racetrack = new Racetrack(scene.getAnimatedPlayer());
 		scene.setRacetrack(racetrack);
+
+		TextMaster.init(this.rawModelLoader);
 
 		FontType font = FontFactory.getFont("candara");
 		GUIText guiText = new GUIText("", 2.5f, font, new Vector2f(0.38f, 0.9f), 1f, false);
