@@ -61,7 +61,6 @@ public class GUIText {
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
-		System.out.println("New GUIText created.");
 	}
 
 	public void setTextString(String textString) {

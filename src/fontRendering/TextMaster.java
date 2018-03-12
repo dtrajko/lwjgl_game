@@ -10,6 +10,7 @@ import fontMeshCreator.TextMeshData;
 import loaders.RawModelLoader;
 import loaders.SceneLoader;
 import racetrack.LapStopwatch;
+import utils.DisplayManager;
 
 public class TextMaster {
 	
@@ -21,6 +22,8 @@ public class TextMaster {
 	private static int previousLapTime = -1;
 	private static LapStopwatch stopwatch = null;
 	private static List<GUIText> guiTexts;
+	private static int currentUpdateTime = 0;
+	private static int previousUpdateTime = -1;
 
 	public static void init(RawModelLoader rawModelLoader) {
 		renderer = new FontRenderer();
@@ -67,23 +70,24 @@ public class TextMaster {
 	}
 
 	public static void update() {
-		updateLapInfo();
+		// make sure that text is updated once per second
+		currentUpdateTime = DisplayManager.getCurrentTimeSeconds();
+		if (currentUpdateTime != previousUpdateTime) {
+			updateLapInfo();
+		}
+		previousUpdateTime = currentUpdateTime;
 	}
 
 	public static void updateLapInfo() {
 		if (stopwatch == null) {
 			stopwatch = SceneLoader.getScene().getRacetrack().getStopwatch();
 		}
-		currentlapTime = stopwatch.getCurrentLapTime();
-		if (currentlapTime != previousLapTime) {
-			String textInfoString = 
-				"Lap: " + stopwatch.getLapCount() + "    " + 
-				"Lap time: " + stopwatch.getLapTime() + "    " +
-				"Best lap: " + stopwatch.getBestLap();
-			GUIText guiText = guiTexts.get(0);
-			guiText.setTextString(textInfoString);
-			loadText(guiText);
-			previousLapTime = currentlapTime;
-		}
+		String textInfoString = 
+			"Lap: " + stopwatch.getLapCount() + "    " + 
+			"Lap time: " + stopwatch.getLapTime() + "    " +
+			"Best lap: " + stopwatch.getBestLap();
+		GUIText guiText = guiTexts.get(0);
+		guiText.setTextString(textInfoString);
+		loadText(guiText);
 	}
 }

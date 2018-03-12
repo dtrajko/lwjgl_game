@@ -112,6 +112,11 @@ public class DisplayManager {
 		return Sys.getTime() * 1000 / Sys.getTimerResolution();
 	}
 
+	public static int getCurrentTimeSeconds() {
+		long currentTime = getCurrentTime();
+		return Math.round(currentTime / 1000);
+	}
+
 	public static void closeDisplay(){
 		Display.destroy();
 	}

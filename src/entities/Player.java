@@ -11,6 +11,7 @@ import interfaces.ITerrain;
 import loaders.SceneLoader;
 import main.WorldSettings;
 import openglObjects.Vao;
+import racetrack.LapStopwatch;
 import terrains.Terrain;
 import textures.Texture;
 import utils.DisplayManager;
@@ -42,13 +43,8 @@ public class Player extends AnimatedModel {
 
 	public void setProperties() {
 		// setings for the autokomerc karting game
-		VERTICAL_OFFSET = -5;
-		RUN_SPEED = 15;
-		TURN_SPEED = 55;
-		GRAVITY = -30;
-		JUMP_POWER = 0;
-		TERRAIN_HEIGHT = 0;
-		HEIGHT = 5.5f;
+		RUN_SPEED = 16;
+		TURN_SPEED = 57;
 	}
 
 	public void update(ITerrain terrain) {
@@ -59,9 +55,10 @@ public class Player extends AnimatedModel {
 
 	public void move(ITerrain terrain) {
 		checkInputs();
-
+		
 		if (super.getPosition().y > TERRAIN_HEIGHT + 0.5f) {
 			currentSpeed /= 10f;
+			SceneLoader.getScene().getRacetrack().getStopwatch().addPenaltySeconds(2);
 		}
 
 		// prevent shaking when standing on objects
