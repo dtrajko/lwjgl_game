@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import audio.AudioMaster;
+import audio.Source;
 import entities.Entity;
 import entities.Player;
 import extra.Camera;
@@ -39,29 +41,20 @@ public class Scene {
 	private List<SceneEntity> importantEntities = new ArrayList<SceneEntity>();
 	private List<SceneEntity> shinyEntities = new ArrayList<SceneEntity>();
 	private List<Entity> additionalEntities = new ArrayList<Entity>();
-
 	private List<WaterTile> waterTiles = new ArrayList<WaterTile>();
 	private List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
 	private List<GuiTexture> guis = new ArrayList<GuiTexture>();
-
 	private final ICamera camera;
-
 	private final Player animatedPlayer;
-
 	private Vector3f lightDirection = new Vector3f(0, -1, 0);
-
 	private Skybox sky;
 	private ITerrain terrain;
 	private Light light;
 	private Sun sun;
 	private FlareManager lensFlare;
-
 	private Texture environmentMap;
-
 	private float waterHeight = -0.1f; // should set elsewhere
-
 	private List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
-
 	private Racetrack racetrack = null;
 
 	public Scene(Player animatedPlayer, Skybox sky, ITerrain terrain, List<WaterTileVao> waters, Sun sun) {
@@ -136,8 +129,9 @@ public class Scene {
 		for (SceneEntity entity : standardEntities) {
 			entity.delete();
 		}
-		animatedPlayer.delete();
 		environmentMap.delete();
+		AudioMaster.cleanUp();
+		animatedPlayer.cleanUp();
 	}
 
 	public void addEntity(Entity entity) {

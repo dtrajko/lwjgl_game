@@ -46,6 +46,7 @@ public class MainApp {
 		}
 
 		scene.delete();
+		loader.cleanUp();
 		engine.close();
 
 	}

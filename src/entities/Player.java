@@ -1,11 +1,16 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import animatedModel.AnimatedModel;
 import animatedModel.Joint;
+import audio.AudioMaster;
+import audio.Source;
 import input.GamepadManager;
 import interfaces.ITerrain;
 import loaders.SceneLoader;
@@ -36,9 +41,15 @@ public class Player extends AnimatedModel {
 	private ITerrain terrain = null;
 	
 	private boolean generateParticles = false;
+	
+	private Integer soundCartEngine;
+	private Integer soundTyreScreech;
+	private Source audioSourceEngine = null;
+	private Source audioSourceTyres = null;
 
 	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, Vector3f rotation, float scale) {
 		super(model, texture, rootJoint, jointCount, position, rotation.getX(), rotation.getY(), rotation.getZ(), scale);
+		initSound();
 	}
 
 	public void setProperties() {
@@ -50,12 +61,42 @@ public class Player extends AnimatedModel {
 	public void update(ITerrain terrain) {
 		this.terrain = terrain;
 		move(terrain);
+		handleSound();
 		super.update(getCurrentSpeed());
 	}
 
+	private void initSound() {
+		// init cart engine sound
+		soundCartEngine = AudioMaster.loadSound("audio/cart_engine.wav");
+		audioSourceEngine = new Source();
+		audioSourceEngine.setVolume(0.2f);
+		audioSourceEngine.setLooping(true);
+		audioSourceEngine.play(soundCartEngine);
+		// init tyre screetch sound
+		soundTyreScreech = AudioMaster.loadSound("audio/tyre_screech.wav");
+		audioSourceTyres = new Source();
+		audioSourceTyres.setVolume(0.5f);
+		audioSourceTyres.setLooping(true);
+		audioSourceTyres.play(soundTyreScreech);
+		audioSourceTyres.pause();	
+	}
+
+	private void handleSound() {
+		if (currentTurnSpeed < -10 || currentTurnSpeed > 10) {
+			if (!audioSourceTyres.isPlaying()) {
+				audioSourceTyres.continuePlaying();
+			}
+		} else {
+			if (audioSourceTyres.isPlaying()) {
+				audioSourceTyres.pause();
+			}
+		}
+	}
+
 	public void move(ITerrain terrain) {
+
 		checkInputs();
-		
+
 		if (super.getPosition().y > TERRAIN_HEIGHT + 0.5f) {
 			currentSpeed /= 10f;
 			SceneLoader.getScene().getRacetrack().getStopwatch().addPenaltySeconds(2);
@@ -186,5 +227,15 @@ public class Player extends AnimatedModel {
 			));
 			System.out.println("Generating particles");
 		}
+	}
+	
+	public void cleanUp() {
+		if (audioSourceEngine != null) {
+			audioSourceEngine.delete();			
+		}
+		if (audioSourceTyres != null) {
+			audioSourceTyres.delete();			
+		}
+		super.delete();
 	}
 }

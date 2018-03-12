@@ -8,6 +8,8 @@ import java.util.Random;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import animation.Animation;
+import audio.AudioMaster;
+import audio.Source;
 import entities.Entity;
 import entities.Player;
 import factories.FontFactory;
@@ -105,6 +107,9 @@ public class SceneLoader {
 		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
+		AudioMaster.init();
+		AudioMaster.setListenerData(0, 0, 0);
+
 		Skybox sky = skyLoader.loadSkyBox(new MyFile(new MyFile("skybox"), LoaderSettings.SKYBOX_FOLDER_II));
 
 		// initialize sun and lens flare and set sun direction
@@ -145,6 +150,10 @@ public class SceneLoader {
 		TextMaster.setGuiText(0, guiText);
 
 		return scene;
+	}
+
+	public void cleanUp() {
+		// do cleanup here
 	}
 
 	private List<Entity> createAdditionalEntities(List<Entity> additionalEntities, ITerrain terrain) {
