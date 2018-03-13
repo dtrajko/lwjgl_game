@@ -19,8 +19,8 @@ public class Racetrack {
 	}
 
 	public void update() {
-		if (player.getPosition().x > 105 && player.getPosition().x < 125 &&
-				player.getPosition().z > 165 && player.getPosition().z < 175) {
+		if (player.getPosition().x > 90 && player.getPosition().x < 125 &&
+				player.getPosition().z > 165 && player.getPosition().z < 185) {
 			if (raceInProgress == false || stopwatch.getCurrentLapTime() > 30) {
 				stopwatch.reset();
 				raceInProgress = true;
