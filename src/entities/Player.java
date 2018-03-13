@@ -30,6 +30,10 @@ public class Player extends AnimatedModel {
 	private static float JUMP_POWER = 10;
 	private static float TERRAIN_HEIGHT = 0;
 	private static float HEIGHT = 5.5f;
+	
+	private static float ENGINE_SOUND_GAIN = 1.0f;
+	private static float ENGINE_IDLE_SOUND_GAIN = 0.75f;
+	private static float TYRES_SOUND_GAIN = 0.5f;
 
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
@@ -41,9 +45,11 @@ public class Player extends AnimatedModel {
 	private ITerrain terrain = null;
 	
 	private boolean generateParticles = false;
-	
-	private Integer soundCartEngine;
+
+	private Integer soundKartEngineIdle;
+	private Integer soundKartEngine;
 	private Integer soundTyreScreech;
+	private Source audioSourceEngineIdle = null;
 	private Source audioSourceEngine = null;
 	private Source audioSourceTyres = null;
 
@@ -55,7 +61,7 @@ public class Player extends AnimatedModel {
 	public void setProperties() {
 		// setings for the autokomerc karting game
 		RUN_SPEED = 16;
-		TURN_SPEED = 57;
+		TURN_SPEED = 58;
 	}
 
 	public void update(ITerrain terrain) {
@@ -66,31 +72,44 @@ public class Player extends AnimatedModel {
 	}
 
 	private void initSound() {
-		// init cart engine sound
-		soundCartEngine = AudioMaster.loadSound("audio/cart_engine.wav");
+		// init kart idle engine sound
+		soundKartEngineIdle = AudioMaster.loadSound("audio/kart_engine_idle.wav");
+		audioSourceEngineIdle = new Source();
+		audioSourceEngineIdle.setVolume(0f);
+		audioSourceEngineIdle.setLooping(true);
+		audioSourceEngineIdle.play(soundKartEngineIdle);
+		// audioSourceEngineIdle.pause();
+		// init kart engine sound
+		soundKartEngine = AudioMaster.loadSound("audio/kart_engine.wav");
 		audioSourceEngine = new Source();
-		audioSourceEngine.setVolume(0.2f);
+		audioSourceEngine.setVolume(0f);
 		audioSourceEngine.setLooping(true);
-		audioSourceEngine.play(soundCartEngine);
+		audioSourceEngine.play(soundKartEngine);
+		// audioSourceEngine.pause();
 		// init tyre screetch sound
 		soundTyreScreech = AudioMaster.loadSound("audio/tyre_screech.wav");
 		audioSourceTyres = new Source();
-		audioSourceTyres.setVolume(0.5f);
+		audioSourceTyres.setVolume(0f);
 		audioSourceTyres.setLooping(true);
 		audioSourceTyres.play(soundTyreScreech);
-		audioSourceTyres.pause();	
+		// audioSourceTyres.pause();
 	}
 
 	private void handleSound() {
-		if (currentTurnSpeed < -10 || currentTurnSpeed > 10) {
-			if (!audioSourceTyres.isPlaying()) {
-				audioSourceTyres.continuePlaying();
-			}
-		} else {
-			if (audioSourceTyres.isPlaying()) {
-				audioSourceTyres.pause();
-			}
-		}
+
+		float engineVolume = (Math.abs(currentSpeed) / RUN_SPEED) * ENGINE_SOUND_GAIN;
+		float engineIdleVolume = (1 - Math.abs(currentSpeed) / RUN_SPEED) * ENGINE_IDLE_SOUND_GAIN;
+		float tyresScreechVolume = (Math.abs(currentTurnSpeed) / TURN_SPEED) * TYRES_SOUND_GAIN;
+		audioSourceEngine.setVolume(engineVolume);
+		audioSourceEngineIdle.setVolume(engineIdleVolume);
+		audioSourceTyres.setVolume(tyresScreechVolume);
+		/*
+		System.out.println(
+			"engineVolume = " + engineVolume + " " + 
+			"engineIdleVolume = " + engineIdleVolume + " " +
+			"tyresScreechVolume = " + tyresScreechVolume + " " +
+			"currentTurnSpeed = " + currentTurnSpeed);
+		*/
 	}
 
 	public void move(ITerrain terrain) {
@@ -230,6 +249,9 @@ public class Player extends AnimatedModel {
 	}
 	
 	public void cleanUp() {
+		if (audioSourceEngineIdle != null) {
+			audioSourceEngineIdle.delete();			
+		}
 		if (audioSourceEngine != null) {
 			audioSourceEngine.delete();			
 		}
