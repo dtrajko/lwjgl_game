@@ -67,6 +67,7 @@ public class Scene {
 		this.sun = sun;
 		this.lensFlare = sun.getLensFlare();
 		this.animatedPlayer = animatedPlayer;
+		// additionalEntities.add(animatedPlayer);
 		environmentMap = Texture.newEmptyCubeMap(256);
 
 		// adjust camera settings for the race track project
