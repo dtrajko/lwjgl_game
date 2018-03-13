@@ -24,5 +24,4 @@ public class SunShader extends ShaderProgram {
 		sunTexture.loadTexUnit(0);
 		super.stop();
 	}
-
 }

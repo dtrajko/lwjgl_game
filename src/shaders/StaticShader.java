@@ -11,7 +11,7 @@ import interfaces.ICamera;
 import utils.Light;
 import utils.Maths;
 
-public class StaticShader extends ShaderProgramAux {
+public class StaticShader extends ShaderProgram {
 
 	private static final int MAX_LIGHTS = 5;
 

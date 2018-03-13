@@ -30,5 +30,4 @@ public class TerrainShader extends ShaderProgram {
 		super(vertexFile, geometryFile, fragmentFile);
 		super.storeAllUniformLocations(projectionViewMatrix, lightDirection, lightColour, lightBias, plane);
 	}
-
 }

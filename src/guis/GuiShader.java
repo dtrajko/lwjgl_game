@@ -1,11 +1,9 @@
 package guis;
 
 import org.lwjgl.util.vector.Matrix4f;
-
 import shaders.ShaderProgram;
-import shaders.ShaderProgramAux;
 
-public class GuiShader extends ShaderProgramAux {
+public class GuiShader extends ShaderProgram {
 
 	private static final String VERTEX_FILE = "guis/guiVertexShader.txt";
 	private static final String FRAGMENT_FILE = "guis/guiFragmentShader.txt";

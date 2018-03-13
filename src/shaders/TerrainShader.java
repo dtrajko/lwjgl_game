@@ -1,15 +1,13 @@
 package shaders;
 
 import java.util.List;
-
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-
 import interfaces.ICamera;
 import utils.Maths;
 
-public class TerrainShader extends ShaderProgramAux {
+public class TerrainShader extends ShaderProgram {
 
 	private static final int MAX_LIGHTS = 5;
 

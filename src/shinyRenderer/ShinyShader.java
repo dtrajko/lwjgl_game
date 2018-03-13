@@ -30,5 +30,4 @@ public class ShinyShader extends ShaderProgram {
 		enviroMap.loadTexUnit(1);
 		super.stop();
 	}
-
 }

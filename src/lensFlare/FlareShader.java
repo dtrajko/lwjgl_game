@@ -35,5 +35,4 @@ public class FlareShader extends ShaderProgram {
 		flareTexture.loadTexUnit(0);
 		super.stop();
 	}
-
 }
