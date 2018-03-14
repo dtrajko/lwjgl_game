@@ -16,6 +16,7 @@ import interfaces.ITerrain;
 import interfaces.ITerrainRenderer;
 import models.RawModel;
 import shaders.TerrainShader;
+import terrains.Terrain;
 import textures.TerrainTexturePack;
 import utils.Light;
 import utils.Maths;
@@ -32,6 +33,7 @@ public class HeightMapTerrainRenderer implements ITerrainRenderer {
 		shader.stop();
 	}
 
+	@Override
 	public void render(List<ITerrain> terrains, Matrix4f toShadowSpace) {
 		shader.loadToShadowSpaceMatrix(toShadowSpace);
 		for (ITerrain terrain:terrains) {

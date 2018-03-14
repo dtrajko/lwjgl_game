@@ -27,7 +27,7 @@ public class ShadowMapMasterRenderer {
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
-	private ShadowBox shadowBox;
+	private ShadowBox shadowBox = null;
 	private Matrix4f projectionMatrix = new Matrix4f();
 	private Matrix4f lightViewMatrix = new Matrix4f();
 	private Matrix4f projectionViewMatrix = new Matrix4f();
@@ -46,9 +46,8 @@ public class ShadowMapMasterRenderer {
 	 * @param camera
 	 *            - the camera being used in the scene.
 	 */
-	public ShadowMapMasterRenderer(ICamera camera) {
+	public ShadowMapMasterRenderer() {
 		shader = new ShadowShader();
-		shadowBox = new ShadowBox(lightViewMatrix, camera);
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
 	}
@@ -68,7 +67,10 @@ public class ShadowMapMasterRenderer {
 	 * @param sun
 	 *            - the light acting as the sun in the scene.
 	 */
-	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
+	public void render(Map<TexturedModel, List<Entity>> entities, ICamera camera, Light sun) {
+		if (shadowBox == null) {
+			shadowBox = new ShadowBox(lightViewMatrix, camera);
+		}
 		shadowBox.update();
 		Vector3f sunPosition = sun.getPosition();
 		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);

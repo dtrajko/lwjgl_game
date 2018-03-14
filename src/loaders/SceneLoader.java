@@ -127,14 +127,15 @@ public class SceneLoader {
 		TerrainTexture blendMap = new TerrainTexture(rawModelLoader.loadTexture("race/race_track_blend_map"));
 		HeightMapTerrain terrain = new HeightMapTerrain(0f, 0f, rawModelLoader, texturePack, blendMap, "race/race_track_heightmap");
 
-		// additionalEntities = createAdditionalEntities(additionalEntities, terrain);
-		// particleSystems = createParticleSystems(particleSystems);
-
 		Player animatedPlayer = AnimatedModelLoader.loadPlayer(new MyFile(resFolder, GeneralSettings.MODEL_FILE),
 			new MyFile(resFolder, GeneralSettings.DIFFUSE_FILE), new Vector3f(114, 0, 206), new Vector3f(0, 180, 0), 0.2f);
 		animatedPlayer.setProperties();
 		Animation animation = AnimationLoader.loadAnimation(new MyFile(resFolder, GeneralSettings.ANIM_FILE));
 		animatedPlayer.doAnimation(animation);
+
+		additionalEntities = createAdditionalEntities(additionalEntities, terrain);
+		// additionalEntities = createAdditionalEntitiesRandom(additionalEntities, terrain);
+		// particleSystems = createParticleSystems(particleSystems);
 
 		Scene scene = createScene(animatedPlayer, sky, sun, terrain, waters, additionalEntities);
 		scene.addParticleSystems(particleSystems);
@@ -153,10 +154,37 @@ public class SceneLoader {
 	}
 
 	public void cleanUp() {
-		// do cleanup here
+		scene.delete();
 	}
 
 	private List<Entity> createAdditionalEntities(List<Entity> additionalEntities, ITerrain terrain) {
+		ModelData treeData = OBJFileLoader.loadOBJ(new MyFile("pine.obj"));
+		RawModel treeRawModel = rawModelLoader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(), treeData.getIndices());
+		TexturedModel treeModel = new TexturedModel(treeRawModel, new ModelTexture(rawModelLoader.loadTexture("pine")));
+
+		Entity tree1 = new Entity(treeModel, new Vector3f(65, terrain.getHeightOfTerrain(65, 107), 100), 0, 0, 0, 0.4f);
+		Entity tree2 = new Entity(treeModel, new Vector3f(65, terrain.getHeightOfTerrain(65, 90), 90), 0, 0, 0, 0.4f);
+		Entity tree3 = new Entity(treeModel, new Vector3f(65, terrain.getHeightOfTerrain(65, 80), 80), 0, 0, 0, 0.4f);
+		additionalEntities.add(tree1);
+		additionalEntities.add(tree2);
+		additionalEntities.add(tree3);
+
+		Entity tree4 = new Entity(treeModel, new Vector3f(110, terrain.getHeightOfTerrain(110, 9), 9), 0, 0, 0, 0.4f);
+		Entity tree5 = new Entity(treeModel, new Vector3f(120, terrain.getHeightOfTerrain(120, 7), 7), 0, 0, 0, 0.4f);
+		Entity tree6 = new Entity(treeModel, new Vector3f(130, terrain.getHeightOfTerrain(130, 5), 5), 0, 0, 0, 0.4f);
+		additionalEntities.add(tree4);
+		additionalEntities.add(tree5);
+		additionalEntities.add(tree6);
+
+		Entity tree7 = new Entity(treeModel, new Vector3f(188, terrain.getHeightOfTerrain(188, 245), 245), 0, 0, 0, 0.4f);
+		Entity tree8 = new Entity(treeModel, new Vector3f(177, terrain.getHeightOfTerrain(177, 250), 250), 0, 0, 0, 0.4f);
+		additionalEntities.add(tree7);
+		additionalEntities.add(tree8);
+		
+		return additionalEntities;
+	}
+
+	private List<Entity> createAdditionalEntitiesRandom(List<Entity> additionalEntities, ITerrain terrain) {
 		int treesLoaded = 0;
 		while (treesLoaded < 50) {
 			Random rand = new Random();

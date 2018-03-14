@@ -14,6 +14,7 @@ public class LapStopwatch {
 	private int penaltySeconds = 0; // seconds
 	private int penaltyTime = 0;
 	private int previousPenaltyTime = penaltyTime;
+	private boolean running = false;
 
 	public LapStopwatch() {
 		init();
@@ -37,7 +38,8 @@ public class LapStopwatch {
 	}
 
 	public void update(boolean running) {
-		if (!running) {
+		this.running = running;
+		if (!this.running) {
 			return;
 		}
 		currentTimestamp = Math.round(DisplayManager.getCurrentTime());
@@ -73,7 +75,7 @@ public class LapStopwatch {
 
 	public void addPenaltySeconds(int numSeconds) {
 		penaltyTime = getCurrentLapTime();
-		if (previousPenaltyTime == 0 || penaltyTime - previousPenaltyTime > 5) {
+		if (this.running && (previousPenaltyTime == 0 || penaltyTime - previousPenaltyTime > 5)) {
 			penaltySeconds += numSeconds;
 			previousPenaltyTime = penaltyTime;
 			System.out.println(numSeconds + " penalty seconds appended in lap " + lapCount + ". Total penalty seconds: " + penaltySeconds);

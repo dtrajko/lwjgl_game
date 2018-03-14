@@ -9,6 +9,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
 import animatedModelRenderer.AnimatedModelRenderer;
@@ -21,6 +22,7 @@ import fbos.TextureAttachment;
 import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import interfaces.ICamera;
+import interfaces.ITerrain;
 import interfaces.ITerrainRenderer;
 import models.TexturedModel;
 import particles.ParticleMaster;
@@ -28,6 +30,7 @@ import scene.Scene;
 import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
 import sunRenderer.SunRenderer;
+import terrains.Terrain;
 import utils.Light;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -59,9 +62,9 @@ public class MasterRenderer {
 	private SunRenderer sunRenderer;
 	private WaterRendererVao waterRendererVao;
 	private GuiRenderer guiRenderer;
-	private ShadowMapMasterRenderer shadowMapRenderer;
 	private final Fbo reflectionFbo;
 	private final Fbo refractionFbo;
+	private ShadowMapMasterRenderer shadowMapRenderer;
 
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 
@@ -78,6 +81,7 @@ public class MasterRenderer {
 		this.guiRenderer = new GuiRenderer();
 		this.entityRenderer = new EntityRenderer();
 		this.animModelRenderer = new AnimatedModelRenderer();
+		this.shadowMapRenderer = new ShadowMapMasterRenderer();
 	}
 
 	/**
@@ -92,6 +96,7 @@ public class MasterRenderer {
 		this.waterRenderer.cleanUp();
 		this.terrainRenderer.cleanUp();
 		this.guiRenderer.cleanUp();
+		this.shadowMapRenderer.cleanUp();
 		this.waterFbos.cleanUp();
 		this.refractionFbo.delete();
 		this.reflectionFbo.delete();
@@ -105,7 +110,6 @@ public class MasterRenderer {
 			renderWaterRefractionPass(scene);
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);	
 		}
-		// this.shadowMapRenderer = new ShadowMapMasterRenderer(scene.getCamera());
 		renderMainPass(scene);
 	}
 
@@ -118,13 +122,16 @@ public class MasterRenderer {
 		}
 		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
 		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+		// List<ITerrain> terrains = new ArrayList<ITerrain>();
+		// terrains.add(scene.getTerrain());
+		// terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());
 		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 		for (WaterTileVao water : scene.getWatersVao()) {
 			waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
 		}
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
 		guiRenderer.render(scene.getGuiElements());
-		// renderShadowMap(scene.getAdditionalEntities(), scene.getSun().getLight());
+		renderShadowMap(scene.getAdditionalEntities(), scene.getCamera(), scene.getSun().getLight());
 		TextMaster.render();
 		ParticleMaster.renderParticles(scene.getCamera());
 	}
@@ -202,11 +209,12 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public void renderShadowMap(List<Entity> entityList, Light sun) {
+	public void renderShadowMap(List<Entity> entityList, ICamera camera, Light sun) {
 		for (Entity entity : entityList) {
 			processEntity(entity);
 		}
-		shadowMapRenderer.render(entities, sun);
+		System.out.println("MasterRenderer renderShadowMap: " + entities.entrySet().size());
+		shadowMapRenderer.render(entities, camera, sun);
 		entities.clear();
 	}
 
