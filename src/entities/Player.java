@@ -103,6 +103,15 @@ public class Player extends AnimatedModel {
 		audioSourceEngine.setVolume(engineVolume);
 		audioSourceEngineIdle.setVolume(engineIdleVolume);
 		audioSourceTyres.setVolume(tyresScreechVolume);
+		
+		if (currentTurnSpeed > 0) {
+			audioSourceTyres.setPosition(50, 0, 0);
+		} else if (currentTurnSpeed < 0) {
+			audioSourceTyres.setPosition(-50, 0, 0);
+		} else if (currentTurnSpeed == 0) {
+			audioSourceTyres.setPosition(0, 0, 0);
+		}
+		
 		/*
 		System.out.println(
 			"engineVolume = " + engineVolume + " " + 

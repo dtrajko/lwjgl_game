@@ -213,7 +213,6 @@ public class MasterRenderer {
 		for (Entity entity : entityList) {
 			processEntity(entity);
 		}
-		System.out.println("MasterRenderer renderShadowMap: " + entities.entrySet().size());
 		shadowMapRenderer.render(entities, camera, sun);
 		entities.clear();
 	}
