@@ -52,6 +52,7 @@ public class MasterRenderer {
 	public static final float FOV = 70; // field of view angle
 	public static final float NEAR_PLANE = 1.0f;
 	public static final float FAR_PLANE = 3000;
+	public static final boolean WATER_RENDERING_ENABLED = false;
 
 	private SkyboxRenderer skyRenderer;
 	private AnimatedModelRenderer animModelRenderer;
@@ -62,20 +63,22 @@ public class MasterRenderer {
 	private SunRenderer sunRenderer;
 	private WaterRendererVao waterRendererVao;
 	private GuiRenderer guiRenderer;
-	private final Fbo reflectionFbo;
-	private final Fbo refractionFbo;
+	private Fbo reflectionFbo;
+	private Fbo refractionFbo;
 	private ShadowMapMasterRenderer shadowMapRenderer;
 
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 
 	protected MasterRenderer() {
-		this.waterFbos = new WaterFrameBuffers();
-		this.refractionFbo = createWaterFbo(Display.getWidth() / 2, Display.getHeight() / 2, true);
-		this.reflectionFbo = createWaterFbo(Display.getWidth(), Display.getHeight(), false);
+		if (WATER_RENDERING_ENABLED) {
+			this.waterFbos = new WaterFrameBuffers();
+			this.waterRenderer = new WaterRenderer(waterFbos);
+			this.waterRendererVao = new WaterRendererVao();			
+			this.refractionFbo = createWaterFbo(Display.getWidth() / 2, Display.getHeight() / 2, true);
+			this.reflectionFbo = createWaterFbo(Display.getWidth(), Display.getHeight(), false);
+		}
 		this.terrainRenderer = new HeightMapTerrainRenderer();
 		// terrainRenderer = new TerrainRenderer(true);
-		this.waterRenderer = new WaterRenderer(waterFbos);
-		this.waterRendererVao = new WaterRendererVao();
 		this.skyRenderer = new SkyboxRenderer();
 		this.sunRenderer = new SunRenderer();
 		this.guiRenderer = new GuiRenderer();
@@ -88,33 +91,44 @@ public class MasterRenderer {
 	 * Clean up when the game is closed.
 	 */
 	protected void cleanUp() {
+		if (WATER_RENDERING_ENABLED) {
+			this.waterRendererVao.cleanUp();
+			this.waterRenderer.cleanUp();			
+			this.waterFbos.cleanUp();
+			this.refractionFbo.delete();
+			this.reflectionFbo.delete();
+		}
 		this.animModelRenderer.cleanUp();
 		this.entityRenderer.cleanUp();
 		this.sunRenderer.cleanUp();
 		this.skyRenderer.cleanUp();
-		this.waterRendererVao.cleanUp();
-		this.waterRenderer.cleanUp();
 		this.terrainRenderer.cleanUp();
 		this.guiRenderer.cleanUp();
 		this.shadowMapRenderer.cleanUp();
-		this.waterFbos.cleanUp();
-		this.refractionFbo.delete();
-		this.reflectionFbo.delete();
 		TextMaster.cleanUp();
 	}
 
-	protected void renderScene(Scene scene, boolean waterRenderingEnabled) {
-		if (waterRenderingEnabled) {
+	protected void renderScene(Scene scene) {
+		if (WATER_RENDERING_ENABLED) {
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			renderWaterReflectionPass(scene);
 			renderWaterRefractionPass(scene);
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);	
 		}
-		renderMainPass(scene);
+		renderMainPass3D(scene);
+		guiRenderer.render(scene.getGuiElements());
+		TextMaster.render();
+		
 	}
 
-	private void renderMainPass(Scene scene) {
+	private void renderMainPass3D(Scene scene) {
 		prepare();
+		if (WATER_RENDERING_ENABLED) {
+			waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
+			for (WaterTileVao water : scene.getWatersVao()) {
+				waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
+			}
+		}
 		skyRenderer.render(scene.getSky(), scene.getCamera());
 		sunRenderer.render(scene.getSun(), scene.getCamera());
 		if (scene.getLensFlare() != null) {
@@ -125,14 +139,8 @@ public class MasterRenderer {
 		// List<ITerrain> terrains = new ArrayList<ITerrain>();
 		// terrains.add(scene.getTerrain());
 		// terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());
-		waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
-		for (WaterTileVao water : scene.getWatersVao()) {
-			waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
-		}
 		animModelRenderer.render(scene.getAnimatedPlayer(), scene.getCamera(), scene.getLightDirection());
-		guiRenderer.render(scene.getGuiElements());
 		renderShadowMap(scene.getAdditionalEntities(), scene.getCamera(), scene.getSun().getLight());
-		TextMaster.render();
 		ParticleMaster.renderParticles(scene.getCamera());
 	}
 

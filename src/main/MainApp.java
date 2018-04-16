@@ -42,7 +42,7 @@ public class MainApp {
 
 			scene.update();
 			engine.update();
-			engine.renderScene(scene, waterRenderingEnabled);
+			engine.renderScene(scene);
 		}
 
 		scene.delete();

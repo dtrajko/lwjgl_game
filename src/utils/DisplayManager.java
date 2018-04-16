@@ -18,7 +18,7 @@ public class DisplayManager {
 	private static final String TITLE = "Java / LWJGL 3D world";
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	private static final int FPS_CAP = 120;
+	private static final int FPS_CAP = 2000;
 	private static final int WIDTH_FHD = 1920;
 	private static final int HEIGHT_FHD = 1080;
 
