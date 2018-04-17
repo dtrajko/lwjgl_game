@@ -11,11 +11,13 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import animatedModelRenderer.AnimatedModelRenderer;
 import entities.Entity;
 import entityRenderers.EntityRenderer;
+import environmentMapRenderer.CubeMapCamera;
 import fbos.Attachment;
 import fbos.Fbo;
 import fbos.RenderBufferAttachment;
@@ -125,11 +127,10 @@ public class MasterRenderer {
 			renderWaterReflectionPass(scene);
 			renderWaterRefractionPass(scene);
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		}		
+		}
 		renderMainPass3D(scene);
 		guiRenderer.render(scene.getGuiElements());
 		TextMaster.render();
-		
 	}
 
 	private void renderMainPass3D(Scene scene) {
@@ -140,11 +141,11 @@ public class MasterRenderer {
 			}
 		}
 
+		// failed attempt to generate a minimap of the terrain
 		if (false && DisplayManager.getCurrentTime() % 4 == 0) {
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-			minimapFbos.bindReflectionFrameBuffer();
-			terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, 100));
-			skyRenderer.render(scene.getSky(), scene.getCamera());
+			minimapFbos.bindReflectionFrameBuffer();	
+			terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), NO_CLIP);
 			minimapFbos.unbindCurrentFrameBuffer();			
 			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		}
@@ -155,7 +156,7 @@ public class MasterRenderer {
 			scene.getLensFlare().render(scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));			
 		}
 		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
-		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, 100));
+		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), NO_CLIP);
 		// List<ITerrain> terrains = new ArrayList<ITerrain>();
 		// terrains.add(scene.getTerrain());
 		// terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());
@@ -224,7 +225,8 @@ public class MasterRenderer {
 
 	public void renderLowQualityScene(Scene scene, ICamera cubeMapCamera){
 		prepare();
-		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
+		terrainRenderer.render(scene.getTerrain(), cubeMapCamera, scene.getLight(), NO_CLIP);
+		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), cubeMapCamera, scene.getSun(), NO_CLIP);
 		skyRenderer.render(scene.getSky(), cubeMapCamera);
 	}
 

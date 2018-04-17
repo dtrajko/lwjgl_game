@@ -46,7 +46,7 @@ public class HeightMapTerrainRenderer implements ITerrainRenderer {
 	}
 
 	public void render(ITerrain terrain, ICamera camera, Light light, Vector4f clipPlane) {
-		prepareRender(camera, light);
+		prepareRender(camera, light, clipPlane);
 		prepareTerrain(terrain);
 		loadModelMatrix(terrain);
 		GL11.glDrawElements(GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(),
@@ -54,15 +54,15 @@ public class HeightMapTerrainRenderer implements ITerrainRenderer {
 		unbindTexturedModel();
 	}
 
-	private void prepareRender(ICamera camera, Light light) {
+	private void prepareRender(ICamera camera, Light light, Vector4f clipPlane) {
 		shader.start();
+		// System.out.println("Loading clip plane to shader: " + clipPlane);
+		shader.loadClipPlane(clipPlane);
 		shader.loadProjectionMatrix(camera.getProjectionMatrix());
 		shader.loadViewMatrix(camera);
-		
 		List<Light> lights = new ArrayList<Light>();
 		lights.add(light);
 		shader.loadLights(lights);
-
 		doRenderSettings();
 	}
 
@@ -79,6 +79,7 @@ public class HeightMapTerrainRenderer implements ITerrainRenderer {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
+		GL20.glEnableVertexAttribArray(3);
 		bindTextures(terrain);
 		shader.loadShineVariables(1, 0);
 	}
@@ -101,6 +102,7 @@ public class HeightMapTerrainRenderer implements ITerrainRenderer {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
+		GL20.glDisableVertexAttribArray(3);
 		GL30.glBindVertexArray(0);
 	}
 
