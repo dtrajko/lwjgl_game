@@ -15,13 +15,13 @@ import utils.DisplayManager;
  */
 public class RenderEngine {
 
-	private MasterRenderer renderer;
+	private static MasterRenderer renderer;
 
 	private RenderEngine(MasterRenderer renderer) {
-		this.renderer = renderer;
+		RenderEngine.renderer = renderer;
 	}
 
-	public MasterRenderer getRenderer() {
+	public static MasterRenderer getRenderer() {
 		return renderer;
 	}
 

@@ -73,6 +73,11 @@ public class Scene {
 		// adjust camera settings for the race track project
 		camera.togglePerspective();
 	}
+	
+	public void addGuiTexture(GuiTexture guiTexture)
+	{
+		guis.add(guiTexture);
+	}
 
 	public void addParticleSystems(List<ParticleSystemComplex> particleSystems) {
 		this.particleSystems = particleSystems;

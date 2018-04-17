@@ -32,6 +32,7 @@ import objConverter.OBJFileLoader;
 import particles.ParticleSystemComplex;
 import particles.ParticleTexture;
 import racetrack.Racetrack;
+import renderEngine.RenderEngine;
 import scene.SceneEntity;
 import scene.Scene;
 import skybox.Skybox;
@@ -45,6 +46,7 @@ import textures.TerrainTexturePack;
 import textures.Texture;
 import utils.Light;
 import utils.MyFile;
+import water.WaterFrameBuffers;
 import water.WaterGenerator;
 import water.WaterTileVao;
 
@@ -105,7 +107,6 @@ public class SceneLoader {
 		List<WaterTileVao> waters = new ArrayList<WaterTileVao>();
 		List<Entity> additionalEntities = new ArrayList<Entity>();
 		List<ParticleSystemComplex> particleSystems = new ArrayList<ParticleSystemComplex>();
-		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 		AudioMaster.init();
 		AudioMaster.setListenerData(0, 0, 0);
@@ -149,6 +150,9 @@ public class SceneLoader {
 		GUIText guiText = new GUIText("", 2.5f, font, new Vector2f(0.38f, 0.9f), 1f, false);
 		guiText.setColour(1.0f, 1.0f, 0.9f);
 		TextMaster.setGuiText(0, guiText);
+
+		GuiTexture minimapTexture = new GuiTexture(RenderEngine.getRenderer().getMinimapFbos().getReflectionTexture(), new Vector2f(-0.76f, 0.72f), new Vector2f(0.2f, 0.2f));
+		// scene.addGuiTexture(minimapTexture);
 
 		return scene;
 	}

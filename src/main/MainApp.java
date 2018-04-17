@@ -1,7 +1,14 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.lwjgl.input.Controllers;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
+
+import guis.GuiRenderer;
+import guis.GuiTexture;
 import input.GamepadManager;
 import loaders.LoaderSettings;
 import loaders.SceneLoader;
@@ -11,6 +18,7 @@ import renderEngine.RenderEngine;
 import scene.Scene;
 import utils.DisplayManager;
 import utils.MyFile;
+import water.WaterFrameBuffers;
 
 public class MainApp {
 
@@ -23,8 +31,6 @@ public class MainApp {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		boolean waterRenderingEnabled = false;
 
 		RenderEngine engine = RenderEngine.init();
 		SceneLoader loader = SceneLoaderFactory.createSceneLoader();
@@ -48,6 +54,5 @@ public class MainApp {
 		scene.delete();
 		loader.cleanUp();
 		engine.close();
-
 	}
 }

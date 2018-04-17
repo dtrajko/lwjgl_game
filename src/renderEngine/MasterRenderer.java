@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector4f;
 
 import animatedModelRenderer.AnimatedModelRenderer;
@@ -21,9 +22,11 @@ import fbos.RenderBufferAttachment;
 import fbos.TextureAttachment;
 import fontRendering.TextMaster;
 import guis.GuiRenderer;
+import guis.GuiTexture;
 import interfaces.ICamera;
 import interfaces.ITerrain;
 import interfaces.ITerrainRenderer;
+import loaders.SceneLoader;
 import models.TexturedModel;
 import particles.ParticleMaster;
 import scene.Scene;
@@ -31,6 +34,7 @@ import shadows.ShadowMapMasterRenderer;
 import skybox.SkyboxRenderer;
 import sunRenderer.SunRenderer;
 import terrains.Terrain;
+import utils.DisplayManager;
 import utils.Light;
 import water.WaterFrameBuffers;
 import water.WaterRenderer;
@@ -66,7 +70,7 @@ public class MasterRenderer {
 	private Fbo reflectionFbo;
 	private Fbo refractionFbo;
 	private ShadowMapMasterRenderer shadowMapRenderer;
-
+	private WaterFrameBuffers minimapFbos;
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 
 	protected MasterRenderer() {
@@ -85,6 +89,11 @@ public class MasterRenderer {
 		this.entityRenderer = new EntityRenderer();
 		this.animModelRenderer = new AnimatedModelRenderer();
 		this.shadowMapRenderer = new ShadowMapMasterRenderer();
+		this.minimapFbos = new WaterFrameBuffers();
+	}
+	
+	public WaterFrameBuffers getMinimapFbos() {
+		return this.minimapFbos;
 	}
 
 	/**
@@ -105,16 +114,18 @@ public class MasterRenderer {
 		this.terrainRenderer.cleanUp();
 		this.guiRenderer.cleanUp();
 		this.shadowMapRenderer.cleanUp();
+		this.minimapFbos.cleanUp();
 		TextMaster.cleanUp();
 	}
 
 	protected void renderScene(Scene scene) {
+		prepare();
 		if (WATER_RENDERING_ENABLED) {
 			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 			renderWaterReflectionPass(scene);
 			renderWaterRefractionPass(scene);
-			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);	
-		}
+			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		}		
 		renderMainPass3D(scene);
 		guiRenderer.render(scene.getGuiElements());
 		TextMaster.render();
@@ -122,20 +133,29 @@ public class MasterRenderer {
 	}
 
 	private void renderMainPass3D(Scene scene) {
-		prepare();
 		if (WATER_RENDERING_ENABLED) {
 			waterRenderer.render(scene.getWater(), scene.getCamera(), scene.getLightDirection());
 			for (WaterTileVao water : scene.getWatersVao()) {
 				waterRendererVao.render(water, scene.getCamera(), scene.getLight(), reflectionFbo.getColourBuffer(0), refractionFbo.getColourBuffer(0), refractionFbo.getDepthBuffer());
 			}
 		}
+
+		if (false && DisplayManager.getCurrentTime() % 4 == 0) {
+			GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+			minimapFbos.bindReflectionFrameBuffer();
+			terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, 100));
+			skyRenderer.render(scene.getSky(), scene.getCamera());
+			minimapFbos.unbindCurrentFrameBuffer();			
+			GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		}
+
 		skyRenderer.render(scene.getSky(), scene.getCamera());
 		sunRenderer.render(scene.getSun(), scene.getCamera());
 		if (scene.getLensFlare() != null) {
 			scene.getLensFlare().render(scene.getCamera(), scene.getSun().getWorldPosition(scene.getCamera().getPosition()));			
 		}
 		entityRenderer.render(scene.getAllEntities(), scene.getAdditionalEntities(), scene.getCamera(), scene.getSun(), NO_CLIP);
-		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+		terrainRenderer.render(scene.getTerrain(), scene.getCamera(), scene.getLight(), new Vector4f(0, 1, 0, 100));
 		// List<ITerrain> terrains = new ArrayList<ITerrain>();
 		// terrains.add(scene.getTerrain());
 		// terrainRenderer.render(terrains, this.shadowMapRenderer.getToShadowMapSpaceMatrix());

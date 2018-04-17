@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 import loaders.RawModelLoader;
 import models.RawModel;
+import renderEngine.RenderEngine;
 import utils.Maths;
 
 public class GuiRenderer {
