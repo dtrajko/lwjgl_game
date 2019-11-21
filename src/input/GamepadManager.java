@@ -11,6 +11,7 @@ import utils.DisplayManager;
 
 public class GamepadManager {
 
+	private static boolean useGamepad;
 	private static Controller gamepad;
 	private static boolean gamePadEnabled = false;
 
@@ -65,9 +66,10 @@ public class GamepadManager {
 		}
 
 		// gamepad movement
-		if (gamepad.isButtonPressed(7)) {
+		if (useGamepad && gamepad.isButtonPressed(7)) {
 			gamePadEnabled = true;
 		}
+
 		if (gamePadEnabled) {
 			if (gamepad.getAxisValue(4) < -0.2) {
 				player.setCurrentSpeed(player.getRunSpeed() * -gamepad.getAxisValue(4));
