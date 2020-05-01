@@ -11,7 +11,7 @@ import utils.DisplayManager;
 
 public class GamepadManager {
 
-	private static boolean useGamepad;
+	private static boolean useGamepad = false;
 	private static Controller gamepad;
 	private static boolean gamePadEnabled = false;
 
@@ -72,22 +72,22 @@ public class GamepadManager {
 
 		if (gamePadEnabled) {
 			if (gamepad.getAxisValue(4) < -0.2) {
-				player.setCurrentSpeed(player.getRunSpeed() * -gamepad.getAxisValue(4));
+				player.setCurrentSpeed(player.getRunSpeed() * -gamepad.getAxisValue(4) * 1.5f);
 			}
 			if (gamepad.getAxisValue(4) > 0.2) {
-				player.setCurrentSpeed(-player.getRunSpeed() * gamepad.getAxisValue(4));
+				player.setCurrentSpeed(-player.getRunSpeed() * gamepad.getAxisValue(4) * 1.5f);
 			}
-			if (gamepad.getAxisValue(1) < -0.2) {
-				player.setCurrentTurnSpeed(player.getTurnSpeed() * -gamepad.getAxisValue(1));
+			if (gamepad.getAxisValue(1) < -0.5) {
+				player.setCurrentTurnSpeed(player.getTurnSpeed());
 			}
-			if (gamepad.getAxisValue(1) > 0.2) {
-				player.setCurrentTurnSpeed(-player.getTurnSpeed() * gamepad.getAxisValue(1));
+			if (gamepad.getAxisValue(1) > 0.5) {
+				player.setCurrentTurnSpeed(-player.getTurnSpeed());
 			}
-			if (gamepad.getAxisValue(2) < -0.2) {
+			if (gamepad.getAxisValue(2) < -0.5) {
 				float pitch = camera.getPitch();
 				camera.setPitch(pitch -= 0.5f);
 			}
-			if (gamepad.getAxisValue(2) > 0.2) {
+			if (gamepad.getAxisValue(2) > 0.5) {
 				float pitch = camera.getPitch();
 				camera.setPitch(pitch += 0.5f);
 			}
