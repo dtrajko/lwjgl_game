@@ -4,7 +4,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import interfaces.ICamera;
+
+import entities.Camera;
+import renderEngine.DisplayManager;
 import renderEngine.MasterRenderer;
 
 /**
@@ -31,7 +33,7 @@ public class ShadowBox {
 	private float minY, maxY;
 	private float minZ, maxZ;
 	private Matrix4f lightViewMatrix;
-	private ICamera cam;
+	private Camera cam;
 
 	private float farHeight, farWidth, nearHeight, nearWidth;
 
@@ -48,7 +50,7 @@ public class ShadowBox {
 	 * @param camera
 	 *            - the in-game camera.
 	 */
-	protected ShadowBox(Matrix4f lightViewMatrix, ICamera camera) {
+	protected ShadowBox(Matrix4f lightViewMatrix, Camera camera) {
 		this.lightViewMatrix = lightViewMatrix;
 		this.cam = camera;
 		calculateWidthsAndHeights();

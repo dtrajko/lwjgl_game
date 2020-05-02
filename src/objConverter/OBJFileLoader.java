@@ -2,22 +2,93 @@ package objConverter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import models.RawModel;
+import renderEngine.Loader;
 import utils.MyFile;
 
 public class OBJFileLoader {
+	
+	private static final String RES_LOC = "";
+	private static BufferedReader reader;
+
+	public static RawModel loadOBJ(String objFileName, Loader loader) {
+
+		try {
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(RES_LOC + objFileName + ".obj");
+			InputStreamReader isr = new InputStreamReader(is);
+			reader = new BufferedReader(isr);
+		} catch (Exception e) {
+			System.err.println("File not found in res; don't use any extention");
+		}
+		String line;
+		List<Vertex> vertices = new ArrayList<Vertex>();
+		List<Vector2f> textures = new ArrayList<Vector2f>();
+		List<Vector3f> normals = new ArrayList<Vector3f>();
+		List<Integer> indices = new ArrayList<Integer>();
+		try {
+			while (true) {
+				line = reader.readLine();
+				if (line.startsWith("v ")) {
+					String[] currentLine = line.split(" ");
+					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]),
+							(float) Float.valueOf(currentLine[3]));
+					Vertex newVertex = new Vertex(vertices.size(), vertex);
+					vertices.add(newVertex);
+
+				} else if (line.startsWith("vt ")) {
+					String[] currentLine = line.split(" ");
+					Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]));
+					textures.add(texture);
+				} else if (line.startsWith("vn ")) {
+					String[] currentLine = line.split(" ");
+					Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]),
+							(float) Float.valueOf(currentLine[2]),
+							(float) Float.valueOf(currentLine[3]));
+					normals.add(normal);
+				} else if (line.startsWith("f ")) {
+					break;
+				}
+			}
+			while (line != null && line.startsWith("f ")) {
+				String[] currentLine = line.split(" ");
+				String[] vertex1 = currentLine[1].split("/");
+				String[] vertex2 = currentLine[2].split("/");
+				String[] vertex3 = currentLine[3].split("/");
+				processVertex(vertex1, vertices, indices);
+				processVertex(vertex2, vertices, indices);
+				processVertex(vertex3, vertices, indices);
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			System.err.println("Error reading the file");
+		}
+		removeUnusedVertices(vertices);
+		float[] verticesArray = new float[vertices.size() * 3];
+		float[] texturesArray = new float[vertices.size() * 2];
+		float[] normalsArray = new float[vertices.size() * 3];
+		float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
+				texturesArray, normalsArray);
+		int[] indicesArray = convertIndicesListToArray(indices);
+		return loader.loadToVAO(verticesArray, texturesArray, normalsArray, indicesArray);
+	}
 
 	public static ModelData loadOBJ(MyFile objFile) {
 		BufferedReader reader = null;
 		try {
 			reader = objFile.getReader();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e1) {
+			e1.printStackTrace();
 			System.err.println("Couldn't find model file: " + objFile);
 			System.exit(-1);
 		}
@@ -27,7 +98,8 @@ public class OBJFileLoader {
 		List<Vector3f> normals = new ArrayList<Vector3f>();
 		List<Integer> indices = new ArrayList<Integer>();
 		try {
-			while ((line = reader.readLine()) != null) {
+			while (true) {
+				line = reader.readLine();
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
 					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]),
@@ -61,9 +133,7 @@ public class OBJFileLoader {
 			}
 			reader.close();
 		} catch (IOException e) {
-			e.printStackTrace();
 			System.err.println("Couldn't read model file: " + objFile);
-			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 		removeUnusedVertices(vertices);
@@ -75,7 +145,7 @@ public class OBJFileLoader {
 		return new ModelData(verticesArray, texturesArray, normalsArray, indicesArray, furthest);
 	}
 
-	private static Vertex processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
+	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {
 		int index = Integer.parseInt(vertex[0]) - 1;
 		Vertex currentVertex = vertices.get(index);
 		int textureIndex = Integer.parseInt(vertex[1]) - 1;
@@ -84,9 +154,9 @@ public class OBJFileLoader {
 			currentVertex.setTextureIndex(textureIndex);
 			currentVertex.setNormalIndex(normalIndex);
 			indices.add(index);
-			return currentVertex;
 		} else {
-			return dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices, vertices);
+			dealWithAlreadyProcessedVertex(currentVertex, textureIndex, normalIndex, indices,
+					vertices);
 		}
 	}
 
@@ -98,8 +168,9 @@ public class OBJFileLoader {
 		return indicesArray;
 	}
 
-	private static float convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures, List<Vector3f> normals,
-			float[] verticesArray, float[] texturesArray, float[] normalsArray) {
+	private static float convertDataToArrays(List<Vertex> vertices, List<Vector2f> textures,
+			List<Vector3f> normals, float[] verticesArray, float[] texturesArray,
+			float[] normalsArray) {
 		float furthestPoint = 0;
 		for (int i = 0; i < vertices.size(); i++) {
 			Vertex currentVertex = vertices.get(i);
@@ -117,21 +188,19 @@ public class OBJFileLoader {
 			normalsArray[i * 3] = normalVector.x;
 			normalsArray[i * 3 + 1] = normalVector.y;
 			normalsArray[i * 3 + 2] = normalVector.z;
-
 		}
 		return furthestPoint;
 	}
 
-	private static Vertex dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex, int newNormalIndex,
-			List<Integer> indices, List<Vertex> vertices) {
+	private static void dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex,
+			int newNormalIndex, List<Integer> indices, List<Vertex> vertices) {
 		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
 			indices.add(previousVertex.getIndex());
-			return previousVertex;
 		} else {
 			Vertex anotherVertex = previousVertex.getDuplicateVertex();
 			if (anotherVertex != null) {
-				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex, indices,
-						vertices);
+				dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex,
+						indices, vertices);
 			} else {
 				Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition());
 				duplicateVertex.setTextureIndex(newTextureIndex);
@@ -139,20 +208,17 @@ public class OBJFileLoader {
 				previousVertex.setDuplicateVertex(duplicateVertex);
 				vertices.add(duplicateVertex);
 				indices.add(duplicateVertex.getIndex());
-				return duplicateVertex;
 			}
 
 		}
 	}
-
-	private static void removeUnusedVertices(List<Vertex> vertices) {
-		for (Vertex vertex : vertices) {
-			vertex.averageTangents();
-			if (!vertex.isSet()) {
+	
+	private static void removeUnusedVertices(List<Vertex> vertices){
+		for(Vertex vertex:vertices){
+			if(!vertex.isSet()){
 				vertex.setTextureIndex(0);
 				vertex.setNormalIndex(0);
 			}
 		}
 	}
-
 }

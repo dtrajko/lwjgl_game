@@ -4,20 +4,23 @@ import org.lwjgl.util.vector.Vector3f;
 
 import collision.AABB;
 import models.TexturedModel;
-import scene.Skin;
 
 public class Entity {
 
-	private TexturedModel texModel;
+	private TexturedModel model;
 	private Vector3f position;
 	private float rotX, rotY, rotZ;
 	private float scale;
-	private AABB aabb;
-	private Skin skin;
-	private boolean renderingEnabled = true;
+
 	private int textureIndex = 0;
+	
+	private AABB aabb;
+	
+	private boolean renderingEnabled = true;
 
-	public Entity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super();
+		this.model = model;
 		this.position = position;
 		this.rotX = rotX;
 		this.rotY = rotY;
@@ -25,41 +28,15 @@ public class Entity {
 		this.scale = scale;
 	}
 
-	public Entity(int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super();
+		this.textureIndex = index;
+		this.model = model;
 		this.position = position;
 		this.rotX = rotX;
 		this.rotY = rotY;
 		this.rotZ = rotZ;
 		this.scale = scale;
-	}
-
-	public Entity() {
-		this.position = new Vector3f(0, 0, 0);
-		this.rotX = 0;
-		this.rotY = 0;
-		this.rotZ = 0;
-		this.scale = 1;
-	}
-
-	public Entity(TexturedModel texModel, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		this.texModel = texModel;
-		this.position = position;
-		this.rotX = rotX;
-		this.rotY = rotY;
-		this.rotZ = rotZ;
-		this.scale = scale;
-	}
-
-	public Skin getSkin() {
-		return skin;
-	}
-
-	public TexturedModel getTexModel() {
-		return texModel;
-	}
-
-	public void setTexModel(TexturedModel texModel) {
-		this.texModel = texModel;
 	}
 
 	public boolean isRenderingEnabled() {
@@ -78,29 +55,36 @@ public class Entity {
 		return	aabb;
 	}
 
+	public float getTextureXOffset() {
+		int column = textureIndex % model.getTexture().getNumberOfRows();
+		return (float) column / (float) model.getTexture().getNumberOfRows();
+	}
+
+	public float getTextureYOffset() {
+		int row = textureIndex / model.getTexture().getNumberOfRows();
+		return (float) row / (float) model.getTexture().getNumberOfRows();
+	}
+
 	public void increasePosition(float dx, float dy, float dz) {
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		this.aabb.setMinExtents(new Vector3f(this.position.x - 2, this.position.y - 2, this.position.z - 2));
+		this.aabb.setMaxExtents(new Vector3f(this.position.x + 2, this.position.y + 2, this.position.z + 2));
 	}
 
 	public void increaseRotation(float dx, float dy, float dz) {
 		this.rotX += dx;
 		this.rotY += dy;
 		this.rotZ += dz;
-		this.rotX = (this.rotX %= 360) < 0 ? 360 - this.rotX : this.rotX;
-		this.rotY = (this.rotY %= 360) < 0 ? 360 - this.rotY : this.rotY;
-		this.rotZ = (this.rotZ %= 360) < 0 ? 360 - this.rotZ : this.rotZ;
 	}
 
-	public float getTextureXOffset() {
-		int column = textureIndex % texModel.getTexture().getNumberOfRows();
-		return (float) column / (float) texModel.getTexture().getNumberOfRows();
+	public TexturedModel getModel() {
+		return model;
 	}
 
-	public float getTextureYOffset() {
-		int row = textureIndex / texModel.getTexture().getNumberOfRows();
-		return (float) row / (float) texModel.getTexture().getNumberOfRows();
+	public void setModel(TexturedModel model) {
+		this.model = model;
 	}
 
 	public Vector3f getPosition() {
@@ -142,4 +126,6 @@ public class Entity {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+	
+	
 }

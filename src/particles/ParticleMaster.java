@@ -6,21 +6,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.lwjgl.util.vector.Matrix4f;
 
-import interfaces.ICamera;
-import loaders.RawModelLoader;
+import entities.Camera;
+import renderEngine.Loader;
 
 public class ParticleMaster {
 
 	private static Map<ParticleTexture, List<Particle>> particles = new HashMap<ParticleTexture, List<Particle>>();
 	private static ParticleRenderer renderer;
 	
-	public static void init(RawModelLoader loader, Matrix4f projectionMatrix) {
+	public static void init(Loader loader, Matrix4f projectionMatrix) {
 		renderer = new ParticleRenderer(loader, projectionMatrix);
 	}
 
-	public static void update(ICamera camera) {
+	public static void update(Camera camera) {
 		Iterator<Entry<ParticleTexture, List<Particle>>> mapIterator = particles.entrySet().iterator();
 		while (mapIterator.hasNext()) {
 			Entry<ParticleTexture, List<Particle>> entry = mapIterator.next();
@@ -42,7 +43,7 @@ public class ParticleMaster {
 		}
 	}
 
-	public static void renderParticles(ICamera camera) {
+	public static void renderParticles(Camera camera) {
 		renderer.render(particles, camera);
 	}
 	

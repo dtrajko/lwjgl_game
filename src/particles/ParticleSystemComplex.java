@@ -6,7 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import utils.DisplayManager;
+import renderEngine.DisplayManager;
 
 public class ParticleSystemComplex {
 
@@ -39,36 +39,32 @@ public class ParticleSystemComplex {
 		this.directionDeviation = (float) (deviation * Math.PI);
 	}
 
-	public ParticleSystemComplex randomizeRotation() {
+	public void randomizeRotation() {
 		randomRotation = true;
-		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public ParticleSystemComplex setSpeedError(float error) {
+	public void setSpeedError(float error) {
 		this.speedError = error * averageSpeed;
-		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public ParticleSystemComplex setLifeError(float error) {
+	public void setLifeError(float error) {
 		this.lifeError = error * averageLifeLength;
-		return this;
 	}
 
 	/**
 	 * @param error
 	 *            - A number between 0 and 1, where 0 means no error margin.
 	 */
-	public ParticleSystemComplex setScaleError(float error) {
+	public void setScaleError(float error) {
 		this.scaleError = error * averageScale;
-		return this;
 	}
 
 	public void generateParticles(Vector3f systemCenter) {

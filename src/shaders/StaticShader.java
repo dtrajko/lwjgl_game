@@ -7,9 +7,9 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import interfaces.ICamera;
-import utils.Light;
-import utils.Maths;
+import entities.Camera;
+import entities.Light;
+import toolbox.Maths;
 
 public class StaticShader extends ShaderProgram {
 
@@ -37,6 +37,12 @@ public class StaticShader extends ShaderProgram {
 	private int location_shadowMap;
 	private int location_specularMap;
 	private int location_usesSpecularMap;
+
+	public Object projectionViewMatrix;
+
+	public Object lightDirection;
+
+	public Object plane;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -127,9 +133,9 @@ public class StaticShader extends ShaderProgram {
 	public void loadLights(List<Light> lights) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
-				super.loadVector(location_lightPosition[i], lights.get(i).getDirection());				
-				super.loadVector(location_lightColour[i], lights.get(i).getColour().getVector());
-				super.loadVector(location_attenuation[i], new Vector3f(lights.get(i).getLightBias().getX(), lights.get(i).getLightBias().getY(), 1.0f));
+				super.loadVector(location_lightPosition[i], lights.get(i).getPosition());				
+				super.loadVector(location_lightColour[i], lights.get(i).getColour());
+				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
 			} else {
 				super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));				
 				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
@@ -138,7 +144,7 @@ public class StaticShader extends ShaderProgram {
 		}
 	}
 
-	public void loadViewMatrix(ICamera camera) {
+	public void loadViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}

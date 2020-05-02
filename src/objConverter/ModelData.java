@@ -1,7 +1,7 @@
 package objConverter;
 
 public class ModelData {
-	
+
 	private static final int DIMENSIONS = 3;
 
 	private float[] vertices;
@@ -18,9 +18,9 @@ public class ModelData {
 		this.indices = indices;
 		this.furthestPoint = furthestPoint;
 	}
-	
+
 	public int getVertexCount(){
-		return vertices.length/DIMENSIONS;
+		return vertices.length / DIMENSIONS;
 	}
 
 	public float[] getVertices() {
@@ -42,5 +42,4 @@ public class ModelData {
 	public float getFurthestPoint() {
 		return furthestPoint;
 	}
-
 }

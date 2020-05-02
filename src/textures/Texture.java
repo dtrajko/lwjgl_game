@@ -36,14 +36,15 @@ public class Texture {
 		return new TextureBuilder(textureFile);
 	}
 
-	public static Texture newEmptyCubeMap(int size) {
-		int cubeMapId = TextureUtils.createEmptyCubeMap(size);
-		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size);
-	}
-
 	public static Texture newCubeMap(MyFile[] textureFiles) {
 		int cubeMapId = TextureUtils.loadCubeMap(textureFiles);
 		//TODO needs to know size!
 		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, 0);
 	}
+	
+	public static Texture newEmptyCubeMap(int size) {
+		int cubeMapId = TextureUtils.createEmptyCubeMap(size);
+		return new Texture(cubeMapId, GL13.GL_TEXTURE_CUBE_MAP, size);
+	}
+
 }

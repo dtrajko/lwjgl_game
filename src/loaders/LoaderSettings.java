@@ -5,13 +5,11 @@ import utils.MyFile;
 public class LoaderSettings {
 	
 	public static final MyFile RES_FOLDER = new MyFile("res");
-
+	
 	protected static final String ENTITIES_FOLDER = "entities";
-	public static final String SKYBOX_FOLDER = "skybox";
-	public static final String SKYBOX_FOLDER_II = "skybox2";
+	protected static final String SKYBOX_FOLDER = "skybox";
 	protected static final String[] SKYBOX_TEX_FILES = {"posX.png", "negX.png", "posY.png", "negY.png", "posZ.png", "negZ.png"};
-	protected static final String[] SKYBOX_TEX_FILES_II = {"sRight.png", "sLeft.png", "sUp.png", "sDown.png", "sBack.png", "sFront.png"};
-	protected static final float SKYBOX_SIZE = 500;
+	protected static final float SKYBOX_SIZE = 100;
 	protected static final String ENTITY_LIST_FILE = "entityList.txt";
 	protected static final String CONFIGS_FILE = "configs.txt";
 	protected static final String MODEL_FILE = "model.obj";

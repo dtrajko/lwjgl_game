@@ -8,18 +8,16 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import loaders.RawModelLoader;
 import models.RawModel;
-import renderEngine.RenderEngine;
-import utils.Maths;
+import renderEngine.Loader;
+import toolbox.Maths;
 
 public class GuiRenderer {
 	
 	private final RawModel quad;
 	private GuiShader shader;
 
-	public GuiRenderer() {
-		RawModelLoader loader = new RawModelLoader();
+	public GuiRenderer(Loader loader) {
 		float[] positions = { -1, 1, -1, -1, 1, 1, 1, -1};
 		this.quad = loader.loadToVAO(positions, 2); // 2 stands for 2D
 		shader = new GuiShader();

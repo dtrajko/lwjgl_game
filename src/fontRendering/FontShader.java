@@ -2,9 +2,10 @@ package fontRendering;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
 import shaders.ShaderProgram;
 
-public class FontShader extends ShaderProgram {
+public class FontShader extends ShaderProgram{
 
 	private static final String VERTEX_FILE = "fontRendering/fontVertex.txt";
 	private static final String FRAGMENT_FILE = "fontRendering/fontFragment.txt";

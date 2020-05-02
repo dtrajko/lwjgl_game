@@ -2,7 +2,7 @@ package particles;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import utils.DisplayManager;
+import renderEngine.DisplayManager;
 
 public class ParticleSystemSimple {
 	
@@ -20,7 +20,7 @@ public class ParticleSystemSimple {
 		this.gravityComplient = gravityComplient;
 		this.lifeLength = lifeLength;
 	}
-
+	
 	public void generateParticles(Vector3f systemCenter){
 		float delta = DisplayManager.getFrameTimeSeconds();
 		float particlesToCreate = pps * delta;
@@ -33,7 +33,7 @@ public class ParticleSystemSimple {
 			emitParticle(systemCenter);
 		}
 	}
-
+	
 	private void emitParticle(Vector3f center){
 		float dirX = (float) Math.random() * 2f - 1f;
 		float dirZ = (float) Math.random() * 2f - 1f;

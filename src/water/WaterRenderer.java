@@ -2,100 +2,94 @@ package water;
 
 import java.util.List;
 
+import models.RawModel;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import interfaces.ICamera;
-import openglObjects.Vao;
-import textures.Texture;
-import utils.MyFile;
-import utils.OpenGlUtils;
+import renderEngine.DisplayManager;
+import renderEngine.Loader;
+import toolbox.Maths;
+import entities.Camera;
+import entities.Light;
 
 public class WaterRenderer {
+ 
+	private static final String DUDV_MAP = "waterDUDV";
+	private static final String NORMAL_MAP = "normal";
+	private static final float WAVE_SPEED = 0.03f;
 
-	private static final MyFile DUDV_MAP = new MyFile("res", "waterDUDV.png");
-	private static final MyFile NORMAL_MAP = new MyFile("res", "normal.png");
-	// private static final float WAVE_SPEED = 0.03f;
+    private RawModel quad;
+    private WaterShader shader;
+    private WaterFrameBuffers fbos;
 
-	private Vao quad;
-	private WaterShader shader;
-	private WaterFrameBuffers fbos;
+    private float moveFactor = 0;
 
-	private float moveFactor = 0;
+    private int dudvTexture;
+    private int normalMap;
 
-	private Texture dudvTexture;
-	private Texture normalMap;
+    public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers fbos) {
+        this.shader = shader;
+        this.fbos = fbos;
+        this.dudvTexture = loader.loadTexture(DUDV_MAP);
+        this.normalMap = loader.loadTexture(NORMAL_MAP);
+        shader.start();
+        shader.connectTextureUnits();
+        shader.loadProjectionMatrix(projectionMatrix);
+        shader.stop();
+        setUpVAO(loader);
+    }
 
-	public WaterRenderer(WaterFrameBuffers fbos) {
-		this.shader = new WaterShader();
-		this.fbos = fbos;
-		this.quad = QuadGenerator.generateQuad();
-		this.normalMap = Texture.newTexture(NORMAL_MAP).create();
-		this.dudvTexture = Texture.newTexture(DUDV_MAP).anisotropic().create();
-	}
+    public void render(List<WaterTile> water, Camera camera, Light sun) {
+        prepareRender(camera, sun);  
+        for (WaterTile tile : water) {
+            Matrix4f modelMatrix = Maths.createTransformationMatrix(
+                    new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
+                    WaterTile.TILE_SIZE);
+            shader.loadModelMatrix(modelMatrix);
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
+        }
+        unbind();
+    }
 
-	public void render(List<WaterTile> water, ICamera camera, Vector3f lightDir) {
-		prepareRender(camera, lightDir);
-		for (WaterTile tile : water) {
-			Matrix4f modelMatrix = createModelMatrix(tile.getX(), tile.getHeight(), tile.getZ(), WaterTile.TILE_SIZE);
-			shader.modelMatrix.loadMatrix(modelMatrix);
-			GL11.glDrawElements(GL11.GL_TRIANGLES, quad.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
-		}
-		finish();
-	}
+    private void prepareRender(Camera camera, Light sun){
+        shader.start();
+        shader.loadViewMatrix(camera);
+        moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSeconds();
+        moveFactor %= 1;
+        shader.loadMoveFactor(moveFactor);
+        shader.loadLight(sun);
+        GL30.glBindVertexArray(quad.getVaoID());
+        GL20.glEnableVertexAttribArray(0);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getReflectionTexture());
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionTexture());
+        GL13.glActiveTexture(GL13.GL_TEXTURE2);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.dudvTexture);
+        GL13.glActiveTexture(GL13.GL_TEXTURE3);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.normalMap);
+        GL13.glActiveTexture(GL13.GL_TEXTURE4);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
 
-	public void cleanUp() {
-		quad.delete();
-		dudvTexture.delete();
-		normalMap.delete();
-		fbos.cleanUp();
-		shader.cleanUp();
-	}
+    private void unbind(){
+    	GL11.glDisable(GL11.GL_BLEND);
+        GL20.glDisableVertexAttribArray(0);
+        GL30.glBindVertexArray(0);
+        shader.stop();
+    }
 
-	private void prepareRender(ICamera camera, Vector3f lightDir) {
-		shader.start();
-		shader.projectionMatrix.loadMatrix(camera.getProjectionMatrix());
-		shader.viewMatrix.loadMatrix(camera.getViewMatrix());
-		shader.cameraPosition.loadVec3(camera.getPosition());
-		moveFactor += 0.0005f;
-		moveFactor %= 1;
-		shader.moveFactor.loadFloat(moveFactor);
-		shader.lightDirection.loadVec3(lightDir);
-		quad.bind(0);
-		bindTextures();
-		doRenderSettings();
-	}
-
-	private void bindTextures() {
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getReflectionTexture());
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionTexture());
-		dudvTexture.bindToUnit(2);
-		normalMap.bindToUnit(3);
-		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fbos.getRefractionDepthTexture());
-	}
-
-	private void doRenderSettings() {
-		OpenGlUtils.enableDepthTesting(true);
-		OpenGlUtils.antialias(false);
-		OpenGlUtils.cullBackFaces(true);
-		OpenGlUtils.enableAlphaBlending();
-	}
-
-	private void finish() {
-		quad.unbind(0);
-		shader.stop();
-	}
-
-	private Matrix4f createModelMatrix(float x, float y, float z, float scale) {
-		Matrix4f modelMatrix = new Matrix4f();
-		Matrix4f.translate(new Vector3f(x, y, z), modelMatrix, modelMatrix);
-		Matrix4f.scale(new Vector3f(scale, scale, scale), modelMatrix, modelMatrix);
-		return modelMatrix;
-	}
-
+    private void setUpVAO(Loader loader) {
+        // Just x and z vertex positions here, y is set to 0 in v.shader
+        float[] vertices = { -1, -1, -1, 1, 1, -1, 1, -1, -1, 1, 1, 1 };
+        quad = loader.loadToVAO(vertices, 2);
+    }
 }

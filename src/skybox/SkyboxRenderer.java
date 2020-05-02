@@ -1,80 +1,160 @@
 package skybox;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
-import interfaces.ICamera;
-import openglObjects.Vao;
-import utils.DisplayManager;
-import utils.OpenGlUtils;
+import entities.Camera;
+import models.RawModel;
+import renderEngine.DisplayManager;
+import renderEngine.Loader;
 
 public class SkyboxRenderer {
 
-	private static final float SIZE = 200;
-	private static final float ROTATE_SPEED = 1f;
-
-	private SkyboxShader shader;
-	private Vao box;
+	private static final float SIZE = 1000f;
 	
-	private float rotation = 0;
-
-	public SkyboxRenderer() {
-		this.shader = new SkyboxShader();
-		this.box = CubeGenerator.generateCube(SIZE);
-	}
-	
-	public void render(Skybox skybox, ICamera iCamera){
-		prepare(skybox, iCamera);
-		Vao model = skybox.getCubeVao();
-		model.bind(0);
-		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
-		model.unbind(0);
-		finish();
-	}
-
-	/**
-	 * Delete the shader when the game closes.
-	 */
-	public void cleanUp() {
-		shader.cleanUp();
-	}
-
-	/**
-	 * Starts the shader, loads the projection-view matrix to the uniform
-	 * variable, and sets some OpenGL state which should be mostly
-	 * self-explanatory.
-	 * 
-	 * @param camera
-	 *            - the scene's camera.
-	 */
-	private void prepare(ICamera camera) {
-		shader.start();
-		shader.projectionViewMatrix.loadMatrix(camera.getProjectionViewMatrix());
-		OpenGlUtils.disableBlending();
-		OpenGlUtils.enableDepthTesting(true);
-		OpenGlUtils.cullBackFaces(true);
-		OpenGlUtils.antialias(false);
-	}
-
-	private void prepare(Skybox skybox, ICamera camera){
-		shader.start();
-		GL11.glDepthMask(false);
+	private static final float[] VERTICES = {
+		-SIZE,  SIZE, -SIZE,
+		-SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
 		
-		Matrix4f projectionViewMatrix = camera.getProjectionViewMatrix();
-		projectionViewMatrix.translate(new Vector3f(0f, -50f, 0f));
-		rotation += ROTATE_SPEED * DisplayManager.getFrameTimeSeconds();
-		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0), projectionViewMatrix, projectionViewMatrix);
-		shader.projectionViewMatrix.loadMatrix(projectionViewMatrix);
-		skybox.getTexture().bindToUnit(0);
-		OpenGlUtils.disableBlending();
-		OpenGlUtils.enableDepthTesting(true);
-		OpenGlUtils.cullBackFaces(true);
-		OpenGlUtils.antialias(false);
-	}
+		-SIZE, -SIZE,  SIZE,
+		-SIZE, -SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE, -SIZE,
+		-SIZE,  SIZE,  SIZE,
+		-SIZE, -SIZE,  SIZE,
+		
+		 SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		
+		-SIZE, -SIZE,  SIZE,
+		-SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE, -SIZE,  SIZE,
+		-SIZE, -SIZE,  SIZE,
+		
+		-SIZE,  SIZE, -SIZE,
+		 SIZE,  SIZE, -SIZE,
+		 SIZE,  SIZE,  SIZE,
+		 SIZE,  SIZE,  SIZE,
+		-SIZE,  SIZE,  SIZE,
+		-SIZE,  SIZE, -SIZE,
+		
+		-SIZE, -SIZE, -SIZE,
+		-SIZE, -SIZE,  SIZE,
+		 SIZE, -SIZE, -SIZE,
+		 SIZE, -SIZE, -SIZE,
+		-SIZE, -SIZE,  SIZE,
+		 SIZE, -SIZE,  SIZE
+	};
 
-	private void finish() {
-		GL11.glDepthMask(true);
+	/**
+	 * GL_TEXTURE_CUBE_MAP_POSITIVE_X = Right Face
+	 * GL_TEXTURE_CUBE_MAP_NEGATIVE_X = Left Face
+	 * GL_TEXTURE_CUBE_MAP_POSITIVE_Y = Top Face
+	 * GL_TEXTURE_CUBE_MAP_NEGATIVE_Y = Bottom Face
+	 * GL_TEXTURE_CUBE_MAP_POSITIVE_Z = Back Face
+	 * GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = Front Face
+	 */
+	private static String[] TEXTURE_FILES = {
+		"skybox/right", 
+		"skybox/left", 
+		"skybox/top", 
+		"skybox/bottom", 
+		"skybox/back", 
+		"skybox/front"
+	};
+
+	private static String[] TEXTURE_FILES_SKY = {
+		"skybox/skybox2/sRight", 
+		"skybox/skybox2/sLeft", 
+		"skybox/skybox2/sUp", 
+		"skybox/skybox2/sDown", 
+		"skybox/skybox2/sBack", 
+		"skybox/skybox2/sFront"
+	};
+
+	private static String[] NIGHT_TEXTURE_FILES = {
+		"skybox/night/nightRight", 
+		"skybox/night/nightLeft", 
+		"skybox/night/nightTop", 
+		"skybox/night/nightBottom", 
+		"skybox/night/nightBack", 
+		"skybox/night/nightFront"
+	};
+
+	private RawModel cube;
+	private int texture;
+	private int nightTexture;
+	private SkyboxShader shader;
+	private float time = 7000; // dawn
+	
+	public SkyboxRenderer(Loader loader, Matrix4f projectionMatrix) {
+		cube = loader.loadToVAO(VERTICES, 3);
+		texture = loader.loadCubeMap(TEXTURE_FILES_SKY);
+		nightTexture = loader.loadCubeMap(NIGHT_TEXTURE_FILES);
+		shader = new SkyboxShader();
+		shader.start();
+		shader.connectTextureUnits();
+		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
-	}	
+	}
+	
+	public void render(Camera camera, float r, float g, float b) {
+		shader.start();
+		shader.loadViewMatrix(camera);
+		shader.loadFogColour(r, g, b);
+		GL30.glBindVertexArray(cube.getVaoID());
+		GL20.glEnableVertexAttribArray(0);
+		bindTextures();
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, cube.getVertexCount());
+		GL20.glDisableVertexAttribArray(0);
+		GL30.glBindVertexArray(0);
+		shader.stop();
+	}
+	
+	private void bindTextures() {
+
+		int texture1;
+		int texture2;
+
+		time += DisplayManager.getFrameTimeSeconds() * 100;
+		time %= 24000;
+		float blendFactor;
+
+		if (time >= 0 && time < 5000) {
+			texture1 = nightTexture;
+			texture2 = nightTexture;
+			blendFactor = (time - 0) / (5000 - 0);
+		} else if (time >= 5000 && time < 8000) {
+			texture1 = nightTexture;
+			texture2 = texture;
+			blendFactor = (time - 5000) / (8000 - 5000);
+		} else if (time >= 8000 && time < 21000) {
+			texture1 = texture;
+			texture2 = texture;
+			blendFactor = (time - 8000) / (21000 - 8000);
+		} else {
+			texture1 = texture;
+			texture2 = nightTexture;
+			blendFactor = (time - 21000) / (24000 - 21000);
+		}
+
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
+		GL13.glActiveTexture(GL13.GL_TEXTURE1);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
+		shader.loadBlendFactor(blendFactor);
+	}
 }

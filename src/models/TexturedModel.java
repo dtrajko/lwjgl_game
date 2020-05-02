@@ -1,6 +1,5 @@
 package models;
 
-import openglObjects.Vao;
 import textures.ModelTexture;
 
 public class TexturedModel {

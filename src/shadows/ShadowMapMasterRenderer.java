@@ -7,10 +7,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+
+import entities.Camera;
 import entities.Entity;
-import interfaces.ICamera;
+import entities.Light;
 import models.TexturedModel;
-import utils.Light;
 
 /**
  * This class is in charge of using all of the classes in the shadows package to
@@ -27,7 +28,7 @@ public class ShadowMapMasterRenderer {
 
 	private ShadowFrameBuffer shadowFbo;
 	private ShadowShader shader;
-	private ShadowBox shadowBox = null;
+	private ShadowBox shadowBox;
 	private Matrix4f projectionMatrix = new Matrix4f();
 	private Matrix4f lightViewMatrix = new Matrix4f();
 	private Matrix4f projectionViewMatrix = new Matrix4f();
@@ -46,8 +47,9 @@ public class ShadowMapMasterRenderer {
 	 * @param camera
 	 *            - the camera being used in the scene.
 	 */
-	public ShadowMapMasterRenderer() {
+	public ShadowMapMasterRenderer(Camera camera) {
 		shader = new ShadowShader();
+		shadowBox = new ShadowBox(lightViewMatrix, camera);
 		shadowFbo = new ShadowFrameBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		entityRenderer = new ShadowMapEntityRenderer(shader, projectionViewMatrix);
 	}
@@ -67,10 +69,7 @@ public class ShadowMapMasterRenderer {
 	 * @param sun
 	 *            - the light acting as the sun in the scene.
 	 */
-	public void render(Map<TexturedModel, List<Entity>> entities, ICamera camera, Light sun) {
-		if (shadowBox == null) {
-			shadowBox = new ShadowBox(lightViewMatrix, camera);
-		}
+	public void render(Map<TexturedModel, List<Entity>> entities, Light sun) {
 		shadowBox.update();
 		Vector3f sunPosition = sun.getPosition();
 		Vector3f lightDirection = new Vector3f(-sunPosition.x, -sunPosition.y, -sunPosition.z);

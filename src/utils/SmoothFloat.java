@@ -27,9 +27,15 @@ public class SmoothFloat {
 		this.target = target;
 	}
 	
+	public void instantIncrease(float increase){
+		this.actual += increase;
+	}
+	
 	public float get(){
 		return actual;
 	}
+	
+	public void force(){}
 	
 	public float getTarget(){
 		return target;

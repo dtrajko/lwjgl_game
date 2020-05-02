@@ -1,39 +1,22 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
-import animatedModel.AnimatedModel;
-import animatedModel.Joint;
-import audio.AudioMaster;
-import audio.Source;
-import input.GamepadManager;
-import interfaces.ITerrain;
-import loaders.SceneLoader;
-import main.WorldSettings;
-import openglObjects.Vao;
-import racetrack.LapStopwatch;
+import collision.AABB;
+import models.TexturedModel;
+import renderEngine.DisplayManager;
 import terrains.Terrain;
-import textures.Texture;
-import utils.DisplayManager;
 
-public class Player extends AnimatedModel {
-
-	private static float VERTICAL_OFFSET = -5;
-	private static float RUN_SPEED = 10;
-	private static float TURN_SPEED = 160;
-	private static float GRAVITY = -20;
-	private static float JUMP_POWER = 10;
-	private static float TERRAIN_HEIGHT = 0;
-	private static float HEIGHT = 5.5f;
+public class Player extends Entity {
 	
-	private static float ENGINE_SOUND_GAIN = 1.0f;
-	private static float ENGINE_IDLE_SOUND_GAIN = 0.75f;
-	private static float TYRES_SOUND_GAIN = 0.5f;
+	private static final float VERTICAL_OFFSET = -5;
+	private static final float RUN_SPEED = 20;
+	private static final float TURN_SPEED = 160;
+	private static final float GRAVITY = -30;
+	private static final float JUMP_POWER = 30;
+	private static final float TERRAIN_HEIGHT = 0;
+	private static final float HEIGHT = 5.5f;
 
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
@@ -41,121 +24,33 @@ public class Player extends AnimatedModel {
 	
 	private boolean isInAir = false;
 	private boolean gravityEnabled = true;
-	
-	private ITerrain terrain = null;
-	
-	private boolean generateParticles = false;
 
-	private Integer soundKartEngineIdle;
-	private Integer soundKartEngine;
-	private Integer soundTyreScreech;
-	private Source audioSourceEngineIdle = null;
-	private Source audioSourceEngine = null;
-	private Source audioSourceTyres = null;
-
-	public Player(Vao model, Texture texture, Joint rootJoint, int jointCount, Vector3f position, Vector3f rotation, float scale) {
-		super(model, texture, rootJoint, jointCount, position, rotation.getX(), rotation.getY(), rotation.getZ(), scale);
-		initSound();
+	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+		super(model, position, rotX, rotY, rotZ, scale);
+		super.setAABB(new AABB(super.getPosition(), super.getPosition()));
 	}
 
-	public void setProperties() {
-		// setings for the autokomerc karting game
-		RUN_SPEED = 16;
-		TURN_SPEED = 58;
-	}
-
-	public void update(ITerrain terrain) {
-		this.terrain = terrain;
-		move(terrain);
-		handleSound();
-		super.update(getCurrentSpeed());
-	}
-
-	private void initSound() {
-		// init kart idle engine sound
-		soundKartEngineIdle = AudioMaster.loadSound("audio/kart_engine_idle.wav");
-		audioSourceEngineIdle = new Source();
-		audioSourceEngineIdle.setVolume(0f);
-		audioSourceEngineIdle.setLooping(true);
-		audioSourceEngineIdle.play(soundKartEngineIdle);
-		// audioSourceEngineIdle.pause();
-		// init kart engine sound
-		soundKartEngine = AudioMaster.loadSound("audio/kart_engine.wav");
-		audioSourceEngine = new Source();
-		audioSourceEngine.setVolume(0f);
-		audioSourceEngine.setLooping(true);
-		audioSourceEngine.play(soundKartEngine);
-		// audioSourceEngine.pause();
-		// init tyre screetch sound
-		soundTyreScreech = AudioMaster.loadSound("audio/tyre_screech.wav");
-		audioSourceTyres = new Source();
-		audioSourceTyres.setVolume(0f);
-		audioSourceTyres.setLooping(true);
-		audioSourceTyres.play(soundTyreScreech);
-		// audioSourceTyres.pause();
-	}
-
-	private void handleSound() {
-
-		float engineVolume = (Math.abs(currentSpeed) / RUN_SPEED) * ENGINE_SOUND_GAIN;
-		float engineIdleVolume = (1 - Math.abs(currentSpeed) / RUN_SPEED) * ENGINE_IDLE_SOUND_GAIN;
-		float tyresScreechVolume = (Math.abs(currentTurnSpeed) / TURN_SPEED) * TYRES_SOUND_GAIN;
-		audioSourceEngine.setVolume(engineVolume);
-		audioSourceEngineIdle.setVolume(engineIdleVolume);
-		audioSourceTyres.setVolume(tyresScreechVolume);
-		
-		if (currentTurnSpeed > 0) {
-			audioSourceTyres.setPosition(50, 0, 0);
-		} else if (currentTurnSpeed < 0) {
-			audioSourceTyres.setPosition(-50, 0, 0);
-		} else if (currentTurnSpeed == 0) {
-			audioSourceTyres.setPosition(0, 0, 0);
-		}
-		
-		/*
-		System.out.println(
-			"engineVolume = " + engineVolume + " " + 
-			"engineIdleVolume = " + engineIdleVolume + " " +
-			"tyresScreechVolume = " + tyresScreechVolume + " " +
-			"currentTurnSpeed = " + currentTurnSpeed);
-		*/
-	}
-
-	public void move(ITerrain terrain) {
-
+	public void move(Terrain terrain) {
 		checkInputs();
-
-		if (super.getPosition().y > TERRAIN_HEIGHT + 0.5f) {
-			currentSpeed /= 10f;
-			SceneLoader.getScene().getRacetrack().getStopwatch().addPenaltySeconds(2);
-		}
 
 		// prevent shaking when standing on objects
 		float gravity = GRAVITY;
 		if (gravityEnabled == false) {
 			gravity = 0;
 		}
-		float rotY = currentTurnSpeed * DisplayManager.getFrameTimeSeconds();
-		super.increaseRotation(0, rotY, 0);
-		float distance = getCurrentSpeed() * DisplayManager.getFrameTimeSeconds();
+		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
 		upwardSpeed += gravity * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSeconds(), dz);
-
-		// terrain collision detection
 		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
-		if (super.getPosition().y <= terrainHeight) {
+		if (super.getPosition().y < terrainHeight) {
 			upwardSpeed = 0;
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
-
-		// prevent player going above the water level
-		if (super.getPosition().y > WorldSettings.WATER_HEIGHT) {
-			// dx = -dx;
-			// dz = -dz;
-		}
+		// System.out.println("Gravity enabled? " + gravityEnabled + ", gravity amount = " + gravity);
 	}
 
 	public static float getHeight() {
@@ -165,41 +60,12 @@ public class Player extends AnimatedModel {
 	public static float getGravity() {
 		return GRAVITY;
 	}
-	
-	public ITerrain getTerrain() {
-		return this.terrain;
-	}
-
-	public float getVerticalOffset() {
-		return Player.VERTICAL_OFFSET;
-	}
-
-	public float getRunSpeed() {
-		return Player.RUN_SPEED;
-	}
-
-	public float getCurrentSpeed() {
-		return currentSpeed;
-	}
-
-	public void setCurrentSpeed(float currentSpeed) {
-		this.currentSpeed = currentSpeed;
-	}
-
-	public float getTurnSpeed() {
-		return Player.TURN_SPEED;
-	}
-
-	public float getCurrentTurnSpeed() {
-		return this.currentTurnSpeed;
-	}
-
-	public void setCurrentTurnSpeed(float currentTurnSpeed) {
-		this.currentTurnSpeed = currentTurnSpeed;
-	}
 
 	public void increasePosition(float dx, float dy, float dz) {
 		super.increasePosition(dx, dy, dz);
+		// dtrajko: experimental code for AABB
+		super.getAABB().setMinExtents(new Vector3f(super.getPosition().x - 2, super.getPosition().y - 2, super.getPosition().z - 2));
+		super.getAABB().setMaxExtents(new Vector3f(super.getPosition().x + 2, super.getPosition().y + 2, super.getPosition().z + 2));
 	}
 
 	// prevent shaking when standing on objects
@@ -225,48 +91,35 @@ public class Player extends AnimatedModel {
 
 	public void checkInputs() {
 
-		setCurrentSpeed(0);
-		if (Keyboard.isKeyDown(Keyboard.KEY_W) || Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-			setCurrentSpeed(RUN_SPEED);
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S) || Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			setCurrentSpeed(-RUN_SPEED);
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+			currentSpeed = RUN_SPEED;
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			currentSpeed = -RUN_SPEED;
+		} else {
+			currentSpeed = 0;
 		}
 
-		currentTurnSpeed = 0;
-		if (Keyboard.isKeyDown(Keyboard.KEY_A) || Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			currentTurnSpeed = TURN_SPEED;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D) || Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			currentTurnSpeed = -TURN_SPEED;
+		} else {
+			currentTurnSpeed = 0;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			jump();
 		}
-
-		GamepadManager.handleInput();
-
-		if (generateParticles && Mouse.isButtonDown(2)) { // 2 for mouse wheel button
-			SceneLoader.getScene().getParticleSystems().get(0).generateParticles(new Vector3f(
-				this.getPosition().getX(),
-				this.getPosition().getY() + 0.1f,
-				this.getPosition().getZ()
-			));
-			System.out.println("Generating particles");
+		if (Keyboard.isKeyDown(Keyboard.KEY_L)) {
+			System.out.println("Player location: "
+				+ " X = " + super.getPosition().x
+				+ " Y = " + super.getPosition().y
+				+ " Z = " + super.getPosition().z
+			);
 		}
 	}
 	
-	public void cleanUp() {
-		if (audioSourceEngineIdle != null) {
-			audioSourceEngineIdle.delete();			
-		}
-		if (audioSourceEngine != null) {
-			audioSourceEngine.delete();			
-		}
-		if (audioSourceTyres != null) {
-			audioSourceTyres.delete();			
-		}
-		super.delete();
+	public float getVerticalOffset() {
+		return this.VERTICAL_OFFSET;
 	}
 }

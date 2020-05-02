@@ -13,7 +13,7 @@ import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
 import renderEngine.MasterRenderer;
-import utils.Maths;
+import toolbox.Maths;
 
 public class ShadowMapEntityRenderer {
 

@@ -3,8 +3,7 @@ package environmentMapRenderer;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import interfaces.ICamera;
-import scene.Scene;
+import utils.ICamera;
 
 public class CubeMapCamera implements ICamera {
 
@@ -13,7 +12,7 @@ public class CubeMapCamera implements ICamera {
 	private static final float FOV = 90;// don't change!
 	private static final float ASPECT_RATIO = 1;
 
-	private Vector3f center;
+	private final Vector3f center;
 	private float pitch = 0;
 	private float yaw = 0;
 
@@ -101,66 +100,8 @@ public class CubeMapCamera implements ICamera {
 		Matrix4f.rotate((float) Math.toRadians(yaw), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
 		Vector3f negativeCameraPos = new Vector3f(-center.x, -center.y, -center.z);
 		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
+
 		Matrix4f.mul(projectionMatrix, viewMatrix, projectionViewMatrix);
 	}
 
-	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void reflect() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setScene(Scene scene) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setPitch(float pitch) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public float getPitch() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getYaw() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getRoll() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public float getNearPlane() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public float getFarPlane() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void togglePerspective() {
-		// TODO Auto-generated method stub
-		
-	}
 }

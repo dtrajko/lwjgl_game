@@ -15,7 +15,7 @@ import models.RawModel;
 import models.TexturedModel;
 import shaders.StaticShader;
 import textures.ModelTexture;
-import utils.Maths;
+import toolbox.Maths;
 
 public class EntityRenderer {
 
@@ -78,5 +78,6 @@ public class EntityRenderer {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
 				entity.getPosition(), entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 			shader.loadTransformationMatrix(transformationMatrix);
+			shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 }

@@ -1,11 +1,14 @@
 package shaders;
 
 import java.util.List;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import interfaces.ICamera;
-import utils.Maths;
+
+import entities.Camera;
+import entities.Light;
+import toolbox.Maths;
 
 public class TerrainShader extends ShaderProgram {
 
@@ -103,21 +106,21 @@ public class TerrainShader extends ShaderProgram {
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 
-	public void loadLights(List<utils.Light> lights) {
+	public void loadLights(List<Light> lights) {
 		for (int i = 0; i < MAX_LIGHTS; i++) {
 			if (i < lights.size()) {
-				super.loadVector(location_lightPosition[i], lights.get(i).getPosition());
-				super.loadVector(location_lightColour[i], lights.get(i).getColorVector());
+				super.loadVector(location_lightPosition[i], lights.get(i).getPosition());				
+				super.loadVector(location_lightColour[i], lights.get(i).getColour());
 				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
 			} else {
-				super.loadVector(location_lightPosition[i], new Vector3f(1, 1, 1));				
-				super.loadVector(location_lightColour[i], new Vector3f(1, 1, 1));
-				super.loadVector(location_attenuation[i], new Vector3f(1, 1, 1));
+				super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));				
+				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+				super.loadVector(location_attenuation[i], new Vector3f(0, 0, 0));
 			}
 		}
 	}
 
-	public void loadViewMatrix(ICamera camera) {
+	public void loadViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}

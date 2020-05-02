@@ -13,10 +13,10 @@ import org.lwjgl.opengl.GL31;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import interfaces.ICamera;
-import loaders.RawModelLoader;
+import entities.Camera;
 import models.RawModel;
-import utils.Maths;
+import renderEngine.Loader;
+import toolbox.Maths;
 
 public class ParticleRenderer {
 
@@ -30,11 +30,11 @@ public class ParticleRenderer {
 	private RawModel quad;
 	private ParticleShader shader;
 	
-	private RawModelLoader loader;
+	private Loader loader;
 	private int vbo;
 	private int pointer = 0;
 
-	protected ParticleRenderer(RawModelLoader loader, Matrix4f projectionMatrix){
+	protected ParticleRenderer(Loader loader, Matrix4f projectionMatrix){
 		this.loader = loader;
 		this.vbo = loader.createEmptyVbo(INSTANCE_DATA_LENGTH * MAX_INSTANCES);
 		this.quad = loader.loadToVAO(this.VERTICES, 2);
@@ -50,7 +50,7 @@ public class ParticleRenderer {
 		shader.stop();
 	}
 
-	protected void render(Map<ParticleTexture, List<Particle>> particles, ICamera camera){
+	protected void render(Map<ParticleTexture, List<Particle>> particles, Camera camera){
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		prepare();
 		for (ParticleTexture texture: particles.keySet()) {

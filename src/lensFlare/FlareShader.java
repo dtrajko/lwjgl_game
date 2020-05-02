@@ -35,4 +35,17 @@ public class FlareShader extends ShaderProgram {
 		flareTexture.loadTexUnit(0);
 		super.stop();
 	}
+
+	@Override
+	protected void bindAttributes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void getAllUniformLocations() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

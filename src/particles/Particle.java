@@ -3,9 +3,9 @@ package particles;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import entities.Camera;
 import entities.Player;
-import interfaces.ICamera;
-import utils.DisplayManager;
+import renderEngine.DisplayManager;
 
 public class Particle {
 
@@ -78,7 +78,7 @@ public class Particle {
 		return scale;
 	}
 
-	protected boolean update(ICamera camera) {
+	protected boolean update(Camera camera) {
 		velocity.y += Player.getGravity() * this.gravityEffect * DisplayManager.getFrameTimeSeconds();
 		reusableChange.set(velocity);
 		reusableChange.scale(DisplayManager.getFrameTimeSeconds());

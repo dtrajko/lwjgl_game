@@ -10,12 +10,12 @@ public class SceneLoaderFactory {
 		 * here. Kind of pointless and excessive in this case, but I was doing
 		 * it this way as an exercise for myself :P
 		 */
-		ConfigsLoader  configsLoader = new ConfigsLoader();
-		ModelLoader    modelLoader = new ModelLoader();
-		RawModelLoader rawModelLoader = new RawModelLoader();
-		SkinLoader     skinLoader = new SkinLoader();
-		EntityLoader   entityLoader = new EntityLoader(modelLoader, skinLoader, configsLoader);
-		SkyboxLoader   skyLoader = new SkyboxLoader();
-		return new SceneLoader(entityLoader, skyLoader, rawModelLoader);
+		ModelLoader modelLoader = new ModelLoader();
+		SkinLoader skinLoader = new SkinLoader();
+		ConfigsLoader configsLoader = new ConfigsLoader();
+		EntityLoader entityLoader = new EntityLoader(modelLoader, skinLoader, configsLoader);
+		SkyboxLoader skyLoader = new SkyboxLoader();
+		return new SceneLoader(entityLoader, skyLoader);
 	}
+
 }

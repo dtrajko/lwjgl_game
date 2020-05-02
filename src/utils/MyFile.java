@@ -4,15 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Represents a "file" inside a Jar File. Used for accessing resources (models, textures), as they
- * are all inside a jar file when exported.
- * 
- * @author Karl
- *
- */
 public class MyFile {
-
+	
 	private static final String FILE_SEPARATOR = "/";
 
 	private String path;
@@ -37,7 +30,7 @@ public class MyFile {
 		this.path = file.path + FILE_SEPARATOR + subFile;
 		this.name = subFile;
 	}
-
+	
 	public MyFile(MyFile file, String... subFiles) {
 		this.path = file.path;
 		for (String part : subFiles) {
@@ -50,9 +43,9 @@ public class MyFile {
 	public String getPath() {
 		return path;
 	}
-
+	
 	@Override
-	public String toString() {
+	public String toString(){
 		return getPath();
 	}
 

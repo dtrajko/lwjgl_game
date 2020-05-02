@@ -24,4 +24,17 @@ public class SunShader extends ShaderProgram {
 		sunTexture.loadTexUnit(0);
 		super.stop();
 	}
+
+	@Override
+	protected void bindAttributes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void getAllUniformLocations() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

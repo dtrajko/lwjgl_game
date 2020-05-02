@@ -2,37 +2,21 @@ package sunRenderer;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import lensFlare.FlareManager;
 import textures.Texture;
-import utils.Light;
 
 public class Sun {
 
-	private static final float SUN_DIS = 100; // fairly arbitrary - but make sure it doesn't go behind skybox
+	private static final float SUN_DIS = 200;// fairly arbitrary - but make sure
+											// it doesn't go behind skybox
 
 	private final Texture texture;
+
+	private Vector3f lightDirection = new Vector3f(0, -1, 0);
 	private float scale;
-	private Light light;
-	private FlareManager lensFlare = null;
 
-	public Sun(Texture texture, float scale, Light light) {
+	public Sun(Texture texture, float scale) {
 		this.texture = texture;
 		this.scale = scale;
-		this.light = light;
-		this.lensFlare = null;
-	}
-
-	public Sun(Texture texture, float scale, Light light, FlareManager lensFlare) {
-		this.texture = texture;
-		this.scale = scale;
-		this.light = light;
-		this.lensFlare = lensFlare;
-	}
-
-	public void delete(){
-		if (lensFlare != null) {
-			lensFlare.cleanUp();			
-		}
 	}
 
 	public void setScale(float scale) {
@@ -40,19 +24,16 @@ public class Sun {
 	}
 
 	public void setDirection(Vector3f dir) {
-		light.setDirection(dir);
-	}
-
-	public Light getLight() {
-		return this.light;
-	}
-
-	public FlareManager getLensFlare() {
-		return this.lensFlare;
+		lightDirection.set(dir);
+		lightDirection.normalise();
 	}
 
 	public Texture getTexture() {
 		return texture;
+	}
+
+	public Vector3f getLightDirection() {
+		return lightDirection;
 	}
 
 	public float getScale() {
@@ -68,9 +49,10 @@ public class Sun {
 	 * @return The 3D world position of the sun.
 	 */
 	public Vector3f getWorldPosition(Vector3f camPos) {
-		Vector3f sunPos = new Vector3f(this.light.getDirection());
+		Vector3f sunPos = new Vector3f(lightDirection);
 		sunPos.negate();
 		sunPos.scale(SUN_DIS);
 		return Vector3f.add(camPos, sunPos, null);
 	}
+
 }
